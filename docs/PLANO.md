@@ -631,17 +631,3 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 | T06 ou T07 estouram o tempo | CP1 vermelho | Teto de 1h na terça de manhã; depois, corte 5. |
 | Escopo crescendo durante a construção | Vontade de "só mais isso" | Anotar em `docs/decisoes.md` como fase seguinte. O CONTEXTO (seção 3.2) é a lista do que não entra. |
 | Cansaço na madrugada | Erros bobos, testes pulados | Parar no CP1 às 23:30. A terça tem folga para terminar T07/T08. |
-
-## D19 · Modelo de dados: escolhas da T02 · 23/11/2026
-**Contexto:** a T02 cria as 13 tabelas da seção 8 do CONTEXTO; alguns detalhes não estavam definidos.
-**Decisão:**
-- Enums em `db/enums.py` como `StrEnum` com os valores da seção 8.1 (nomes dos membros = valor em maiúsculas). No banco, texto com `CHECK` (o banco recusa valor fora do enum). `limpo` não é enum de trecho; só existe no `overall` da peça (T06).
-- Enum extra `Role` (`marca`, `creator`, `operacoes`, `sistema`, seção 4) para `review_event.actor_role`. `review_event.target_type` fica como texto (ex.: `check_result`, `refund_classification`).
-- `refund_classification.cause` e `subcause` são texto, não enum: a taxonomia é dado (`taxonomia_devolucao.yaml`, T03) e a validação fica no classificador (T10).
-- Datas pelo tipo `UTCDateTime`: grava em UTC sem fuso (o SQLite não guarda fuso) e devolve com fuso UTC; data sem fuso na entrada é tratada como UTC.
-- Ids: texto para `brand`, `creator`, `product` (ex.: `prod_treino`); uuid para `content_piece`; 8 caracteres para `tracked_link` (gerado na T09); inteiro autoincremento nas demais.
-- Imutabilidade: triggers SQLite `<tabela>_no_update` e `<tabela>_no_delete` com `RAISE(ABORT, ...)` em `product_facts`, `content_piece` e `review_event`, criados junto com as tabelas; equivalente em Postgres comentado em `db/session.py`. Chaves estrangeiras ligadas (`PRAGMA foreign_keys=ON`).
-- Regras de negócio da ficha (garantia ≥ 7 dias, `prazo` exige meses) **não** viram `CHECK` no banco: ficam na validação da T05, que devolve `FICHA_INVALIDA` com a explicação.
-- `get_current_facts(session, product_id, at=None)` fica em `db/models.py` (consulta, não regra de negócio): maior `valid_from ≤ at`; empate fica com a maior versão; sem versão vigente, `None`.
-- `db-reset`: `python -m promessa.db.session --reset` apaga o arquivo de `PROMESSA_DB_URL` e recria tabelas e triggers; recusa banco que não seja SQLite em arquivo.
-**Consequência:** `refund_classification` permite mais de uma linha por devolução (sem `UNIQUE` em `refund_id`); a T10 decide se reclassificação atualiza ou cria linha. Invariantes 2 a 5 da seção 8.3 dependem dos serviços e são testadas nas tasks deles (T09, T11, T13).
