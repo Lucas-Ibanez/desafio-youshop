@@ -1,0 +1,51 @@
+[project]
+name = "promessa-rastreavel"
+version = "0.1.0"
+description = "MVP Promessa Rastreável: liga a promessa da peça à venda e ao motivo da devolução."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "anthropic>=2.12.0",
+    "mcp>=2.3.0",
+    "pandas>=3.1.1",
+    "pydantic>=2",
+    "pydantic-settings>=2.16.3",
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.4",
+    "scikit-learn>=1.9.1",
+    "sqlalchemy>=2",
+    "streamlit>=1.67.0",
+]
+
+[project.scripts]
+promessa-mcp = "promessa.mcp_server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/promessa"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = '-m "not llm"'
+markers = [
+    "llm: chama a API do Claude",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]

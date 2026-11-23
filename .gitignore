@@ -1,0 +1,24 @@
+# Segredos
+.env
+.streamlit/secrets.toml
+
+# Ambiente Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Cache do modelo e afins
+.cache/
+
+# Banco local (fora do git)
+var/*
+!var/.gitkeep
+
+# Dados brutos com nomes (fora do git)
+data/raw/*
+!data/raw/.gitkeep
+
+# Saídas de erro da avaliação
+eval/reports/*.csv
