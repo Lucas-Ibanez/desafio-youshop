@@ -47,7 +47,7 @@
 
 | Task | Status | Evidência |
 |---|---|---|
-| T00 Preparação | ✅ Concluída | CSV, fontes, `.env` (chave do Gemini) e ferramentas prontos; IN 28 de magnésio e B6 em `data/rules/suplemento_in28_permitidas.yaml` (D17); padrões confirmados (D16). A conferir pelo Lucas: texto contra o PDF, página e alegação de B6 sobre o sistema nervoso. |
+| T00 Preparação | ✅ Concluída | CSV, fontes, `.env` (chave do Gemini) e ferramentas prontos; IN 28 de magnésio e B6 conferida em `data/rules/suplemento_in28_permitidas.yaml` (D17); padrões confirmados (D16); sobreposição IN 28 × `SUP-IMUN` resolvida (D18). Página da IN 28 não verificável (site fora do ar). |
 | T01 Esqueleto do repositório | ✅ Concluída | Commits `88a1956` (T01), `1471916` (T01b: `tasks.py`, MCP via `python -m`, UTF-8) e `22d6d26` (T01c: Gemini). |
 | T02 Modelo de dados e banco | **Próxima** | — |
 | T03–T16 | Não iniciadas | — |
@@ -128,15 +128,15 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 2. Copiar o guia do MVP e as validações H1–H4 para `docs/fontes/`.
 3. Criar o `.env` com `GEMINI_API_KEY`.
 4. Instalar `uv`, Python 3.12 e o Claude Code; conferir `git` configurado.
-5. **Até o fim da T03:** abrir o PDF da IN 28/2018 compilada (link na H2, seção 9) e transcrever **literalmente**, do Anexo V, as alegações permitidas de **magnésio** e **vitamina B6** (constituintes do suplemento fictício), com a página. Vai para `data/rules/suplemento_in28_permitidas.yaml`. ✅ *Feito: arquivo com 7 alegações permitidas para magnésio e 7 para B6 (D17). Item 5: texto a conferir contra o PDF pelo Lucas; página pendente. A alegação de B6 sobre o sistema nervoso fica em `pendente_confirmacao`.*
+5. **Até o fim da T03:** abrir o PDF da IN 28/2018 compilada (link na H2, seção 9) e transcrever **literalmente**, do Anexo V, as alegações permitidas de **magnésio** e **vitamina B6** (constituintes do suplemento fictício), com a página. Vai para `data/rules/suplemento_in28_permitidas.yaml`. ✅ *Feito: arquivo com 7 alegações permitidas para magnésio e 8 para B6, conferido contra o PDF pelo Lucas (D17). Página não verificável (site da Anvisa fora do ar). A alegação de B6 sobre o sistema nervoso foi confirmada em vigor. Sobreposição com `SUP-IMUN` resolvida na D18.*
 6. Ler a seção 18 do CONTEXTO e confirmar (ou mudar) os padrões: mínimo de 30 vendas, limiar 0,8, modelos. ✅ *Feito: confirmados na D16 (30 vendas, limiar 0,8, modelos do `.env` definidos na D14).*
 
 **Critérios de aceite:**
 - [x] Os 3 CSV estão em `data/raw/` e abrem com acentos corretos. *(UTF-8 sem BOM, vírgula; 60, 98 e 95 linhas; colunas de paráfrase, promessa verificável, veredito, causa, subcausa e público presentes.)*
 - [x] `.env` existe e **não** está no git. *(ignorado pelo `.gitignore`; `GEMINI_API_KEY` preenchida.)*
-- [x] As alegações do Anexo V para magnésio e B6 estão transcritas com página, ou o arquivo está marcado `status: pendente_transcricao`. *(`data/rules/suplemento_in28_permitidas.yaml` transcrito, `status: conferido`, `pagina: null`; validado: campos obrigatórios presentes e 7 alegações por constituinte. Página pendente; texto a conferir contra o PDF pelo Lucas.)*
+- [x] As alegações do Anexo V para magnésio e B6 estão transcritas com página, ou o arquivo está marcado `status: pendente_transcricao`. *(`data/rules/suplemento_in28_permitidas.yaml` transcrito e conferido, `status: conferido`; validado: campos obrigatórios presentes, 7 alegações para magnésio e 8 para B6. `pagina: null`: site da Anvisa fora do ar.)*
 
-**Status:** ✅ concluída em 23/11. Itens 1–6 feitos (D16, D17). Pendências do Lucas que não travam a T02: conferir o texto contra o PDF e anotar a página; confirmar se a alegação de B6 sobre o sistema nervoso já está em vigor.
+**Status:** ✅ concluída em 23/11. Itens 1–6 feitos (D16, D17). Sem pendências. Única ressalva: a página da IN 28 não pôde ser verificada (site fora do ar).
 
 ---
 
@@ -204,7 +204,7 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
    - `condicoes_oferta.yaml`: padrões de garantia, acesso, recorrência, bônus e custo (seção 11.2, item 5, do CONTEXTO).
    - `normalizacao.yaml`: mapa de grafia disfarçada.
    - `taxonomia_devolucao.yaml`: seção 12.1 do CONTEXTO, com definição de uma linha por subcausa, a precedência e os 4 casos de fronteira.
-   - `suplemento_in28_permitidas.yaml`: estrutura pronta; conteúdo da T00 (ou `status: pendente_transcricao`).
+   - `suplemento_in28_permitidas.yaml`: estrutura pronta; conteúdo da T00 (ou `status: pendente_transcricao`). O loader dá a cada alegação permitida um `rule_key` estável (`IN28-MAG-01`…, `IN28-B6-01`…), que pode ser gravado no YAML sem tocar no texto (D18).
 2. `rules/schema.py` (Pydantic) e `rules/loader.py` com cache em memória e CLI `python -m promessa.rules.loader --check`.
 3. `rules/normalize.py`: `normalize(text) -> str` de **mesmo comprimento** do original (minúsculas, acento removido caractere a caractere) e `deleet(token)` aplicado só a tokens que misturam letra com dígito ou símbolo.
 
@@ -305,6 +305,8 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 | "veja os resultados melhores que m0unj@r0" | `prod_treino` | `revisar` `MED-COMPARACAO` |
 | "bloqueador de açúcar que seca barriga e firma pele em tempo recorde" | `prod_magnesio` | ao menos `bloquear` `SUP-EMAG` |
 | "Imunidade Forte: nutrientes que blindam sua saúde" | `prod_magnesio` | `bloquear` `SUP-IMUN` |
+| "A vitamina B6 auxilia no funcionamento do sistema imune." | `prod_magnesio` | `registrar` (alegação permitida da IN 28); **nenhum** `SUP-IMUN` (D18) |
+| "Vitamina B6 que turbina a sua imunidade" | `prod_magnesio` | `bloquear` `SUP-IMUN`; sugestão com o texto literal permitido (D18) |
 | "previne a queda hereditária" | `prod_capilar` | `bloquear` `COS-TERAPEUTICA` |
 | "tenha uma RENDA EXTRA de 10K" | `prod_canal` | `revisar` `RENDA-NUMERO` |
 | "comece do zero, sem gastar nada" | `prod_canal` | `bloquear` `COND-CUSTO-OCULTO` |

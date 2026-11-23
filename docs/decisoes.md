@@ -107,3 +107,15 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Consequência:**
 - TODO T03: o loader (`promessa.rules.loader`) deve validar o cabeçalho deste arquivo, aceitar os três valores de `status`, ler `constituintes[].alegacoes_permitidas` e ignorar `pendente_confirmacao` como permitida. Não havia loader na T01, então nada foi criado agora.
 - Atenção para T03/T06: a IN 28 permite "A vitamina B6 auxilia no funcionamento do sistema imune.", enquanto a regra prevista `SUP-IMUN` bloqueia o tema imunidade em suplementos. A T03 precisa resolver essa sobreposição (por exemplo, não bloquear quando o trecho coincide com uma alegação permitida da ficha), para o checador não barrar uma alegação legal.
+**Atualização (23/11/2026, Lucas):** texto conferido contra o PDF (comentário de `status` retirado). A página não pôde ser verificada (site da Anvisa fora do ar); `pagina: null` com essa nota. A alegação "A vitamina B6 auxilia na função normal do sistema nervoso." foi confirmada em vigor e passou, com o texto idêntico, para `alegacoes_permitidas`: B6 agora tem 8 alegações permitidas e o arquivo não tem mais `pendente_confirmacao`. O conflito com `SUP-IMUN` foi resolvido na D18.
+
+## D18 · Alegação permitida literal prevalece sobre termo proibido · 23/11/2026
+**Contexto:** a IN 28 permite "A vitamina B6 auxilia no funcionamento do sistema imune.", mas `SUP-IMUN` bloqueia o tema imunidade em suplementos (H2: "Imunidade Forte", "blindam sua saúde"). Sem regra, o checador bloquearia uma alegação legal. O mesmo pode acontecer com qualquer termo proibido que apareça dentro de uma alegação permitida.
+**Decisão:** exceção determinística na camada 1, antes das listas proibidas:
+- procurar, no texto normalizado (minúsculas, sem acento), cada alegação permitida da versão da ficha (`claim_rule` com `kind = permitida`, vindas do YAML da IN 28);
+- cada ocorrência literal vira `registrar` (`source = regra`, `reason_type = alegacao_permitida`, `rule_key` estável da alegação, ex.: `IN28-B6-02`) e entra como promessa do tipo `alegacao`;
+- termos proibidos cujo casamento cai **inteiramente dentro** do trecho permitido são descartados, com log; fora dele, a lista proibida vale normalmente;
+- paráfrase não é exceção ("Vitamina B6 que turbina a sua imunidade" continua `bloquear SUP-IMUN`); a sugestão de reescrita oferece o texto literal permitido da ficha, e o creator pode contestar;
+- a explicação do `registrar` lembra que a alegação só vale se o produto tiver a dose mínima do Anexo III (D17).
+**Por que assim:** é a opção mais simples que não depende de afinar termos da lista proibida caso a caso, vale para qualquer sobreposição futura, mantém "determinístico antes do modelo" e não deixa o modelo rebaixar uma regra (D6). A Anvisa exige a redação aprovada, então só o texto literal ganha a exceção.
+**Consequência:** CONTEXTO seções 10 e 11.2 e PLANO T03 (chaves `IN28-*`) e T06 (dois casos novos na tabela de aceite) atualizados. A implementação fica com a T03 (chaves e loader) e a T06 (exceção na camada 1).

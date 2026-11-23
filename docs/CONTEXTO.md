@@ -390,7 +390,7 @@ regras:
 | Arquivo | Conteúdo | Saída |
 |---|---|---|
 | `suplemento_proibidas.yaml` | Temas sem alegação aprovada (H2 seção 3): emagrecimento, imunidade, foco/concentração, desempenho sexual, tratamento ou prevenção de doença (glicose, insulina, colesterol, fígado, inflamação, diabetes, pressão). | `bloquear` |
-| `suplemento_in28_permitidas.yaml` | Alegações permitidas do Anexo V da IN 28, **só para os constituintes do suplemento fictício**, com texto literal. **Transcrever do PDF oficial; nunca inventar.** Enquanto não transcrito, o arquivo leva `status: pendente_transcricao`. | Usado pela camada 2: alegação de saúde fora da lista → `revisar`. |
+| `suplemento_in28_permitidas.yaml` | Alegações permitidas do Anexo V da IN 28, **só para os constituintes do suplemento fictício**, com texto literal. **Transcrever do PDF oficial; nunca inventar.** Enquanto não transcrito, o arquivo leva `status: pendente_transcricao`. | Camada 1: trecho que reproduz literalmente uma alegação permitida → `registrar` e não é bloqueado por termo proibido (D18). Camada 2: alegação de saúde fora da lista → `revisar`. |
 | `cosmetico_proibidas.yaml` | Alegação terapêutica em cosmético (RDC 752/2022 e votos da Anvisa): alopecia, queda hereditária, calvície como tratamento, cura, nome que lembra minoxidil. "Crescimento" e "antiqueda" ficam como zona cinzenta. | `bloquear` / `revisar` |
 | `padroes_h2.yaml` | Regex e termos: prazo/número junto de resultado (`PRAZO-RESULTADO`), renda com número (`RENDA-NUMERO`), resultado garantido (`RESULTADO-GARANTIDO`), urgência (`URGENCIA`), comparação com medicamento (`MED-COMPARACAO`: mounjaro, ozempic, wegovy, semaglutida, tirzepatida, sibutramina, injeção, caneta). | `revisar` |
 | `condicoes_oferta.yaml` | Padrões que extraem garantia (dias), acesso (vitalício ou N meses/anos), recorrência (pagamento único × assinatura), bônus, custo extra ("sem gastar nada", "100% grátis"). | `bloquear` se contradiz a ficha; `registrar` se bate. |
@@ -415,7 +415,7 @@ regras:
 
 1. **Segmentar** o texto em trechos (frases e quebras de linha), guardando posição inicial e final no texto original.
 2. **Normalizar preservando posições:** minúsculas; remover acento caractere a caractere (mesmo comprimento); substituição de grafia disfarçada **só em tokens que misturam letras com dígitos ou símbolos** (`m0unj@r0` → `mounjaro`, mas `10K` continua `10k`).
-3. **Listas da categoria** (`claim_rule` proibidas da versão) → `bloquear`.
+3. **Listas da categoria** (`claim_rule` proibidas da versão) → `bloquear`. **Exceção (D18):** antes, procurar no texto normalizado as alegações permitidas da versão (`claim_rule` com `kind = permitida`). Cada ocorrência literal vira `registrar` (`reason_type = alegacao_permitida`, `rule_key` da alegação, ex.: `IN28-B6-02`) e os termos proibidos que caem **inteiramente dentro** desse trecho são descartados (com log). Paráfrase não é exceção: continua `bloquear`, e a sugestão oferece o texto literal permitido. A explicação lembra que a alegação só vale com a dose mínima do Anexo III.
 4. **Padrões da H2** → `revisar`. Urgência vira `URGENCIA-VENCIDA` quando `published_since` tem mais de 7 dias; sem data, `URGENCIA` com explicação "confirme se a oferta é mesmo por tempo limitado".
 5. **Condições da oferta × ficha:**
    - garantia de N dias ≠ `guarantee_days` → `bloquear COND-GARANTIA`; igual → `registrar`;
