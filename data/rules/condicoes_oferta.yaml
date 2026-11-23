@@ -1,0 +1,76 @@
+# Condições da oferta anunciadas na peça (CONTEXTO 11.2, item 5). A camada 1 (T06) compara o valor
+# extraído com a ficha: contradiz → bloquear; bate → registrar.
+# `extratores`: regex sobre o texto normalizado. Sem `valor` fixo, o grupo `n` traz o número e o
+# grupo opcional `unidade` (meses/anos) a unidade.
+# Atenção: "5 kg em 7 dias" NÃO é garantia; dias só contam com contexto de garantia ou teste.
+id: condicoes_oferta
+versao: "2026-11-23"
+categoria: todas
+origem: CDC
+fonte: "CDC art. 30 (a oferta vincula) e art. 49 (arrependimento em 7 dias); casos da H1 (garantia 30×7, vitalício que acabou, custo oculto)"
+referencia: "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
+nota: "O que o anúncio promete passa a integrar o contrato. Padrões a partir das peças da H2 (família condições) e das reclamações da H1."
+regras:
+  - rule_key: COND-GARANTIA
+    atributo: garantia
+    extratores:
+      - padrao: '\b(?P<n>\d{1,3})\s*dias?\s+(?:de\s+)?(?:garantia|teste|para\s+testar|para\s+experimentar|gratis\s+para\s+testar)\b'
+      - padrao: '\bgarantia\s+(?:incondicional\s+|total\s+)?de\s+(?P<n>\d{1,3})\s*dias?\b'
+      - padrao: '\b(?P<n>\d{1,3})\s*dias?\s+(?:ou\s+)?(?:seu\s+)?dinheiro\s+de\s+volta\b'
+      - padrao: '\bdinheiro\s+de\s+volta\s+em\s+(?:ate\s+)?(?P<n>\d{1,3})\s*dias?\b'
+    explicacao: "O prazo de garantia anunciado é diferente do que está na ficha. A oferta vincula: o comprador vai cobrar o prazo anunciado."
+    sugestao: "Use o prazo de garantia da ficha."
+
+  - rule_key: COND-ACESSO
+    atributo: acesso
+    extratores:
+      - padrao: '\b(?:acesso\s+)?vitalicio\b'
+        valor: vitalicio
+      - padrao: '\bpara\s+sempre\b'
+        valor: vitalicio
+      - padrao: '\bacesso\s+(?:ilimitado|permanente)\b'
+        valor: vitalicio
+      - padrao: '\b(?P<n>\d{1,3})\s*(?P<unidade>mes(?:es)?|anos?)\s+de\s+acesso\b'
+      - padrao: '\bacesso\s+(?:por|de|durante)\s+(?P<n>\d{1,3})\s*(?P<unidade>mes(?:es)?|anos?)\b'
+    explicacao: "A duração do acesso anunciada é diferente da ficha. Prometer mais tempo cria uma obrigação que o produto não cumpre."
+    sugestao: "Use a duração de acesso da ficha."
+
+  - rule_key: COND-RECORRENCIA
+    atributo: recorrencia
+    extratores:
+      - padrao: '\bpagamento\s+unico\b'
+        valor: unica
+      - padrao: '\bsem\s+mensalidades?\b'
+        valor: unica
+      - padrao: '\bpag(?:a|ue|ar)\s+(?:apenas\s+|so\s+|somente\s+)?uma\s+(?:unica\s+)?vez\b'
+        valor: unica
+      - padrao: '\bsem\s+assinatura\b'
+        valor: unica
+    explicacao: "A peça diz que o pagamento é único, mas a ficha diz que a cobrança é recorrente."
+    sugestao: "Diga como a cobrança funciona de verdade (por exemplo, assinatura mensal com renovação automática)."
+
+  - rule_key: COND-BONUS
+    atributo: bonus
+    extratores:
+      - padrao: '\bbonus\b'
+        valor: citado
+      - padrao: '\bbrindes?\b'
+        valor: citado
+    explicacao: "A peça promete bônus, mas a ficha não lista nenhum."
+    sugestao: "Retire o bônus ou peça para a marca incluí-lo na ficha."
+
+  - rule_key: COND-CUSTO-OCULTO
+    atributo: custo
+    extratores:
+      - padrao: '\bsem\s+gastar\s+(?:nada|um\s+centavo)\b'
+        valor: sem_custo
+      - padrao: '\b100\s*%\s*(?:gratis|gratuito)\b'
+        valor: sem_custo
+      - padrao: '\bsem\s+invest(?:ir|imento)\b'
+        valor: sem_custo
+      - padrao: '\bcusto\s+zero\b'
+        valor: sem_custo
+      - padrao: '\bnao\s+precisa\s+investir\b'
+        valor: sem_custo
+    explicacao: "A peça diz que não há custo, mas a ficha lista custos extras."
+    sugestao: "Informe os custos extras da ficha (por exemplo, ferramentas pagas por mês)."

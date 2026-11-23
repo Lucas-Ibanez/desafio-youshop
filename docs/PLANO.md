@@ -43,17 +43,18 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 19:15):
+**Andamento** (atualizado em 23/11, 19:25):
 
 | Task | Status | Evidência |
 |---|---|---|
 | T00 Preparação | ✅ Concluída | CSV, fontes, `.env` (chave do Gemini) e ferramentas prontos; IN 28 de magnésio e B6 conferida em `data/rules/suplemento_in28_permitidas.yaml` (D17); padrões confirmados (D16); sobreposição IN 28 × `SUP-IMUN` resolvida (D18). Página da IN 28 não verificável (site fora do ar). |
 | T01 Esqueleto do repositório | ✅ Concluída | Commits `88a1956` (T01), `1471916` (T01b: `tasks.py`, MCP via `python -m`, UTF-8) e `22d6d26` (T01c: Gemini). |
 | T02 Modelo de dados e banco | ✅ Concluída | 13 tabelas e 6 triggers de imutabilidade; `tests/test_models.py` com 15 testes (D19). |
-| T03 Regras como dados | **Próxima** | — |
-| T04–T16 | Não iniciadas | — |
+| T03 Regras como dados | ✅ Concluída | 7 YAML validados pelo `promessa.rules.loader --check`; `tests/test_rules.py` com 44 testes (D20). |
+| T04 Gabaritos | **Próxima** | — |
+| T05–T16 | Não iniciadas | — |
 
-Atraso de cerca de 3h45 em relação ao cronograma abaixo (a T03 estava prevista para 15:30).
+Atraso de cerca de 2h40 em relação ao cronograma abaixo (a T04 estava prevista para 16:45).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -212,14 +213,16 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 3. `rules/normalize.py`: `normalize(text) -> str` de **mesmo comprimento** do original (minúsculas, acento removido caractere a caractere) e `deleet(token)` aplicado só a tokens que misturam letra com dígito ou símbolo.
 
 **Critérios de aceite:**
-- [ ] `uv run python -m promessa.rules.loader --check` lista cada arquivo com versão e número de regras, e **falha** se um arquivo não tiver `fonte` ou `referencia`.
-- [ ] `tests/test_rules.py` passa:
+- [x] `uv run python -m promessa.rules.loader --check` lista cada arquivo com versão e número de regras, e **falha** se um arquivo não tiver `fonte` ou `referencia`. *(7 arquivos ok; testes removem `fonte` e `referencia` de uma cópia e o `--check` sai com 1.)*
+- [x] `tests/test_rules.py` passa: *(44 testes; também cobrem `deleet` em `b6`, `omega3`, `r$`, a taxonomia igual à seção 12.1, as chaves `IN28-*` e os exemplos da H2 nos padrões.)*
   - `normalize("Só HOJE!!")` → `"so hoje!!"` e `len` igual ao original;
   - `deleet("m0unj@r0")` → `"mounjaro"`; `deleet("10K")` → `"10k"`;
   - todo `rule_key` é único entre arquivos;
   - toda subcausa da taxonomia pertence a uma causa.
-- [ ] Nenhum termo proibido aparece em arquivo `.py` (teste com `grep` sobre `src/`).
-- [ ] Nenhum texto da IN 28 foi inventado: ou há transcrição com página, ou `status: pendente_transcricao`.
+- [x] Nenhum termo proibido aparece em arquivo `.py` (teste com `grep` sobre `src/`). *(`test_nenhum_termo_proibido_em_src` busca os 82 termos das listas, como palavra ou prefixo, no texto normalizado de `src/**/*.py`.)*
+- [x] Nenhum texto da IN 28 foi inventado: ou há transcrição com página, ou `status: pendente_transcricao`. *(Transcrição conferida pelo Lucas, `status: conferido`; página não verificável com o site fora do ar (D17). Um teste guarda o hash do texto das alegações: qualquer edição quebra o teste.)*
+
+**Status:** ✅ concluída em 23/11.
 
 **Não fazer:** lógica de checagem (T06).
 

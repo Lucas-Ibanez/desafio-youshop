@@ -54,7 +54,8 @@ def _enable_sqlite_foreign_keys(dbapi_connection, _record) -> None:
 def get_engine(url: str | None = None) -> Engine:
     """Engine para `url` (padrão: `PROMESSA_DB_URL`). Em SQLite, liga as chaves estrangeiras.
 
-    `sqlite://` (memória) usa uma conexão compartilhada, para todas as sessões verem o mesmo banco.
+    `sqlite://` (banco temporário, sem arquivo) usa uma conexão compartilhada, para todas as
+    sessões verem o mesmo banco.
     """
     url = url or get_settings().promessa_db_url
     parsed = make_url(url)

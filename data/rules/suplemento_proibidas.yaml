@@ -1,0 +1,54 @@
+# Temas sem alegação aprovada para suplementos (H2, seção 3). Saída: bloquear.
+# Termos já normalizados (minúsculas, sem acento). Palavra ou frase inteira; `*` no fim = prefixo.
+# Exceção (D18): trecho que reproduz literalmente uma alegação permitida da IN 28 não é bloqueado.
+id: suplemento_proibidas
+versao: "2026-11-23"
+categoria: suplemento
+origem: ANVISA
+fonte: "Anvisa: RDC 243/2018 e IN 28/2018 (só valem as alegações do Anexo V); perguntas e respostas sobre suplementos"
+referencia: "https://www.gov.br/anvisa/pt-br/centraisdeconteudo/publicacoes/alimentos/perguntas-e-respostas-arquivos/suplementos-alimentares.pdf"
+nota: "Lista curada a partir da auditoria H2 (seções 3 e 4.2). Não é exaustiva; a camada 2 cobre o que escapa. Termos ruidosos devem ser ajustados olhando só o split dev (T08)."
+regras:
+  - rule_key: SUP-EMAG
+    tema: emagrecimento
+    saida: bloquear
+    termos: ["emagrec*", "seca barriga", "secar a barriga", "secar barriga", "queima gordura",
+             "queimar gordura", "queima de gordura", "perda de gordura", "perder gordura",
+             "reduz gordura", "reduzir gordura", "reduzir o acumulo de gordura", "acumulo de gordura",
+             "bloqueador de acucar", "controle do apetite", "controla o apetite", "inibe o apetite",
+             "inibidor de apetite", "perda de peso", "perder peso"]
+    explicacao: "Emagrecimento não tem alegação aprovada para suplementos. A Anvisa só aceita as alegações da lista da IN 28."
+    sugestao: "Retire a promessa de emagrecimento. Use só alegações da lista permitida para os ingredientes do produto."
+
+  - rule_key: SUP-IMUN
+    tema: imunidade
+    saida: bloquear
+    termos: ["imunidade", "imune", "imunologic*", "defesas do organismo", "defesa do organismo",
+             "anticorpos"]
+    explicacao: "Aumento da imunidade não tem alegação aprovada para suplementos."
+    sugestao: "Retire a promessa sobre imunidade. Se o produto tiver vitamina B6, use o texto exato permitido: \"A vitamina B6 auxilia no funcionamento do sistema imune.\""
+
+  - rule_key: SUP-FOCO
+    tema: foco e concentração
+    saida: bloquear
+    termos: ["foco", "concentracao", "memoria", "raciocinio", "desempenho cognitivo",
+             "funcao cognitiva", "performance mental"]
+    explicacao: "Aumento de foco, concentração ou memória não tem alegação aprovada para suplementos."
+    sugestao: "Retire a promessa sobre foco ou memória. Use só alegações da lista permitida."
+
+  - rule_key: SUP-SEXUAL
+    tema: desempenho sexual
+    saida: bloquear
+    termos: ["libido", "desempenho sexual", "potencia sexual", "disfuncao eretil", "erecao",
+             "virilidade", "estimulante sexual"]
+    explicacao: "Desempenho sexual não tem alegação aprovada para suplementos."
+    sugestao: "Retire a promessa sobre desempenho sexual."
+
+  - rule_key: SUP-DOENCA
+    tema: tratamento ou prevenção de doença
+    saida: bloquear
+    termos: ["glicose", "glicemia", "insulina", "colesterol", "figado", "inflamacao",
+             "inflamacoes", "anti-inflamatorio", "diabetes", "pressao alta", "pressao arterial",
+             "hipertensao", "previne", "previnem", "prevenir", "cura", "curar", "trata", "tratar"]
+    explicacao: "Suplemento não pode prometer tratar, curar ou prevenir doença, nem agir sobre glicose, insulina, colesterol, fígado, inflamação ou pressão."
+    sugestao: "Retire a menção a doença ou a efeito no organismo. Use só alegações da lista permitida."

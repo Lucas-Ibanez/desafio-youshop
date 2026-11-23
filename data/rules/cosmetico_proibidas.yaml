@@ -1,0 +1,25 @@
+# Alegação terapêutica em cosmético (H2, seções 3 e 4.2). bloquear = terapêutica; revisar = zona cinzenta.
+# Termos já normalizados (minúsculas, sem acento). Palavra ou frase inteira; `*` no fim = prefixo.
+id: cosmetico_proibidas
+versao: "2026-11-23"
+categoria: cosmetico
+origem: RDC752
+fonte: "Anvisa: RDC 752/2022 (rotulagem de cosméticos) e votos da Diretoria Colegiada sobre alopecia androgenética (2025) e nome semelhante a minoxidil (2026)"
+referencia: "https://www.gov.br/anvisa/pt-br/composicao/diretoria-colegiada/reunioes-da-diretoria/votos-dos-circuitos-deliberativos-1/2025/cd-0485-2025-voto.pdf"
+nota: "Lista curada a partir da auditoria H2. Cosmético não pode ter alegação terapêutica. Outra referência: voto CD 0180/2026 (minoxidil)."
+regras:
+  - rule_key: COS-TERAPEUTICA
+    tema: alegação terapêutica
+    saida: bloquear
+    termos: ["alopecia", "queda hereditaria", "calvicie", "trata a queda", "tratamento da queda",
+             "trata a calvicie", "minoxidil", "cura a queda", "cura da calvicie"]
+    explicacao: "Cosmético não pode prometer tratar condição médica, como alopecia ou queda hereditária. A Anvisa já cancelou produtos por esse tipo de menção."
+    sugestao: "Fale do cuidado com o cabelo (limpeza, fortalecimento dos fios) sem citar doença, tratamento ou medicamento."
+
+  - rule_key: COS-ZONA-CINZENTA
+    tema: crescimento ou antiqueda com eficácia comprovada
+    saida: revisar
+    termos: ["crescimento", "antiqueda", "anti-queda", "anti queda"]
+    junto_de: ["comprovad*", "clinicamente", "cientificamente"]
+    explicacao: "\"Crescimento\" e \"antiqueda\" com eficácia comprovada ficam na zona cinzenta: exigem comprovação que a peça não mostra."
+    sugestao: "Confirme com a marca que existe estudo que comprove o efeito, ou retire a palavra \"comprovado\"."

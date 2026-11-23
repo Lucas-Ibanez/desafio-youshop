@@ -133,3 +133,16 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - `get_current_facts(session, product_id, at=None)` fica em `db/models.py` (consulta, não regra de negócio): maior `valid_from ≤ at`; empate fica com a maior versão; sem versão vigente, `None`.
 - `db-reset`: `python -m promessa.db.session --reset` apaga o arquivo de `PROMESSA_DB_URL` e recria tabelas e triggers; recusa banco que não seja SQLite em arquivo.
 **Consequência:** `refund_classification` permite mais de uma linha por devolução (sem `UNIQUE` em `refund_id`); a T10 decide se reclassificação atualiza ou cria linha. Invariantes 2 a 5 da seção 8.3 dependem dos serviços e são testadas nas tasks deles (T09, T11, T13).
+
+## D20 · Regras como dados: escolhas da T03 · 23/11/2026
+**Contexto:** a T03 cria os 7 YAML, o carregador e a normalização; alguns detalhes não estavam definidos.
+**Decisão:**
+- **Sintaxe de termo:** termos ficam normalizados (minúsculas, sem acento) e casam como palavra ou frase inteira; terminado em `*`, casa como prefixo (`emagrec*`). Evita que "cura" pegue "curativo". O exemplo da seção 10 do CONTEXTO passou a usar `emagrec*`.
+- **Padrões:** regex sobre o texto normalizado e com a grafia disfarçada desfeita. `junto_de` exige um termo no mesmo trecho (ex.: `PRAZO-RESULTADO` só com verbo de resultado; `COS-ZONA-CINZENTA` só com "comprovado").
+- **Cabeçalho:** além de `id`, `versao`, `categoria`, `fonte`, `referencia` e `nota`, os arquivos que viram `claim_rule` têm `origem` (`ANVISA`, `RDC752`, `IN28`, `CDC`), usado como `claim_rule.source` na T05. `id` precisa ser igual ao nome do arquivo.
+- **`deleet`:** troca caracteres do mapa só quando algum deles está **entre duas letras** do token (sinal de disfarce). `m0unj@r0` vira `mounjaro`; `10k`, `5kg`, `b6`, `omega3`, `r$` e `@perfil` ficam iguais. A regra literal ("tokens que misturam letra e dígito") transformaria `10K` em `iok`, o que contradiz o critério da task. O mapa troca 1 caractere por 1 letra, para preservar posições.
+- **Urgência vencida:** `URGENCIA` traz `rule_key_vencida: URGENCIA-VENCIDA` e a explicação própria; o limite de dias continua em `URGENCY_STALE_DAYS`.
+- **IN 28:** cada constituinte ganhou `codigo` (`MAG`, `B6`) e o loader gera `IN28-<codigo>-NN` pela ordem da lista (ex.: `IN28-B6-02` = sistema imune). Alegação nova entra no fim. O texto das alegações não foi tocado; um teste guarda o hash dele.
+- **Escolhas de conteúdo:** `SUP-DOENCA` usa "pressão alta", "pressão arterial" e "hipertensão" no lugar de "pressão" sozinho (evita "sem pressão"); metabolismo não entra em `SUP-EMAG`, porque a IN 28 permite "metabolismo energético" e a T07 espera `revisar` para "acorda o seu metabolismo"; "cura", "trata" e "previne" entram como pede o PLANO, com risco de ruído a medir no split `dev` (T08).
+- **Taxonomia:** 5 casos de fronteira (a renovação virou dois: omitida na venda e só indesejada). Precedência: fraude, promessa explícita, expectativa, acesso, processo, outros. Exemplos escritos para ilustrar, sem texto do gabarito.
+**Consequência:** o loader recusa termo não normalizado, regex inválida, `rule_key` repetido entre arquivos, arquivo ausente ou desconhecido e taxonomia inconsistente. A lógica de casamento (T06) deve usar `match_text` e a mesma sintaxe de termo.

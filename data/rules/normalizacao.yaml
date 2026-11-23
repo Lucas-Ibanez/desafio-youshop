@@ -1,0 +1,18 @@
+# Grafia disfarçada para driblar moderação (H2, seção 4.7: "m0unj@r0").
+# Troca 1 caractere por 1 letra (posições preservadas). Aplicada só quando o caractere aparece
+# entre duas letras do mesmo token (ver promessa.rules.normalize.deleet).
+id: normalizacao
+versao: "2026-11-23"
+categoria: todas
+fonte: "Auditoria H2, seção 4.7 (sinais que uma máquina detecta sem julgamento jurídico)"
+referencia: "docs/fontes/validacao-H2-alegacoes.md#47-sinais-que-uma-máquina-detecta-sem-julgamento-jurídico"
+nota: "Mapa mínimo. Trocar ou ampliar o mapa não muda código."
+mapa:
+  "0": o
+  "1": i
+  "3": e
+  "4": a
+  "5": s
+  "7": t
+  "@": a
+  "$": s

@@ -1,0 +1,131 @@
+# Taxonomia do motivo de devolução (CONTEXTO 12.1): a mesma aplicada à mão nas 172 reclamações da H1.
+# Causa principal = o motivo de querer desfazer a compra.
+id: taxonomia_devolucao
+versao: "2026-11-23"
+categoria: todas
+fonte: "Validação H1, livro de códigos (seção 2.2) e resultados por subtipo (seções 3.2 e 4)"
+referencia: "docs/fontes/validacao-H1-reclamacoes.md#22-codificação"
+nota: "Exemplos curtos escritos para ilustrar cada subcausa; não vêm do gabarito. Exemplos para o prompt do classificador saem só do split dev (T10)."
+
+precedencia: [fraude, promessa_explicita, promessa_expectativa, acesso_entrega, processo, outros]
+
+causas:
+  - causa: promessa_explicita
+    rotulo: "Promessa explícita"
+    pesa_no_creator: true
+    nota: "Pesa no creator só com relation = confirma e confiança alta (CONTEXTO 12.3)."
+    subcausas:
+      - subcausa: diferente_do_anunciado
+        definicao: "O produto entregue é diferente do que o anúncio, a página ou a live mostrou."
+        exemplos: ["Mostraram um método na live e o curso ensina outra coisa.",
+                   "O pacote anunciado tinha aulas próprias, mas eram vídeos gratuitos da internet."]
+      - subcausa: condicao_da_oferta
+        definicao: "A queixa é sobre uma condição anunciada (garantia, duração do acesso, bônus, recorrência) que não foi cumprida."
+        exemplos: ["Anunciaram garantia de 30 dias, mas só aceitam pedido em 7.",
+                   "Perdi o acesso, achei que era para sempre.",
+                   "O bônus prometido no lançamento nunca chegou."]
+      - subcausa: informacao_omitida
+        definicao: "Algo relevante não foi informado na venda: custo extra, renovação automática, exigência para usar."
+        exemplos: ["Para usar o curso precisa pagar ferramentas que ninguém avisou.",
+                   "Cobraram renovação que ninguém me avisou na compra."]
+      - subcausa: resultado_prometido
+        definicao: "O comprador cobra um resultado que foi prometido (peso, renda, prazo) e não aconteceu."
+        exemplos: ["Prometeram 5 kg em uma semana e não perdi nada.",
+                   "Disseram que eu faria renda extra no primeiro mês."]
+
+  - causa: promessa_expectativa
+    rotulo: "Expectativa ou qualidade"
+    pesa_no_creator: false
+    nota: "Julga o conteúdo sem citar anúncio ou oferta. Entra no relatório como sinal fraco."
+    subcausas:
+      - subcausa: qualidade_abaixo
+        definicao: "O comprador acha o conteúdo fraco, desorganizado ou abaixo do esperado, sem citar o que foi anunciado."
+        exemplos: ["O curso é fraco, esperava mais.", "Não era o que eu esperava."]
+
+  - causa: acesso_entrega
+    rotulo: "Acesso ou entrega"
+    pesa_no_creator: false
+    nota: "Vai para a marca e para Operações."
+    subcausas:
+      - subcausa: acesso_nao_liberado
+        definicao: "Pagou e o acesso ao conteúdo ou serviço não foi liberado."
+        exemplos: ["Paguei há 5 dias e até hoje não liberaram o acesso."]
+      - subcausa: fisico_nao_entregue
+        definicao: "Produto físico não chegou, chegou atrasado ou sem confirmação de envio."
+        exemplos: ["O pedido nunca foi entregue."]
+      - subcausa: servico_fora_do_ar
+        definicao: "O serviço ou ferramenta parou de funcionar, foi descontinuado ou não entrega o que deveria."
+        exemplos: ["A ferramenta saiu do ar e não voltou."]
+      - subcausa: login_conta
+        definicao: "Problema de login, senha ou conta bloqueada impede o uso."
+        exemplos: ["Não consigo entrar na área de membros."]
+      - subcausa: conteudo_removido
+        definicao: "Conteúdo ou créditos que o comprador tinha foram removidos."
+        exemplos: ["Os módulos que eu tinha sumiram da plataforma."]
+
+  - causa: processo
+    rotulo: "Processo de reembolso ou cancelamento"
+    pesa_no_creator: false
+    nota: "Problema no processo, não no produto."
+    subcausas:
+      - subcausa: arrependimento_sem_motivo
+        definicao: "Quer desfazer a compra sem dar motivo ligado ao produto (inclui compra por engano)."
+        exemplos: ["Me arrependi, quero cancelar."]
+      - subcausa: renovacao_indesejada
+        definicao: "Não quer a renovação ou cobrança recorrente, sem dizer que ela foi escondida na venda."
+        exemplos: ["Não quero mais a assinatura, cancelem a renovação."]
+      - subcausa: cancelamento_travado
+        definicao: "Tentou cancelar e não conseguiu: sem opção, sem resposta, cancelamento não processado."
+        exemplos: ["Não acho onde cancelar e ninguém responde."]
+      - subcausa: reembolso_nao_processado
+        definicao: "O reembolso foi aceito ou pedido no prazo, mas o dinheiro não voltou."
+        exemplos: ["Aprovaram o reembolso há um mês e nada do dinheiro."]
+      - subcausa: motivo_pessoal
+        definicao: "Motivo da vida do comprador (saúde, dinheiro, tempo), não do produto."
+        exemplos: ["Fiquei sem dinheiro e não vou conseguir fazer o curso."]
+
+  - causa: fraude
+    rotulo: "Fraude"
+    pesa_no_creator: false
+    nota: "Vai para antifraude."
+    subcausas:
+      - subcausa: cobranca_nao_reconhecida
+        definicao: "O comprador não reconhece a cobrança ou a compra."
+        exemplos: ["Não reconheço essa cobrança no meu cartão."]
+      - subcausa: pagamento_fora_do_checkout
+        definicao: "O vendedor levou o pagamento para fora do checkout (por exemplo, Pix direto)."
+        exemplos: ["O vendedor pediu para pagar por Pix e depois sumiu."]
+      - subcausa: golpe
+        definicao: "O comprador relata golpe: produto ou investimento inexistente, vendedor que some."
+        exemplos: ["Era golpe, o investimento não existia."]
+
+  - causa: outros
+    rotulo: "Outros"
+    pesa_no_creator: false
+    nota: "Texto insuficiente ou fora das causas acima."
+    subcausas:
+      - subcausa: outros
+        definicao: "Não dá para classificar nas causas acima."
+        exemplos: ["Quero falar com alguém."]
+
+casos_de_fronteira:
+  - situacao: "Renovação automática não informada na venda."
+    causa: promessa_explicita
+    subcausa: informacao_omitida
+    motivo: "A queixa é a omissão na venda, não a renovação em si."
+  - situacao: "Renovação apenas indesejada, sem dizer que foi escondida."
+    causa: processo
+    subcausa: renovacao_indesejada
+    motivo: "Não há promessa nem omissão; é uma decisão do comprador."
+  - situacao: "\"Perdi o acesso, achei que era para sempre.\""
+    causa: promessa_explicita
+    subcausa: condicao_da_oferta
+    motivo: "A queixa é sobre a duração prometida, não sobre falha técnica."
+  - situacao: "Pagamento por Pix fora do checkout a pedido do vendedor."
+    causa: fraude
+    subcausa: pagamento_fora_do_checkout
+    motivo: "Fraude tem precedência sobre as demais causas."
+  - situacao: "\"O curso é fraco\", \"não era o que eu esperava\", sem citar anúncio."
+    causa: promessa_expectativa
+    subcausa: qualidade_abaixo
+    motivo: "Sem referência ao que foi anunciado, é expectativa, não promessa explícita."

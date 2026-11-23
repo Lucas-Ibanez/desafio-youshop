@@ -372,6 +372,7 @@ Todo YAML em `data/rules/` tem cabeçalho obrigatório e é validado por `promes
 id: suplemento_proibidas
 versao: "2026-11-23"
 categoria: suplemento            # ou "todas"
+origem: ANVISA                   # vira claim_rule.source (IN28, ANVISA, RDC752, CONAR, CDC, MARCA)
 fonte: "Anvisa: RDC 243/2018 e IN 28/2018; perguntas e respostas sobre suplementos"
 referencia: "https://www.gov.br/anvisa/pt-br/centraisdeconteudo/publicacoes/alimentos/perguntas-e-respostas-arquivos/suplementos-alimentares.pdf"
 nota: "Lista curada a partir da auditoria H2. Não é exaustiva."
@@ -379,11 +380,13 @@ regras:
   - rule_key: SUP-EMAG
     tema: emagrecimento
     saida: bloquear
-    termos: ["emagrec", "seca barriga", "secar a barriga", "queima gordura", "perda de gordura",
+    termos: ["emagrec*", "seca barriga", "secar a barriga", "queima gordura", "perda de gordura",
              "reduz gordura", "acumulo de gordura", "bloqueador de acucar", "controle do apetite",
              "controla o apetite", "inibe o apetite"]
     explicacao: "Emagrecimento não tem alegação aprovada para suplementos."
 ```
+
+Termos ficam já normalizados (minúsculas, sem acento) e casam como palavra ou frase inteira; termo terminado em `*` casa como prefixo (`emagrec*`). Padrões são regex sobre o texto normalizado (D20).
 
 **Arquivos e conteúdo esperado:**
 

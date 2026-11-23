@@ -1,0 +1,69 @@
+# Indícios da auditoria H2 (seções 4.4 e 4.7). Saída: revisar (indício sem certeza).
+# `padroes`: regex sobre o texto normalizado (minúsculas, sem acento, grafia disfarçada desfeita).
+# `termos` e `junto_de`: palavra ou frase inteira; `*` no fim = prefixo. `junto_de` exige um desses
+# termos no mesmo trecho.
+id: padroes_h2
+versao: "2026-11-23"
+categoria: todas
+origem: CDC
+fonte: "CDC art. 37 (publicidade enganosa) e Código do Conar (comprovação, apresentação verdadeira); sinais da auditoria H2"
+referencia: "https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm"
+nota: "Padrões tirados das peças da H2 (\"5 kg em 7 dias\", \"renda extra de 10K\", \"só hoje\", \"melhor que m0unj@r0\"). São indícios: o creator vê a sugestão e a marca pode aprovar (D2)."
+regras:
+  - rule_key: PRAZO-RESULTADO
+    tema: prazo ou número junto de resultado
+    saida: revisar
+    padroes:
+      - '\b\d+(?:[.,]\d+)?\s*(?:kg|kgs|kilos?|quilos?|medidas|dias|semanas)\b'
+    junto_de: ["secar", "seca", "seque", "perder", "perca", "perde", "emagrec*", "elimin*",
+               "queim*", "reduz*", "diminu*"]
+    explicacao: "Prometer resultado com número ou prazo (\"5 kg em 7 dias\") exige comprovação e cria uma expectativa que o comprador vai cobrar."
+    sugestao: "Fale do que o produto oferece sem garantir quantidade ou prazo de resultado."
+
+  - rule_key: RENDA-NUMERO
+    tema: renda com número
+    saida: revisar
+    padroes:
+      - '\b\d+(?:[.,]\d+)?\s*(?:k|mil)\b'
+      - 'r\$\s*\d'
+      - '\b(?:\d+|cinco|seis|sete)\s+digitos\b'
+    junto_de: ["renda*", "fatur*", "ganh*", "lucr*", "dinheiro"]
+    explicacao: "Prometer renda com valor (\"renda extra de 10K\") exige comprovação e não é resultado típico de quem compra."
+    sugestao: "Retire o valor de renda. Fale do que a pessoa vai aprender, sem prometer quanto vai ganhar."
+
+  - rule_key: RESULTADO-GARANTIDO
+    tema: resultado garantido
+    saida: revisar
+    padroes:
+      - '\b(?:100\s*%\s*)?garantid[oa]s?\b'
+      - '\bsem erro\b'
+      - '\bresultado certo\b'
+    junto_de: ["resultado*", "renda*", "lucr*", "ganh*", "emagrec*", "perd*", "kg", "quilos"]
+    explicacao: "Garantir resultado ou renda induz a erro: o resultado depende de cada pessoa."
+    sugestao: "Troque a garantia de resultado pelas condições reais da oferta (por exemplo, o prazo de garantia da ficha)."
+
+  - rule_key: URGENCIA
+    tema: urgência ou escassez
+    saida: revisar
+    padroes:
+      - '\bso hoje\b'
+      - '\bsomente hoje\b'
+      - '\bacaba hoje\b'
+      - '\bultimas? vagas?\b'
+      - '\bvagas limitadas\b'
+      - '\bpoucas horas\b'
+      - '\bultimas horas\b'
+      - '\bultimas unidades\b'
+      - '\brestam (?:apenas |so )?\d+ vagas\b'
+    explicacao: "Confirme se a oferta é mesmo por tempo limitado. Urgência falsa é publicidade enganosa."
+    sugestao: "Use urgência só com data real de fim da oferta."
+    rule_key_vencida: URGENCIA-VENCIDA
+    explicacao_vencida: "A peça anuncia urgência, mas está no ar há mais tempo do que o prazo que promete. Urgência falsa é publicidade enganosa."
+
+  - rule_key: MED-COMPARACAO
+    tema: comparação com medicamento
+    saida: revisar
+    termos: ["mounjaro", "ozempic", "wegovy", "semaglutida", "tirzepatida", "sibutramina",
+             "injecao", "injecoes", "caneta", "canetas"]
+    explicacao: "Comparar com medicamento sugere efeito de remédio, o que o produto não pode prometer."
+    sugestao: "Retire a comparação com medicamento ou injeção."
