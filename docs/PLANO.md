@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 19:25):
+**Andamento** (atualizado em 23/11, 19:55):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -51,10 +51,11 @@
 | T01 Esqueleto do repositório | ✅ Concluída | Commits `88a1956` (T01), `1471916` (T01b: `tasks.py`, MCP via `python -m`, UTF-8) e `22d6d26` (T01c: Gemini). |
 | T02 Modelo de dados e banco | ✅ Concluída | 13 tabelas e 6 triggers de imutabilidade; `tests/test_models.py` com 15 testes (D19). |
 | T03 Regras como dados | ✅ Concluída | 7 YAML validados pelo `promessa.rules.loader --check`; `tests/test_rules.py` com 44 testes (D20). |
-| T04 Gabaritos | **Próxima** | — |
-| T05–T16 | Não iniciadas | — |
+| T04 Gabaritos | ✅ Concluída | 17 conferências OK; 60 anúncios e 172 compradores anonimizados; splits 20/40 e 40/132; amostra cega de 20+20 (D21). |
+| T05 Ficha de promessas | **Próxima** | — |
+| T06–T16 | Não iniciadas | — |
 
-Atraso de cerca de 2h40 em relação ao cronograma abaixo (a T04 estava prevista para 16:45).
+Atraso de cerca de 2h10 em relação ao cronograma abaixo (a T05 estava prevista para 17:45).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -244,11 +245,13 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 3. `scripts/blind_sample.py`: 20 anúncios + 20 reclamações do split `test`, semente 7, em CSV sem rótulos em `data/gold/recodificacao/`, com colunas vazias para a codificação.
 
 **Critérios de aceite:**
-- [ ] `make gold` termina com uma tabela de conferência em que **todas** as linhas estão OK: 60 anúncios (37/12/11; 33 não conformes; 4 irregular evidente = S06, S22, S25, S26; 22 verificáveis) e 172 compradores (59/55/44/12/2; 27 explícitas = 11/9/5/2; 17 expectativa).
-- [ ] Se uma contagem não bater, o script **não corrige o número**: aponta as linhas divergentes para investigar a exportação.
-- [ ] `grep` por 10 nomes de anunciantes e empresas do apêndice da H2 e da H1 em `data/gold/*.jsonl` não encontra nada.
-- [ ] `data/raw/` e `anon_map.yaml` estão no `.gitignore`.
-- [ ] Os CSV de recodificação existem e não têm coluna de rótulo preenchida.
+- [x] `make gold` termina com uma tabela de conferência em que **todas** as linhas estão OK: *(17 linhas OK.)* 60 anúncios (37/12/11; 33 não conformes; 4 irregular evidente = S06, S22, S25, S26; 22 verificáveis) e 172 compradores (59/55/44/12/2; 27 explícitas = 11/9/5/2; 17 expectativa).
+- [x] Se uma contagem não bater, o script **não corrige o número**: aponta as linhas divergentes para investigar a exportação. *(Não grava nada e lista os ids do grupo; testado em `tests/test_gold.py`.)*
+- [x] `grep` por 10 nomes de anunciantes e empresas do apêndice da H2 e da H1 em `data/gold/*.jsonl` não encontra nada. *(0 ocorrências; o import também confere os 157 nomes dos apêndices e falha se algum vazar.)*
+- [x] `data/raw/` e `anon_map.yaml` estão no `.gitignore`. *(`git check-ignore`: regra `data/raw/*`.)*
+- [x] Os CSV de recodificação existem e não têm coluna de rótulo preenchida. *(`data/gold/recodificacao/h2_recodificar.csv` e `h1_recodificar.csv`, 20 linhas cada, colunas de codificação vazias.)*
+
+**Status:** ✅ concluída em 23/11.
 
 **Não fazer:** avaliar agentes (T08, T12).
 

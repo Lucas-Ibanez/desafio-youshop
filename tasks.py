@@ -75,6 +75,11 @@ def db_reset() -> int:
     return py("promessa.db.session", "--reset")
 
 
+def gold() -> int:
+    # Importa, anonimiza e confere os gabaritos; gera splits.json (T04).
+    return run(sys.executable, "scripts/import_gold.py")
+
+
 def mcp() -> int:
     return py("promessa.mcp_server")
 
@@ -93,9 +98,7 @@ TASKS: dict[str, Task] = {
     "test": Task("pytest sem modelo (sem rede)", "T01", test),
     "test-llm": Task("pytest só dos testes marcados com llm", "T01", test_llm),
     "db-reset": Task("apaga e recria var/promessa.db", "T02", db_reset),
-    "gold": Task(
-        "importa e confere os gabaritos (scripts/import_gold.py)", "T04", not_implemented("T04")
-    ),
+    "gold": Task("importa e confere os gabaritos (scripts/import_gold.py)", "T04", gold),
     "seed": Task("marcas, produtos, fichas v1 e creators", "T05", not_implemented("T05")),
     "simulate": Task("peças, links, vendas e devoluções sintéticas", "T13", not_implemented("T13")),
     "eval-checador": Task("Teste 1 do checador (H2)", "T08", not_implemented("T08")),
