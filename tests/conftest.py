@@ -9,6 +9,23 @@ from promessa.db.models import Brand, Creator, Product, ProductFacts
 from promessa.db.session import get_engine, get_session, init_db, set_default_engine
 
 
+@pytest.fixture(autouse=True)
+def _sem_modelo_fora_dos_testes_llm(request, monkeypatch):
+    """Testes padrão nunca chamam o Gemini: sem chave e com a camada 2 desligada.
+
+    Testes `@pytest.mark.llm` usam o .env de verdade (chave, cache em disco, LLM_OFFLINE).
+    """
+    from promessa.config import get_settings
+
+    if request.node.get_closest_marker("llm") is None:
+        monkeypatch.setenv("GEMINI_API_KEY", "")
+        monkeypatch.setenv("CHECKER_USE_LLM", "false")
+        monkeypatch.setenv("LLM_OFFLINE", "false")
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
+
+
 @pytest.fixture
 def engine():
     eng = get_engine("sqlite://")

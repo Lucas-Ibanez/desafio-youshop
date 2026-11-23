@@ -15,6 +15,8 @@ from typing import Any
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
+from promessa.checker import service as checker_service
+from promessa.checker.models import CheckResponse
 from promessa.db.session import session_scope
 from promessa.errors import DomainError
 from promessa.facts import service as facts_service
@@ -89,6 +91,38 @@ def upsert_product_facts(
     }
     with session_scope() as session:
         return facts_service.create_facts_version(session, product_id, data, created_by)
+
+
+@mcp.tool()
+@domain_errors
+def check_content(
+    product_id: str,
+    creator_id: str,
+    text: str,
+    channel: str,
+    submitted_by: str = "creator",
+    published_since: str | None = None,
+    parent_piece_id: str | None = None,
+) -> CheckResponse:
+    """Checa o texto de uma peça contra a ficha vigente do produto e grava a peça.
+
+    Devolve, por trecho, `bloquear`, `revisar` ou `registrar`, com explicação e sugestão.
+    channel: instagram | tiktok | youtube | whatsapp | outro. submitted_by: creator | marca.
+    published_since: data ISO em que a peça entrou no ar (para urgência vencida).
+    parent_piece_id: peça corrigida que esta substitui. `can_generate_link` diz se o link pode
+    ser gerado (sem bloqueio pendente).
+    """
+    with session_scope() as session:
+        return checker_service.check_content(
+            session,
+            product_id,
+            creator_id,
+            text,
+            channel,
+            submitted_by=submitted_by,
+            published_since=published_since,
+            parent_piece_id=parent_piece_id,
+        )
 
 
 def main() -> None:

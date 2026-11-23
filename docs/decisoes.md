@@ -190,3 +190,17 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Identificação publicitária:** a lista curta (`#publi`, `publi`, `publicidade`, `parceria paga`, `#ad`) ficou no código de `checker/service.py`: não é termo proibido nem regra com fonte. Não muda o `overall` (D5).
 - **Nome do produto no texto da peça (11.2, item 6):** coberto pelas próprias listas; não há verificação separada.
 **Consequência:** `check_content` (T07) chama `build_context` + `run_layer1`, persiste e funde com a camada 2.
+
+## D24 · Cliente do modelo, camada 2 e `check_content`: escolhas da T07 · 23/11/2026
+**Contexto:** a T07 (marcada [plan]) liga o Gemini ao checador. O Lucas pediu a implementação direta; o plano foi apresentado no início da sessão.
+**Decisão:**
+- **`complete_json`:** prompt em `prompts/<nome>.md` com `{{variavel}}`; saída estruturada do Gemini (`response_schema` = modelo Pydantic) validada de novo com o mesmo modelo; temperatura 0; até 3 tentativas (espera 1 s e 2 s) em rede, 429 e 5xx, e também em JSON fora do esquema; erro não transitório (ex.: 400) não repete. Versão do prompt = nome do arquivo (`checker_v1`).
+- **Cache:** um JSON por chave `sha256(modelo + versão do prompt + entrada renderizada)` em `LLM_CACHE_DIR` (fora do git). `LLM_OFFLINE=true` só lê o cache e falha com `LLMOfflineMiss` se faltar.
+- **Fusão (código):** `excerpt` precisa ser pedaço literal do texto (senão descarta e loga); `bloquear` só com `rule_key` proibido da versão (senão `revisar`); achado do modelo sobre trecho já marcado pela camada 1 com saída igual ou mais grave é ignorado (não rebaixa e não duplica); `registrar` do modelo é descartado (só a camada 1 confere com a ficha); promessa de resultado do modelo sem achado vira `revisar` (`resultado_sem_numero`).
+- **Texto das explicações da camada 1:** continua o modelo de texto da T06. O modelo escreve explicação e sugestão só para os achados dele (reprodutível e com origem clara; princípio 5).
+- **`reason_type` do modelo:** lista fechada com os mesmos nomes da camada 1 (`med_comparacao`, `prazo_resultado`...) mais `grafia_disfarcada`, `alegacao_fora_da_lista`, `resultado_sem_numero`, `renda_implicita`, `alegacao_proibida`, `outro`.
+- **`check_content`:** valida creator, canal, `submitted_by`, data e peça anterior (do mesmo produto); grava a peça com a ficha vigente; roda a camada 1 e, se `CHECKER_USE_LLM` e houver chave (ou `LLM_OFFLINE`), a camada 2. Se o modelo falhar, responde só com regras e avisa em `notes`. Grava um `check_result` por achado; cada achado da resposta traz o `id` (alvo de contestação na T09). `can_generate_link = overall != bloquear`.
+- **Códigos novos:** `CREATOR_INEXISTENTE` e `ENTRADA_INVALIDA`.
+- **Testes:** os testes padrão nunca chamam o Gemini (fixture automática zera a chave e desliga a camada 2); os `@pytest.mark.llm` usam o `.env` real.
+**Achado que precisa de decisão do Lucas (modelo do checador):** com `CHECKER_MODEL=gemini-3.6-flash`, cada chamada levou cerca de 40 s (10 min 40 s para 17 chamadas) e, logo depois, a chave recebeu 429 RESOURCE_EXHAUSTED (cota) nesse modelo; uma chamada com pensamento mínimo levou 166 s. O `gemini-3.5-flash-lite` (já usado no classificador) respondeu o mesmo prompt em cerca de 1,2 s e marcou "acorda o seu metabolismo" como `revisar alegacao_fora_da_lista`. Para a T08 (60 anúncios, duas configurações) e o simulador, o 3.6-flash fica inviável nesta chave. O padrão **não** foi trocado (D16 é decisão do Lucas).
+**Consequência:** `check_content` está pronto para a T09. Antes da T08, decidir o `CHECKER_MODEL`.

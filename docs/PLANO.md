@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 20:10):
+**Andamento** (atualizado em 23/11, 20:30):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -54,10 +54,11 @@
 | T04 Gabaritos | ✅ Concluída | 17 conferências OK; 60 anúncios e 172 compradores anonimizados; splits 20/40 e 40/132; amostra cega de 20+20 (D21). |
 | T05 Ficha de promessas | ✅ Concluída | Seeds, `facts/service.py`, ferramentas `get_product_facts` e `upsert_product_facts`; 27 testes (D22). |
 | T06 Checador camada 1 **[plan]** | ✅ Concluída | Os 15 casos da tabela passam; 31 testes; < 50 ms por peça (D23). Plano apresentado no início da sessão, sem aprovação prévia (pedido direto do Lucas). |
-| T07 Cliente do modelo + camada 2 **[plan]** | **Próxima** | — |
-| T08–T16 | Não iniciadas | — |
+| T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24). |
+| T08 Teste 1 do checador | **Próxima** | Decidir o modelo do checador antes (D24). |
+| T09–T16 | Não iniciadas | — |
 
-Adiantado cerca de 1h em relação ao cronograma abaixo (a T07 estava prevista para 21:15).
+Adiantado cerca de 2h15 em relação ao cronograma abaixo (a T08 estava prevista para 22:45).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -358,18 +359,20 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 5. Ferramenta MCP `check_content`.
 
 **Critérios de aceite:**
-- [ ] Sem chave ou com `CHECKER_USE_LLM=false`, `check_content` funciona só com regras e responde `layers_used = ["regras"]`.
-- [ ] Testes com modelo simulado (*mock*), sem rede:
+- [x] Sem chave ou com `CHECKER_USE_LLM=false`, `check_content` funciona só com regras e responde `layers_used = ["regras"]`. *(e com o modelo fora do ar cai para só regras, com aviso em `notes`.)*
+- [x] Testes com modelo simulado (*mock*), sem rede: *(`tests/test_check_content.py` e `tests/test_llm_client.py`.)*
   - o modelo tenta `bloquear` sem `rule_key` → gravado como `revisar`;
   - o modelo devolve `excerpt` inexistente no texto → descartado e logado;
   - o modelo tenta rebaixar um `bloquear` da camada 1 → ignorado.
-- [ ] Testes `@pytest.mark.llm` (rodam com `make test-llm`):
+- [x] Testes `@pytest.mark.llm` (rodam com `make test-llm`): *(17 passaram com `gemini-3.6-flash` em 10 min 40 s.)*
   - "esse chá dispensa a caneta da farmácia" em `prod_treino` → `revisar` com `reason_type` de comparação com medicamento;
   - "acorda o seu metabolismo" em `prod_magnesio` → `revisar` (alegação fora da lista permitida);
   - os casos da T06 continuam com a mesma saída ou mais grave.
-- [ ] Segunda execução dos testes `llm` com `LLM_OFFLINE=1` passa (cache funciona).
-- [ ] O exemplo do guia pelo cliente MCP: peça 1 ("acesso vitalício e 30 dias para testar") → `can_generate_link = false`; peça 2 com `parent_piece_id` ("12 meses de acesso, 7 dias de garantia") → `can_generate_link = true`.
-- [ ] `content_piece` e `check_result` gravados; `model` e `prompt_version` preenchidos nos achados do modelo.
+- [x] Segunda execução dos testes `llm` com `LLM_OFFLINE=1` passa (cache funciona). *(17 passaram em 1,6 s.)*
+- [x] O exemplo do guia pelo cliente MCP: peça 1 ("acesso vitalício e 30 dias para testar") → `can_generate_link = false`; peça 2 com `parent_piece_id` ("12 meses de acesso, 7 dias de garantia") → `can_generate_link = true`.
+- [x] `content_piece` e `check_result` gravados; `model` e `prompt_version` preenchidos nos achados do modelo.
+
+**Status:** ✅ concluída em 23/11 (20:30). Plano apresentado no início da sessão (pedido direto do Lucas).
 
 **Não fazer:** gerar link (T09).
 

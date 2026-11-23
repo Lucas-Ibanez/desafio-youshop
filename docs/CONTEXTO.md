@@ -338,7 +338,7 @@ Servidor: `src/promessa/mcp_server.py`, nome `promessa-rastreavel`, transporte s
 |---|---|---|---|---|
 | 1 | `get_product_facts` | `product_id`, `version?` | ficha (condições), regras com fonte, `briefing` (texto curto para o creator) | creator (app), checador, agentes externos (fase 2) |
 | 2 | `upsert_product_facts` | `product_id`, condições, `brand_rules[]`, `created_by` | `{version, warnings[]}` (ex.: nome do produto contém alegação) | marca |
-| 3 | `check_content` | `product_id`, `creator_id`, `text`, `channel`, `submitted_by?`, `published_since?`, `parent_piece_id?` | `{piece_id, facts_version, overall, findings[], disclosure, can_generate_link}` | creator, marca |
+| 3 | `check_content` | `product_id`, `creator_id`, `text`, `channel`, `submitted_by?`, `published_since?`, `parent_piece_id?` | `{piece_id, facts_version, overall, findings[], disclosure, can_generate_link, layers_used, notes}` | creator, marca |
 | 4 | `register_content_and_link` | `piece_id`, `actor_type?` | `{link_id, url, registered_promises[], disclosure_text}` | creator |
 | 5 | `classify_refund` | `sale_id`, `reason_text`, `type?` | `{refund_id, cause, subcause, buyer_belief, relation, linked_promise, confidence, needs_review, explanation}` | pipeline de reembolso, Operações |
 | 6 | `get_promise_outcome_report` | `creator_id` **ou** `product_id`, `start`, `end` | taxas por causa, promessas mais contestadas, sinais para a marca, cobertura | marca, Operações |
@@ -348,7 +348,7 @@ Servidor: `src/promessa/mcp_server.py`, nome `promessa-rastreavel`, transporte s
 
 As ferramentas 1, 3, 4, 5, 6 e 7 são as do guia. A 2, 8 e 9 foram acrescentadas porque o guia exige que a marca declare a ficha e que o humano decida, e isso precisa de uma porta.
 
-**Códigos de erro:** `PRODUTO_INEXISTENTE`, `FICHA_INVALIDA`, `FICHA_INEXISTENTE` (versão pedida não existe; D22), `PECA_INEXISTENTE`, `BLOQUEIO_PENDENTE` (lista os trechos), `FICHA_DESATUALIZADA` (a ficha mudou depois da checagem; reenvie a peça), `VENDA_INEXISTENTE`, `PAPEL_NAO_AUTORIZADO`, `PERIODO_INVALIDO`.
+**Códigos de erro:** `PRODUTO_INEXISTENTE`, `FICHA_INVALIDA`, `FICHA_INEXISTENTE` (versão pedida não existe; D22), `CREATOR_INEXISTENTE`, `ENTRADA_INVALIDA` (valor fora do esperado, ex.: canal; D24), `PECA_INEXISTENTE`, `BLOQUEIO_PENDENTE` (lista os trechos), `FICHA_DESATUALIZADA` (a ficha mudou depois da checagem; reenvie a peça), `VENDA_INEXISTENTE`, `PAPEL_NAO_AUTORIZADO`, `PERIODO_INVALIDO`.
 
 **Formato de `findings[]` (check_content):**
 

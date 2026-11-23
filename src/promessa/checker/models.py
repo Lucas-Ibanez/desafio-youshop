@@ -60,6 +60,14 @@ class Finding(BaseModel):
     explanation: str
     suggestion: str | None = None
     extracted: dict[str, Any] | None = None
+    model: str | None = None  # só achados do modelo
+    prompt_version: str | None = None
+
+
+class StoredFinding(Finding):
+    """Achado gravado em `check_result` (o `id` é o alvo de uma contestação)."""
+
+    id: int
 
 
 class Disclosure(BaseModel):
@@ -72,6 +80,19 @@ class Layer1Result(BaseModel):
     overall: Overall
     disclosure: Disclosure
     layers_used: list[str] = Field(default_factory=lambda: ["regras"])
+
+
+class CheckResponse(BaseModel):
+    """Resposta de `check_content` (CONTEXTO, seção 9)."""
+
+    piece_id: str
+    facts_version: int
+    overall: Overall
+    findings: list[StoredFinding]
+    disclosure: Disclosure
+    can_generate_link: bool
+    layers_used: list[str]
+    notes: list[str] = Field(default_factory=list)
 
 
 def overall_of(findings: list[Finding]) -> Overall:
