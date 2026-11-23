@@ -7,14 +7,14 @@ A devolução volta para quem prometeu, de forma automática e auditável.
 ## Requisitos
 
 - [uv](https://docs.astral.sh/uv/) (instala o Python 3.12 do projeto, fixado em `.python-version`)
-- Chave da API do Claude no `.env` (copie de `.env.example`)
+- Chave da API do Gemini no `.env` (copie de `.env.example`)
 
 Não precisa de `make`: os comandos ficam em `tasks.py`, em Python puro.
 
 ## Começar
 
 ```bash
-cp .env.example .env                       # depois preencha ANTHROPIC_API_KEY
+cp .env.example .env                       # depois preencha GEMINI_API_KEY
 uv run python tasks.py setup               # instala as dependências (uv sync)
 uv run python tasks.py lint test           # ruff e testes sem rede
 uv run python tasks.py help                # lista todas as tarefas
@@ -27,7 +27,7 @@ Nos documentos, `make <x>` significa `uv run python tasks.py <x>`.
 |---|---|
 | `setup` | `uv sync` |
 | `lint` / `format` | ruff |
-| `test` / `test-llm` | pytest sem modelo / só testes que chamam o Claude |
+| `test` / `test-llm` | pytest sem modelo / só testes que chamam o Gemini |
 | `db-reset` | apaga e recria `var/promessa.db` |
 | `mcp` | sobe o servidor MCP em stdio |
 | `gold`, `seed`, `simulate`, `eval-checador`, `eval-classificador`, `eval`, `demo`, `painel` | entram nas próximas tasks do plano |

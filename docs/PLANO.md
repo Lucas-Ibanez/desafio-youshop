@@ -115,7 +115,7 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 **O que fazer:**
 1. Exportar da planilha do case, em CSV UTF-8, as abas **H2 Auditoria**, **Amostra 1** e **Amostra 2**. Salvar em `data/raw/` com os nomes `h2_auditoria.csv`, `h1_amostra1.csv`, `h1_amostra2.csv`. Confirme que existe a coluna de resumo em paráfrase da H1 e a coluna "promessa verificável" da H2.
 2. Copiar o guia do MVP e as validações H1–H4 para `docs/fontes/`.
-3. Criar o `.env` com `ANTHROPIC_API_KEY`.
+3. Criar o `.env` com `GEMINI_API_KEY`.
 4. Instalar `uv`, Python 3.12 e o Claude Code; conferir `git` configurado.
 5. **Até o fim da T03:** abrir o PDF da IN 28/2018 compilada (link na H2, seção 9) e transcrever **literalmente**, do Anexo V, as alegações permitidas de **magnésio** e **vitamina B6** (constituintes do suplemento fictício), com a página. Vai para `data/rules/suplemento_in28_permitidas.yaml`.
 6. Ler a seção 18 do CONTEXTO e confirmar (ou mudar) os padrões: mínimo de 30 vendas, limiar 0,8, modelos.
@@ -134,7 +134,7 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 
 **O que fazer:**
 1. Criar a estrutura de pastas da seção 7 do CONTEXTO (pastas vazias com `.gitkeep` onde preciso).
-2. `pyproject.toml` com pacote `promessa` em `src/`, Python 3.12, dependências da seção 6 (`mcp`, `anthropic`, `sqlalchemy`, `pydantic`, `pyyaml`, `python-dotenv`, `streamlit`, `pandas`, `scikit-learn`) e de desenvolvimento (`pytest`, `ruff`). Script `promessa-mcp = "promessa.mcp_server:main"`.
+2. `pyproject.toml` com pacote `promessa` em `src/`, Python 3.12, dependências da seção 6 (`mcp`, `google-genai`, `sqlalchemy`, `pydantic`, `pyyaml`, `python-dotenv`, `streamlit`, `pandas`, `scikit-learn`) e de desenvolvimento (`pytest`, `ruff`). Script `promessa-mcp = "promessa.mcp_server:main"`.
 3. `Makefile` com os alvos da seção 17.2 (os que ainda não têm script imprimem "ainda não implementado").
 4. `.env.example`, `.gitignore`, `CLAUDE.md` (modelo da seção 17.3), `docs/decisoes.md` com cabeçalho, `README.md` mínimo.
 5. `config.py` lendo as variáveis da seção 17.1 com os padrões.
@@ -316,8 +316,8 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 **O que fazer:**
 1. `llm/client.py`: `complete_json(prompt_name, variables, output_model, model)`:
    - monta a mensagem a partir de `prompts/<prompt_name>.md`;
-   - obriga saída estruturada por *tool use* com `tool_choice` forçado e esquema gerado do `output_model` (Pydantic);
-   - temperatura 0; até 3 tentativas com espera crescente em erro de rede ou limite;
+   - obriga saída estruturada pelo Gemini (`response_mime_type="application/json"` e `response_schema=output_model`, Pydantic) e valida a resposta com o próprio `output_model`;
+   - temperatura 0; até 3 tentativas com espera crescente em erro de rede, limite (429) ou indisponibilidade (503, comum no Gemini em pico de demanda);
    - **cache em disco** pela chave `sha256(modelo + versão do prompt + entrada)`; com `LLM_OFFLINE=1`, só cache (erro claro se faltar);
    - registra em log modelo, versão do prompt, tokens e tempo.
 2. `prompts/checker_v1.md` com as instruções da seção 11.3 do CONTEXTO: trechos numerados, ficha resumida, listas com `rule_key`, achados da camada 1, o que procurar, e a regra "use `bloquear` só citando um `rule_key` proibido da lista".

@@ -5,7 +5,7 @@ description = "MVP Promessa Rastreável: liga a promessa da peça à venda e ao 
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "anthropic>=2.12.0",
+    "google-genai>=3.6.1",
     "mcp>=2.3.0",
     "pandas>=3.1.1",
     "pydantic>=2",
@@ -32,7 +32,7 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = '-m "not llm"'
 markers = [
-    "llm: chama a API do Claude",
+    "llm: chama a API do Gemini",
 ]
 
 [tool.ruff]

@@ -137,7 +137,7 @@ DEPOIS DA VENDA
  └───────┬────────────────────┬───────────────────────┬─────────────────────────┘
          ▼                    ▼                       ▼
  ┌──────────────┐   ┌───────────────────┐   ┌───────────────────────────────┐
- │ db (SQLite / │   │ rules (YAML       │   │ llm (API do Claude, saída      │
+ │ db (SQLite / │   │ rules (YAML       │   │ llm (API do Gemini, saída      │
  │ SQLAlchemy)  │   │ versionado)       │   │ estruturada, cache em disco)   │
  └──────────────┘   └───────────────────┘   └───────────────────────────────┘
 ```
@@ -157,11 +157,11 @@ DEPOIS DA VENDA
 
 | Camada | Escolha | Por quê |
 |---|---|---|
-| Linguagem | Python 3.12 | Sugerida no guia; SDK oficial de MCP e da Anthropic. |
+| Linguagem | Python 3.12 | Sugerida no guia; SDK oficial de MCP e do Gemini. |
 | Ambiente e dependências | `uv` (+ `uv.lock`) | Instala e roda rápido; um comando para tudo. |
 | Servidor MCP | SDK oficial `mcp` 2.x (classe `MCPServer` em `mcp.server.mcpserver`), transporte stdio; cliente `mcp.Client` (em memória nos testes ou stdio) | Padrão para Claude Code/Desktop; mesmo servidor serve agentes externos na fase 2. |
-| Modelo de linguagem | SDK `anthropic`, saída estruturada via *tool use* forçado (`tool_choice`), temperatura 0 | JSON validável com Pydantic; reprodutível. |
-| Modelos (configuráveis) | Checador: `claude-sonnet-5-5`; classificador e explicação: `claude-haiku-5-5` | Checador lida com nuance (grafia, comparação implícita); classificador é volume. Trocar por variável de ambiente; escolha final pelo split de desenvolvimento. |
+| Modelo de linguagem | Gemini via SDK `google-genai`, saída estruturada nativa (`response_mime_type="application/json"` + `response_schema` com o modelo Pydantic), temperatura 0 | JSON validável com Pydantic; reprodutível. |
+| Modelos (configuráveis) | Checador: `gemini-3.6-flash`; classificador e explicação: `gemini-3.5-flash-lite` | Checador lida com nuance (grafia, comparação implícita); classificador é volume. Trocar por variável de ambiente; escolha final pelo split de desenvolvimento. |
 | Banco | SQLite (arquivo `var/promessa.db`) via SQLAlchemy 2.x | Protótipo sem servidor; troca para Postgres por URL. |
 | Validação e esquemas | Pydantic v2 | Entrada/saída de ferramentas, YAML de regras, saída do modelo. |
 | Regras e seeds | YAML (`pyyaml`) | Legível pela marca e pelo jurídico; versionável no git. |
@@ -177,24 +177,26 @@ Versões: use a mais recente estável de cada pacote no momento da instalação 
 ## 7. Estrutura de pastas
 
 ```
-promessa-rastreavel/
+desafio-youshop/                  # repositório; projeto Python `promessa-rastreavel`, pacote `promessa`
 ├── CLAUDE.md                     # curto: aponta para docs/ e lista comandos (modelo na seção 17.3)
 ├── README.md                     # como instalar, rodar, testar, demonstrar
-├── Makefile                      # atalhos (seção 17.2)
-├── pyproject.toml
+├── tasks.py                      # executor de tarefas em Python puro (seção 17.2; substitui o make)
+├── pyproject.toml                # dependências, pytest (marcador llm) e ruff
 ├── uv.lock
+├── .python-version               # 3.12
 ├── .env.example                  # variáveis da seção 17.1, sem valores secretos
-├── .gitignore                    # .env, var/, data/raw/, .cache/, __pycache__/
+├── .gitignore                    # .env, var/, data/raw/, docs/fontes/, .cache/, __pycache__/
+├── .gitattributes                # fim de linha LF
 │
 ├── docs/
 │   ├── CONTEXTO.md               # este arquivo
 │   ├── PLANO.md                  # tasks em ordem
 │   ├── decisoes.md               # registro curto de decisões (D1, D2, ...)
 │   ├── resultados.md             # resumo do Teste 1 (gerado/atualizado na T16)
-│   └── fontes/                   # guia do MVP + validações H1–H4 (cópia de referência)
+│   └── fontes/                   # guia do MVP + validações H1–H4 (FORA DO GIT: nomes reais; só o README entra)
 │
 ├── data/
-│   ├── raw/                      # CSV exportados da planilha (FORA DO GIT: têm nomes)
+│   ├── raw/                      # h2_auditoria.csv, h1_amostra1.csv, h1_amostra2.csv, anon_map.yaml (FORA DO GIT: têm nomes)
 │   ├── gold/                     # gabaritos anonimizados (JSONL) + splits.json + recodificacao/
 │   ├── rules/                    # regras como dados (YAML versionado, seção 10)
 │   │   ├── normalizacao.yaml
@@ -222,7 +224,7 @@ promessa-rastreavel/
 │   │   ├── loader.py             # carrega e valida; `python -m promessa.rules.loader --check`
 │   │   └── normalize.py          # normalização que preserva posições (seção 11.2)
 │   ├── llm/
-│   │   ├── client.py             # complete_json(): tool use forçado, retry, cache, log
+│   │   ├── client.py             # complete_json(): Gemini com saída estruturada (response_schema), retry, cache, log
 │   │   ├── cache.py
 │   │   └── prompts/              # checker_v1.md, classifier_v1.md, linker_v1.md, explainer_v1.md
 │   ├── facts/service.py          # ficha: criar versão, ler vigente, briefing, materializar regras
@@ -242,7 +244,7 @@ promessa-rastreavel/
 │   │   └── explain.py            # texto simples para o creator
 │   ├── review/service.py         # fila e decisões humanas
 │   ├── privacy.py                # remoção de dados pessoais do motivo
-│   └── mcp_server.py             # FastMCP + ferramentas (seção 9); main() para stdio
+│   └── mcp_server.py             # MCPServer (mcp 2.x) + ferramentas (seção 9); `python -m promessa.mcp_server`
 │
 ├── app/
 │   ├── painel.py                 # entrada do Streamlit
@@ -265,6 +267,9 @@ promessa-rastreavel/
 ├── var/                          # banco SQLite (fora do git)
 └── tests/
     ├── conftest.py               # banco em memória, fixtures de produtos
+    ├── mcp_helpers.py            # call_tool(): cliente MCP em memória, devolve dict
+    ├── test_config.py
+    ├── test_tasks.py
     ├── test_models.py
     ├── test_rules.py
     ├── test_checker_deterministic.py
@@ -273,7 +278,7 @@ promessa-rastreavel/
     ├── test_refunds.py
     ├── test_reports.py
     ├── test_privacy.py
-    └── test_mcp_tools.py
+    └── test_mcp_tools.py         # pelo protocolo MCP: em memória e por subprocesso stdio
 ```
 
 ---
@@ -566,11 +571,11 @@ Também reportar: matriz de confusão; precisão e recall de `promessa_explicita
 
 | Variável | Padrão | Uso |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | — | Obrigatória para a camada 2 e o classificador |
+| `GEMINI_API_KEY` | — | Chave da Gemini API (AI Studio). Obrigatória para a camada 2 e o classificador |
 | `PROMESSA_DB_URL` | `sqlite:///var/promessa.db` | Banco |
-| `CHECKER_MODEL` | `claude-sonnet-5-5` | Camada 2 do checador |
-| `CLASSIFIER_MODEL` | `claude-haiku-5-5` | Classificador e linker |
-| `EXPLAINER_MODEL` | `claude-haiku-5-5` | Explicação ao creator |
+| `CHECKER_MODEL` | `gemini-3.6-flash` | Camada 2 do checador |
+| `CLASSIFIER_MODEL` | `gemini-3.5-flash-lite` | Classificador e linker |
+| `EXPLAINER_MODEL` | `gemini-3.5-flash-lite` | Explicação ao creator |
 | `CHECKER_USE_LLM` | `true` | Desliga a camada 2 |
 | `LLM_OFFLINE` | `false` | `true` = só cache; erro se não houver |
 | `LLM_CACHE_DIR` | `.cache/llm` | Cache em disco |

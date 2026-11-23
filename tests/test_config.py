@@ -10,12 +10,12 @@ def test_padroes_sem_env(monkeypatch, tmp_path):
 
     s = Settings(_env_file=None)
 
-    assert s.anthropic_api_key.get_secret_value() == ""
+    assert s.gemini_api_key.get_secret_value() == ""
     assert not has_api_key(s)
     assert s.promessa_db_url == "sqlite:///var/promessa.db"
-    assert s.checker_model == "claude-sonnet-5-5"
-    assert s.classifier_model == "claude-haiku-5-5"
-    assert s.explainer_model == "claude-haiku-5-5"
+    assert s.checker_model == "gemini-3.6-flash"
+    assert s.classifier_model == "gemini-3.5-flash-lite"
+    assert s.explainer_model == "gemini-3.5-flash-lite"
     assert s.checker_use_llm is True
     assert s.llm_offline is False
     assert s.llm_cache_dir == ".cache/llm"

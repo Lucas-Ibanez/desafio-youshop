@@ -54,6 +54,7 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Decisão:** seguir o pacote instalado, como manda o CONTEXTO: `from mcp.server.mcpserver import MCPServer`, `MCPServer("promessa-rastreavel", version=...)`, `@mcp.tool()` e `mcp.run(transport="stdio")`. Nos testes, o cliente é `mcp.Client`: recebe a instância do servidor (em memória; com `mode="legacy"` faz o handshake `initialize` e troca mensagens JSON-RPC) ou `StdioServerParameters` (subprocesso stdio).
 **Consequência:** onde o CONTEXTO e o PLANO dizem `FastMCP`, leia `MCPServer`. A demo da T15 pode usar `mcp.Client(StdioServerParameters(...))` no lugar de montar `ClientSession` à mão.
 **Atualização (23/11/2026):** CONTEXTO seção 6 corrigida para `MCPServer` e `mcp.Client`. O comentário da árvore da seção 7 (`mcp_server.py # FastMCP + ferramentas`) e a linha `Makefile` da mesma árvore ficaram como estavam (edição não autorizada nesta rodada); leia `MCPServer` e `tasks.py`.
+**Atualização (23/11/2026):** árvore da seção 7 corrigida (D15).
 
 ## D9 · `make` ausente na máquina de desenvolvimento (Windows) · 23/11/2026 · substituída pela D11
 **Contexto:** o `Makefile` é a interface de comandos do projeto, mas `make` não está instalado e instalá-lo exige mudança global na máquina.
@@ -80,3 +81,13 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Contexto:** o guia do MVP e as validações H1–H4 têm nomes reais de anunciantes e pessoas, com vereditos de irregularidade.
 **Decisão:** `.gitignore` ignora `docs/fontes/*`, exceto `docs/fontes/README.md`, que explica o motivo.
 **Consequência:** quem clona o repositório precisa copiar as fontes à mão. Nada nos gabaritos versionados (`data/gold/`) pode depender de texto que só exista nas fontes.
+
+## D14 · Modelo de linguagem: Gemini no lugar da API do Claude · 23/11/2026
+**Contexto:** o Lucas decidiu usar a API do Gemini. A chave (`GEMINI_API_KEY`) é da Gemini API (AI Studio) e funciona com o SDK `google-genai` sem Vertex AI. A listagem de modelos da chave foi consultada em 23/11/2026.
+**Decisão:** trocar o SDK `anthropic` pelo `google-genai` (3.6.1) e a variável `ANTHROPIC_API_KEY` por `GEMINI_API_KEY`. Saída estruturada passa a ser a nativa do Gemini (`response_mime_type="application/json"` + `response_schema` com o modelo Pydantic), no lugar de *tool use* forçado; temperatura 0 continua. Padrões, mantendo a divisão "checador mais capaz, classificador de volume": `CHECKER_MODEL=gemini-3.6-flash`, `CLASSIFIER_MODEL` e `EXPLAINER_MODEL=gemini-3.5-flash-lite`. Fumaça em 23/11: os dois responderam a chamada simples e a estruturada (`{"ok": true}`). Alternativas observadas: `gemini-3.7-flash` respondeu 503 (alta demanda) nas duas tentativas; `gemini-3.5-flash` funcionou; `gemini-2.5-flash` aparece na listagem mas devolve 404; os `gemini-4-*` (nomes-código) não foram usados por não indicarem versão estável.
+**Consequência:** CONTEXTO (seções 5, 6, 7 e 17.1), PLANO (T00, T01 e T07), README, `.env.example`, `config.py`, testes e marcador `llm` atualizados. Claude Code e Claude Desktop continuam como ferramenta de desenvolvimento e cliente MCP; só o modelo dos agentes mudou. O retry da T07 precisa cobrir 503. A escolha final de cada modelo continua pelo split `dev` (CONTEXTO 18.2).
+
+## D15 · Árvore da seção 7 do CONTEXTO alinhada ao repositório · 23/11/2026
+**Contexto:** a árvore ainda mostrava `Makefile`, `FastMCP`, *tool use* e não tinha os arquivos criados na T01/T01b.
+**Decisão:** raiz nomeada como o repositório (`desafio-youshop/`, projeto `promessa-rastreavel`); `Makefile` → `tasks.py`; `.python-version` e `.gitattributes` incluídos; `.gitignore` com `docs/fontes/`; `docs/fontes/` e `data/raw/` marcados fora do git, com os nomes dos CSV e do `anon_map.yaml`; `llm/client.py` com saída estruturada do Gemini; `mcp_server.py` com `MCPServer` e `python -m`; `tests/` com `mcp_helpers.py`, `test_config.py` e `test_tasks.py`.
+**Consequência:** a árvore descreve o que existe hoje e o que as tasks vão criar, sem resíduos do Makefile e do FastMCP.
