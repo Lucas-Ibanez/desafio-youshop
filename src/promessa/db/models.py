@@ -156,6 +156,9 @@ class ClaimRule(Base):
     source: Mapped[RuleSource] = mapped_column(enum_column(RuleSource))
     reference: Mapped[str] = mapped_column(String(500))  # arquivo.yaml@versao ou URL
     output: Mapped[RuleOutput | None] = mapped_column(enum_column(RuleOutput))  # só proibidas
+    # Cópia do que a camada 1 precisa para aplicar a regra (termos, padrões, junto_de, tema,
+    # sugestão). Fica na versão da ficha para provar o que valia no dia da venda (D4, D22).
+    payload: Mapped[dict[str, Any] | None]
 
 
 # --- Checagem e registro -----------------------------------------------------------------

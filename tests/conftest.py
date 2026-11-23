@@ -6,7 +6,7 @@ import pytest
 
 from promessa.db.enums import AccessType, Category, Recurrence
 from promessa.db.models import Brand, Creator, Product, ProductFacts
-from promessa.db.session import get_engine, get_session, init_db
+from promessa.db.session import get_engine, get_session, init_db, set_default_engine
 
 
 @pytest.fixture
@@ -21,6 +21,25 @@ def engine():
 def session(engine):
     with get_session(engine) as s:
         yield s
+
+
+@pytest.fixture
+def seeded(engine):
+    """Banco em memória com os seeds (5 marcas, produtos, fichas v1, creators)."""
+    from promessa.facts.seed import load_seed
+
+    with get_session(engine) as s:
+        load_seed(s)
+        s.commit()
+    return engine
+
+
+@pytest.fixture
+def mcp_db(seeded):
+    """Faz as ferramentas MCP (via `session_scope`) usarem o banco em memória com seeds."""
+    set_default_engine(seeded)
+    yield seeded
+    set_default_engine(None)
 
 
 @pytest.fixture

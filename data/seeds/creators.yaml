@@ -1,0 +1,20 @@
+# Creators FICTÍCIOS do MVP. As personas da simulação estão no PLANO (T13).
+versao: "2026-11-23"
+nota: "Nomes e perfis inventados."
+
+creators:
+  - id: cr_ana
+    handle: "@ana.treinaemcasa"
+    display_name: Ana
+  - id: cr_bia
+    handle: "@bia.rotina"
+    display_name: Bia
+  - id: cr_caio
+    handle: "@caio.fala.ingles"
+    display_name: Caio
+  - id: cr_duda
+    handle: "@duda.dicas"
+    display_name: Duda
+  - id: cr_eli
+    handle: "@eli.cuidados"
+    display_name: Eli

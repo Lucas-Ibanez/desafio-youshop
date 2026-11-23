@@ -1,0 +1,85 @@
+# Marcas e produtos FICTÍCIOS do MVP (PLANO T05). Cada produto espelha um padrão real das
+# validações, sem usar nome real de marca. A ficha v1 vale desde 01/10/2026, antes do período
+# simulado (26/10 a 22/11/2026).
+versao: "2026-11-23"
+nota: "Nomes inventados. As alegações do suplemento só valem com a dose mínima do Anexo III da IN 28; a ficha não tem campo de dose (D22)."
+
+marcas:
+  - id: mk_movimento
+    nome: Movimento em Casa
+    produtos:
+      - id: prod_treino
+        nome: Treino em Casa 12M
+        categoria: infoproduto_outro
+        espelha: "Vitalício que acabou e garantia 30×7 (H1); \"5 kg em 7 dias\" (H2). É o exemplo do guia."
+        ficha_v1:
+          guarantee_days: 7
+          access_type: prazo
+          access_months: 12
+          recurrence: unica
+          bonuses: ["E-book de receitas"]
+          extra_costs: []
+          valid_from: "2026-10-01T00:00:00Z"
+
+  - id: mk_vitalis
+    nome: Vitalis Nutrição
+    produtos:
+      - id: prod_magnesio
+        nome: Magnésio + B6 Vitalis
+        categoria: suplemento
+        espelha: "Suplemento com alegação de emagrecimento, imunidade, foco (H2: 12 de 13 irregulares)."
+        ficha_v1:
+          guarantee_days: 30
+          access_type: nao_aplica
+          recurrence: unica
+          bonuses: []
+          extra_costs: []
+          valid_from: "2026-10-01T00:00:00Z"
+
+  - id: mk_fortis
+    nome: Fortis Cosméticos
+    produtos:
+      - id: prod_capilar
+        nome: Fortis Shampoo Fortalecedor
+        categoria: cosmetico
+        espelha: "\"Previne a queda hereditária\" (H2)."
+        ficha_v1:
+          guarantee_days: 7
+          access_type: nao_aplica
+          recurrence: unica
+          bonuses: []
+          extra_costs: []
+          valid_from: "2026-10-01T00:00:00Z"
+
+  - id: mk_canal
+    nome: Escola Canal Sem Rosto
+    produtos:
+      - id: prod_canal
+        nome: Canal Sem Rosto
+        categoria: infoproduto_renda
+        espelha: "Canal dark com custo não informado (H1) e \"renda extra de 10K\" (H2)."
+        ficha_v1:
+          guarantee_days: 7
+          access_type: vitalicio
+          recurrence: unica
+          bonuses: []
+          extra_costs:
+            - descricao: "ferramenta de voz e edição"
+              valor_mensal_cents: 9700
+          valid_from: "2026-10-01T00:00:00Z"
+
+  - id: mk_fluente
+    nome: Fluente Idiomas
+    produtos:
+      - id: prod_ingles
+        nome: Inglês Fluente Club
+        categoria: infoproduto_outro
+        espelha: "Renovação não informada e \"pagamento único\" falso (H1)."
+        ficha_v1:
+          guarantee_days: 7
+          access_type: assinatura
+          recurrence: mensal
+          auto_renewal: true
+          bonuses: []
+          extra_costs: []
+          valid_from: "2026-10-01T00:00:00Z"

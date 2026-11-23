@@ -6,6 +6,8 @@ Rodar: `python -m promessa.db.session --reset` apaga e recria o banco de `PROMES
 
 import argparse
 import sys
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 from sqlalchemy import DDL, Engine, create_engine, event, inspect
@@ -79,6 +81,38 @@ def init_db(engine: Engine) -> None:
 def get_session(engine: Engine | None = None) -> Session:
     """Nova sessão. Quem chama fecha (`with get_session() as s:`)."""
     return sessionmaker(bind=engine or get_engine(), expire_on_commit=False)()
+
+
+_default_engine: Engine | None = None
+
+
+def set_default_engine(engine: Engine | None) -> None:
+    """Troca o engine usado por `session_scope()` (testes usam um banco temporário)."""
+    global _default_engine
+    _default_engine = engine
+
+
+def default_engine() -> Engine:
+    """Engine de `PROMESSA_DB_URL`, criado uma vez por processo, com tabelas garantidas."""
+    global _default_engine
+    if _default_engine is None:
+        _default_engine = get_engine()
+        init_db(_default_engine)
+    return _default_engine
+
+
+@contextmanager
+def session_scope(engine: Engine | None = None) -> Iterator[Session]:
+    """Sessão com commit no fim e rollback em erro. Usada pelo MCP e pelos scripts."""
+    session = get_session(engine or default_engine())
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 def reset_db(url: str | None = None) -> Engine:

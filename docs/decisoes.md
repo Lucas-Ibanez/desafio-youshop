@@ -159,3 +159,19 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Splits:** estratificação própria e determinística (semente 42, cota por estrato pelo maior resto), sem depender da versão do scikit-learn. H2 por (`nao_conforme`, família); H1 por `causa_principal`.
 - **Amostra cega:** semente 7, só ids do split `test`; mostra só `id`, `tipo_produto`/`titulo` e `texto`, com colunas vazias para codificar. O script não sobrescreve um arquivo que já tenha codificação (só com `--force`). Roda à parte: `uv run python scripts/blind_sample.py`.
 **Consequência:** `tasks.py gold` roda o import. Os gabaritos anonimizados entram no git; `data/raw/` e `docs/fontes/` continuam fora. Quem clonar sem as fontes ainda consegue avaliar os agentes, mas não consegue reimportar.
+
+## D22 · Ficha de promessas: escolhas da T05 · 23/11/2026
+**Contexto:** a T05 cria a ficha versionada, os produtos fictícios e as duas primeiras ferramentas MCP.
+**Decisão:**
+- **`claim_rule.payload` (JSON, coluna nova):** guarda o que a camada 1 precisa para aplicar a regra (tema, termos, padrões, `junto_de`, sugestão; nas permitidas, constituinte e condição). Sem isso a cópia da regra na versão (D4) não provaria o que valia nem serviria ao checador. `text` = explicação (proibidas) ou texto literal (permitidas).
+- **O que é materializado por versão:** listas proibidas da categoria (`suplemento_proibidas`, `cosmetico_proibidas`), alegações permitidas da IN 28 (suplemento) e regras da marca. `padroes_h2` e `condicoes_oferta` valem para todos e não são copiados (a T06 lê do YAML; `COND-*` já é amarrado à ficha).
+- **Regras da marca:** `rule_key` `MARCA-NN` (ou o que a marca mandar, com prefixo `MARCA-`); `source = MARCA`; proibida sai como `bloquear` por padrão (a ficha é da marca, D6); sem `termos`, o próprio texto normalizado vira o termo.
+- **Validação (`FICHA_INVALIDA`):** garantia ≥ 7 dias citando o CDC art. 49; `prazo` exige meses e meses só com `prazo`; renovação automática não combina com pagamento único; nova versão não pode valer antes da anterior; enum inválido.
+- **Código novo `FICHA_INEXISTENTE`:** produto existe, mas a versão pedida (ou qualquer ficha) não. `PRODUTO_INEXISTENTE` fica para produto que não existe.
+- **Aviso de nome:** o nome do produto passa pelas listas proibidas da categoria, pelas regras da marca e pelos padrões da H2 ("Seca Barriga Caps" → `SUP-EMAG`). É aviso, não bloqueio.
+- **Briefing:** até 150 palavras, gerado das condições e das regras materializadas. Mostra 2 alegações permitidas e o número das demais, para caber no limite; diz "sem bônus" e "sem custos extras" quando for o caso, para o creator não inventar.
+- **Dose do Anexo III (D17):** a ficha não tem campo de dose. O briefing do suplemento avisa que as alegações só valem com a dose mínima da IN 28; a limitação fica registrada aqui.
+- **Ferramentas MCP:** `access_type`, `recurrence`, `extra_costs` e `brand_rules` entram como texto e dicionário para que valor inválido volte como `FICHA_INVALIDA` (validação do serviço), e não como erro genérico de esquema. `DomainError` vira `ToolError`; o SDK acrescenta o prefixo "Error executing tool <nome>:" antes de `CODIGO: explicação`.
+- **Sessão:** `db.session.session_scope()` (commit/rollback) sobre um engine padrão de `PROMESSA_DB_URL`, trocável por `set_default_engine` nos testes. O servidor cria as tabelas na primeira chamada.
+- **Seeds:** 5 marcas, produtos e creators com nomes inventados; ficha v1 vale desde 01/10/2026 (antes do período simulado). `promessa.facts.seed.load_seed` é idempotente.
+**Consequência:** a T06 aplica as `claim_rule` da versão a partir do `payload`, com `promessa.rules.match.find_hits` (mesma sintaxe de termo da D20).

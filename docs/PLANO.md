@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 19:55):
+**Andamento** (atualizado em 23/11, 20:05):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -52,10 +52,11 @@
 | T02 Modelo de dados e banco | ✅ Concluída | 13 tabelas e 6 triggers de imutabilidade; `tests/test_models.py` com 15 testes (D19). |
 | T03 Regras como dados | ✅ Concluída | 7 YAML validados pelo `promessa.rules.loader --check`; `tests/test_rules.py` com 44 testes (D20). |
 | T04 Gabaritos | ✅ Concluída | 17 conferências OK; 60 anúncios e 172 compradores anonimizados; splits 20/40 e 40/132; amostra cega de 20+20 (D21). |
-| T05 Ficha de promessas | **Próxima** | — |
-| T06–T16 | Não iniciadas | — |
+| T05 Ficha de promessas | ✅ Concluída | Seeds, `facts/service.py`, ferramentas `get_product_facts` e `upsert_product_facts`; 27 testes (D22). |
+| T06 Checador camada 1 **[plan]** | **Próxima** | — |
+| T07–T16 | Não iniciadas | — |
 
-Atraso de cerca de 2h10 em relação ao cronograma abaixo (a T05 estava prevista para 17:45).
+Atraso de cerca de 35 min em relação ao cronograma abaixo (a T06 estava prevista para 19:30).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -282,12 +283,14 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 4. Ferramentas MCP `get_product_facts` e `upsert_product_facts` (finas, chamando o serviço).
 
 **Critérios de aceite:**
-- [ ] `make db-reset seed` carrega 5 marcas, 5 produtos, 5 fichas v1 e 5 creators.
-- [ ] `get_product_facts("prod_magnesio")` pelo cliente MCP devolve as regras `SUP-*` com `source` e `reference` preenchidos.
-- [ ] `upsert_product_facts` em `prod_treino` cria v2; `get_product_facts("prod_treino", version=1)` ainda devolve a v1 intacta.
-- [ ] Ficha com `guarantee_days = 5` é recusada com `FICHA_INVALIDA` citando o CDC art. 49.
-- [ ] Produto hipotético chamado "Seca Barriga Caps" (categoria suplemento) gera `warning` com `SUP-EMAG`.
-- [ ] O briefing de `prod_treino` contém "7 dias", "12 meses" e "#publi", e não passa de 150 palavras.
+- [x] `make db-reset seed` carrega 5 marcas, 5 produtos, 5 fichas v1 e 5 creators. *(e 22 regras materializadas: 5 `SUP-*` + 15 `IN28-*` no magnésio, 2 `COS-*` no capilar.)*
+- [x] `get_product_facts("prod_magnesio")` pelo cliente MCP devolve as regras `SUP-*` com `source` e `reference` preenchidos. *(`ANVISA`, `suplemento_proibidas.yaml@2026-11-23`; testado em memória e por stdio.)*
+- [x] `upsert_product_facts` em `prod_treino` cria v2; `get_product_facts("prod_treino", version=1)` ainda devolve a v1 intacta. *(resposta da v1 idêntica antes e depois.)*
+- [x] Ficha com `guarantee_days = 5` é recusada com `FICHA_INVALIDA` citando o CDC art. 49. *("FICHA_INVALIDA: A garantia precisa ser de pelo menos 7 dias (CDC art. 49, direito de arrependimento). Recebido: 5 dias.")*
+- [x] Produto hipotético chamado "Seca Barriga Caps" (categoria suplemento) gera `warning` com `SUP-EMAG`. *(pelo serviço e pelo MCP.)*
+- [x] O briefing de `prod_treino` contém "7 dias", "12 meses" e "#publi", e não passa de 150 palavras. *(62 palavras; os 5 briefings ficam entre 62 e 107.)*
+
+**Status:** ✅ concluída em 23/11 (20:05).
 
 **Não fazer:** checagem de peças (T06).
 
