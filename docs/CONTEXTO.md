@@ -644,9 +644,9 @@ Comandos: uv run python tasks.py <tarefa> (test | test-llm | lint | seed | simul
 
 | Questão | Padrão no MVP |
 |---|---|
-| Mínimo de vendas para mostrar o indicador do creator | 30 no período (`MIN_SALES_FOR_INDICATOR`) |
-| Limiar de confiança alta | 0,8 |
-| Modelo final de cada agente | O que tiver melhor resultado no split `dev`, registrado no relatório |
+| Mínimo de vendas para mostrar o indicador do creator | 30 no período (`MIN_SALES_FOR_INDICATOR`); confirmado (D16) |
+| Limiar de confiança alta | 0,8; confirmado (D16) |
+| Modelo final de cada agente | `gemini-3.6-flash` (checador) e `gemini-3.5-flash-lite` (classificador e explicação), conforme `.env` (D14, D16); reavaliar pelo split `dev` e registrar no relatório |
 | Prazo para a marca revisar uma contestação | Não implementado; aparece a idade do item na fila |
 
 ---

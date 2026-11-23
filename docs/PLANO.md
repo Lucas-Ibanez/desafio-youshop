@@ -43,6 +43,17 @@
 
 ## 3. Cronograma
 
+**Andamento** (atualizado em 23/11, 18:45):
+
+| Task | Status | Evidência |
+|---|---|---|
+| T00 Preparação | ✅ Concluída | CSV, fontes, `.env` (chave do Gemini) e ferramentas prontos; IN 28 de magnésio e B6 em `data/rules/suplemento_in28_permitidas.yaml` (D17); padrões confirmados (D16). A conferir pelo Lucas: texto contra o PDF, página e alegação de B6 sobre o sistema nervoso. |
+| T01 Esqueleto do repositório | ✅ Concluída | Commits `88a1956` (T01), `1471916` (T01b: `tasks.py`, MCP via `python -m`, UTF-8) e `22d6d26` (T01c: Gemini). |
+| T02 Modelo de dados e banco | **Próxima** | — |
+| T03–T16 | Não iniciadas | — |
+
+Atraso de cerca de 4h15 em relação ao cronograma abaixo (a T02 estava prevista para 14:30).
+
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
 | **Seg 14:00** | T00 Preparação | Lucas | 30 min |
@@ -117,13 +128,15 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 2. Copiar o guia do MVP e as validações H1–H4 para `docs/fontes/`.
 3. Criar o `.env` com `GEMINI_API_KEY`.
 4. Instalar `uv`, Python 3.12 e o Claude Code; conferir `git` configurado.
-5. **Até o fim da T03:** abrir o PDF da IN 28/2018 compilada (link na H2, seção 9) e transcrever **literalmente**, do Anexo V, as alegações permitidas de **magnésio** e **vitamina B6** (constituintes do suplemento fictício), com a página. Vai para `data/rules/suplemento_in28_permitidas.yaml`.
-6. Ler a seção 18 do CONTEXTO e confirmar (ou mudar) os padrões: mínimo de 30 vendas, limiar 0,8, modelos.
+5. **Até o fim da T03:** abrir o PDF da IN 28/2018 compilada (link na H2, seção 9) e transcrever **literalmente**, do Anexo V, as alegações permitidas de **magnésio** e **vitamina B6** (constituintes do suplemento fictício), com a página. Vai para `data/rules/suplemento_in28_permitidas.yaml`. ✅ *Feito: arquivo com 7 alegações permitidas para magnésio e 7 para B6 (D17). Item 5: texto a conferir contra o PDF pelo Lucas; página pendente. A alegação de B6 sobre o sistema nervoso fica em `pendente_confirmacao`.*
+6. Ler a seção 18 do CONTEXTO e confirmar (ou mudar) os padrões: mínimo de 30 vendas, limiar 0,8, modelos. ✅ *Feito: confirmados na D16 (30 vendas, limiar 0,8, modelos do `.env` definidos na D14).*
 
 **Critérios de aceite:**
-- [ ] Os 3 CSV estão em `data/raw/` e abrem com acentos corretos.
-- [ ] `.env` existe e **não** está no git.
-- [ ] As alegações do Anexo V para magnésio e B6 estão transcritas com página, ou o arquivo está marcado `status: pendente_transcricao`.
+- [x] Os 3 CSV estão em `data/raw/` e abrem com acentos corretos. *(UTF-8 sem BOM, vírgula; 60, 98 e 95 linhas; colunas de paráfrase, promessa verificável, veredito, causa, subcausa e público presentes.)*
+- [x] `.env` existe e **não** está no git. *(ignorado pelo `.gitignore`; `GEMINI_API_KEY` preenchida.)*
+- [x] As alegações do Anexo V para magnésio e B6 estão transcritas com página, ou o arquivo está marcado `status: pendente_transcricao`. *(`data/rules/suplemento_in28_permitidas.yaml` transcrito, `status: conferido`, `pagina: null`; validado: campos obrigatórios presentes e 7 alegações por constituinte. Página pendente; texto a conferir contra o PDF pelo Lucas.)*
+
+**Status:** ✅ concluída em 23/11. Itens 1–6 feitos (D16, D17). Pendências do Lucas que não travam a T02: conferir o texto contra o PDF e anotar a página; confirmar se a alegação de B6 sobre o sistema nervoso já está em vigor.
 
 ---
 
@@ -135,17 +148,19 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 **O que fazer:**
 1. Criar a estrutura de pastas da seção 7 do CONTEXTO (pastas vazias com `.gitkeep` onde preciso).
 2. `pyproject.toml` com pacote `promessa` em `src/`, Python 3.12, dependências da seção 6 (`mcp`, `google-genai`, `sqlalchemy`, `pydantic`, `pyyaml`, `python-dotenv`, `streamlit`, `pandas`, `scikit-learn`) e de desenvolvimento (`pytest`, `ruff`). Script `promessa-mcp = "promessa.mcp_server:main"`.
-3. `Makefile` com os alvos da seção 17.2 (os que ainda não têm script imprimem "ainda não implementado").
+3. `tasks.py` com as tarefas da seção 17.2 (as que ainda não têm script imprimem "ainda não implementado"). *(Era `Makefile`; trocado na D11.)*
 4. `.env.example`, `.gitignore`, `CLAUDE.md` (modelo da seção 17.3), `docs/decisoes.md` com cabeçalho, `README.md` mínimo.
 5. `config.py` lendo as variáveis da seção 17.1 com os padrões.
-6. `mcp_server.py` com `FastMCP("promessa-rastreavel")`, uma ferramenta `ping` que devolve `{"ok": true, "versao": "0.1.0"}` e `main()` em stdio.
+6. `mcp_server.py` com `MCPServer("promessa-rastreavel")` (o `FastMCP` do SDK `mcp` 1.x; D8), uma ferramenta `ping` que devolve `{"ok": true, "versao": "0.1.0"}` e `main()` em stdio.
 7. `tests/test_mcp_tools.py` chamando `ping` por um cliente MCP (cliente em memória do SDK, se disponível; senão, cliente stdio em subprocesso).
 
 **Critérios de aceite:**
-- [ ] `make setup` instala sem erro; `uv.lock` criado.
-- [ ] `make lint` e `make test` passam.
-- [ ] O teste do `ping` passa **pelo protocolo MCP**, não chamando a função Python direto.
-- [ ] `git log` mostra o commit `T01: esqueleto do repositório`.
+- [x] `make setup` instala sem erro; `uv.lock` criado. *(`tasks.py setup`: 73 pacotes, `uv.lock` versionado.)*
+- [x] `make lint` e `make test` passam. *(`All checks passed!`, `25 files already formatted`, `11 passed`.)*
+- [x] O teste do `ping` passa **pelo protocolo MCP**, não chamando a função Python direto. *(`test_ping_em_memoria` e `test_ping_por_stdio` PASSED.)*
+- [x] `git log` mostra o commit `T01: esqueleto do repositório`. *(`88a1956`, seguido de `1471916` T01b e `22d6d26` T01c.)*
+
+**Status:** ✅ concluída em 23/11 (17:53).
 
 **Não fazer:** nenhuma tabela, regra ou lógica de domínio.
 

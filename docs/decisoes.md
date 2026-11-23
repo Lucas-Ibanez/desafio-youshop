@@ -91,3 +91,19 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Contexto:** a árvore ainda mostrava `Makefile`, `FastMCP`, *tool use* e não tinha os arquivos criados na T01/T01b.
 **Decisão:** raiz nomeada como o repositório (`desafio-youshop/`, projeto `promessa-rastreavel`); `Makefile` → `tasks.py`; `.python-version` e `.gitattributes` incluídos; `.gitignore` com `docs/fontes/`; `docs/fontes/` e `data/raw/` marcados fora do git, com os nomes dos CSV e do `anon_map.yaml`; `llm/client.py` com saída estruturada do Gemini; `mcp_server.py` com `MCPServer` e `python -m`; `tests/` com `mcp_helpers.py`, `test_config.py` e `test_tasks.py`.
 **Consequência:** a árvore descreve o que existe hoje e o que as tasks vão criar, sem resíduos do Makefile e do FastMCP.
+
+## D16 · Padrões do MVP confirmados pelo Lucas · 23/11/2026
+**Contexto:** item 6 da T00 pedia confirmar os padrões da seção 18.2 do CONTEXTO. (Pedido feito como "D12"; esse número já era da decisão sobre `.gitattributes`, por isso o registro é D16.)
+**Decisão:** `MIN_SALES_FOR_INDICATOR=30`; limiar de confiança alta `CONFIDENCE_THRESHOLD=0.8`; modelos conforme o `.env` atual (D14): `CHECKER_MODEL=gemini-3.6-flash`, `CLASSIFIER_MODEL=gemini-3.5-flash-lite`, `EXPLAINER_MODEL=gemini-3.5-flash-lite`.
+**Consequência:** `.env.example` e `config.py` já tinham esses valores. Na seção 18.2 do CONTEXTO, as linhas de 30 vendas e 0,8 ganharam "confirmado (D16)" e a linha de modelos passou a nomear os modelos do `.env`. O split `dev` ainda pode trocar um modelo, com novo registro.
+
+## D17 · Alegações da IN 28 para magnésio e vitamina B6 · 23/11/2026
+**Contexto:** item 5 da T00. O Lucas colocou `data/rules/suplemento_in28_permitidas.yaml` com o texto do Anexo V da IN 28/2018 na versão compilada, que cita alterações até a IN 284/2024. (Pedido feito como "D13"; esse número já era da decisão sobre `docs/fontes`, por isso o registro é D17.)
+**Decisão:**
+- As alegações permitidas são as do arquivo: 7 para magnésio e 7 para vitamina B6, mais as alegações de conteúdo ("Fonte de...", "Alto conteúdo..."). O texto é transcrição literal e não é editado por código nem por agente.
+- "A vitamina B6 auxilia na função normal do sistema nervoso." fica em `pendente_confirmacao` (proposta aprovada em 2026) e **não** é tratada como permitida até o Lucas confirmar que está em vigor no texto consolidado.
+- As alegações só valem se o produto atingir os valores mínimos do Anexo III (e, para "alto conteúdo", o dobro dos mínimos sem passar do máximo do Anexo IV). O suplemento fictício (`prod_magnesio`) deve declarar as doses na ficha na T05; se não declarar, essa limitação fica registrada no briefing e no relatório.
+- Valores aceitos para `status`: `pendente_transcricao`, `transcrito_a_conferir`, `conferido`. O arquivo está hoje com `status: conferido` e `pagina: null`.
+**Consequência:**
+- TODO T03: o loader (`promessa.rules.loader`) deve validar o cabeçalho deste arquivo, aceitar os três valores de `status`, ler `constituintes[].alegacoes_permitidas` e ignorar `pendente_confirmacao` como permitida. Não havia loader na T01, então nada foi criado agora.
+- Atenção para T03/T06: a IN 28 permite "A vitamina B6 auxilia no funcionamento do sistema imune.", enquanto a regra prevista `SUP-IMUN` bloqueia o tema imunidade em suplementos. A T03 precisa resolver essa sobreposição (por exemplo, não bloquear quando o trecho coincide com uma alegação permitida da ficha), para o checador não barrar uma alegação legal.
