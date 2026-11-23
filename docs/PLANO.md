@@ -43,16 +43,17 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 18:45):
+**Andamento** (atualizado em 23/11, 19:15):
 
 | Task | Status | Evidência |
 |---|---|---|
 | T00 Preparação | ✅ Concluída | CSV, fontes, `.env` (chave do Gemini) e ferramentas prontos; IN 28 de magnésio e B6 conferida em `data/rules/suplemento_in28_permitidas.yaml` (D17); padrões confirmados (D16); sobreposição IN 28 × `SUP-IMUN` resolvida (D18). Página da IN 28 não verificável (site fora do ar). |
 | T01 Esqueleto do repositório | ✅ Concluída | Commits `88a1956` (T01), `1471916` (T01b: `tasks.py`, MCP via `python -m`, UTF-8) e `22d6d26` (T01c: Gemini). |
-| T02 Modelo de dados e banco | **Próxima** | — |
-| T03–T16 | Não iniciadas | — |
+| T02 Modelo de dados e banco | ✅ Concluída | 13 tabelas e 6 triggers de imutabilidade; `tests/test_models.py` com 15 testes (D19). |
+| T03 Regras como dados | **Próxima** | — |
+| T04–T16 | Não iniciadas | — |
 
-Atraso de cerca de 4h15 em relação ao cronograma abaixo (a T02 estava prevista para 14:30).
+Atraso de cerca de 3h45 em relação ao cronograma abaixo (a T03 estava prevista para 15:30).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -179,13 +180,15 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 5. `make db-reset` funcional.
 
 **Critérios de aceite:**
-- [ ] `make db-reset` cria `var/promessa.db` com 13 tabelas (`sqlite3 var/promessa.db .tables`).
-- [ ] `tests/test_models.py` cobre e passa:
+- [x] `make db-reset` cria `var/promessa.db` com 13 tabelas (`sqlite3 var/promessa.db .tables`). *(`tasks.py db-reset` → `python -m promessa.db.session --reset`; `sqlite3 .tables` lista as 13; idempotente.)*
+- [x] `tests/test_models.py` cobre e passa: *(15 testes; também cobre DELETE em `product_facts` e `review_event`, UPDATE em `content_piece`, enum inválido recusado pelo banco, chave estrangeira e datas em UTC.)*
   - inserir ficha v1 e v2 do mesmo produto; v1 continua legível;
   - UPDATE em `product_facts` falha; DELETE em `content_piece` falha; UPDATE em `review_event` falha;
   - `get_current_facts` devolve v1 para uma data antes do `valid_from` da v2 e v2 depois;
   - versão duplicada para o mesmo produto falha.
-- [ ] Banco de teste é em memória (`sqlite://`), sem tocar `var/`.
+- [x] Banco de teste é em memória (`sqlite://`), sem tocar `var/`. *(fixture `engine` em `tests/conftest.py`; data de modificação de `var/promessa.db` igual antes e depois da suíte.)*
+
+**Status:** ✅ concluída em 23/11 (19:15).
 
 **Não fazer:** serviços, seeds, validação de negócio (fica na T05).
 
@@ -628,3 +631,17 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 | T06 ou T07 estouram o tempo | CP1 vermelho | Teto de 1h na terça de manhã; depois, corte 5. |
 | Escopo crescendo durante a construção | Vontade de "só mais isso" | Anotar em `docs/decisoes.md` como fase seguinte. O CONTEXTO (seção 3.2) é a lista do que não entra. |
 | Cansaço na madrugada | Erros bobos, testes pulados | Parar no CP1 às 23:30. A terça tem folga para terminar T07/T08. |
+
+## D19 · Modelo de dados: escolhas da T02 · 23/11/2026
+**Contexto:** a T02 cria as 13 tabelas da seção 8 do CONTEXTO; alguns detalhes não estavam definidos.
+**Decisão:**
+- Enums em `db/enums.py` como `StrEnum` com os valores da seção 8.1 (nomes dos membros = valor em maiúsculas). No banco, texto com `CHECK` (o banco recusa valor fora do enum). `limpo` não é enum de trecho; só existe no `overall` da peça (T06).
+- Enum extra `Role` (`marca`, `creator`, `operacoes`, `sistema`, seção 4) para `review_event.actor_role`. `review_event.target_type` fica como texto (ex.: `check_result`, `refund_classification`).
+- `refund_classification.cause` e `subcause` são texto, não enum: a taxonomia é dado (`taxonomia_devolucao.yaml`, T03) e a validação fica no classificador (T10).
+- Datas pelo tipo `UTCDateTime`: grava em UTC sem fuso (o SQLite não guarda fuso) e devolve com fuso UTC; data sem fuso na entrada é tratada como UTC.
+- Ids: texto para `brand`, `creator`, `product` (ex.: `prod_treino`); uuid para `content_piece`; 8 caracteres para `tracked_link` (gerado na T09); inteiro autoincremento nas demais.
+- Imutabilidade: triggers SQLite `<tabela>_no_update` e `<tabela>_no_delete` com `RAISE(ABORT, ...)` em `product_facts`, `content_piece` e `review_event`, criados junto com as tabelas; equivalente em Postgres comentado em `db/session.py`. Chaves estrangeiras ligadas (`PRAGMA foreign_keys=ON`).
+- Regras de negócio da ficha (garantia ≥ 7 dias, `prazo` exige meses) **não** viram `CHECK` no banco: ficam na validação da T05, que devolve `FICHA_INVALIDA` com a explicação.
+- `get_current_facts(session, product_id, at=None)` fica em `db/models.py` (consulta, não regra de negócio): maior `valid_from ≤ at`; empate fica com a maior versão; sem versão vigente, `None`.
+- `db-reset`: `python -m promessa.db.session --reset` apaga o arquivo de `PROMESSA_DB_URL` e recria tabelas e triggers; recusa banco que não seja SQLite em arquivo.
+**Consequência:** `refund_classification` permite mais de uma linha por devolução (sem `UNIQUE` em `refund_id`); a T10 decide se reclassificação atualiza ou cria linha. Invariantes 2 a 5 da seção 8.3 dependem dos serviços e são testadas nas tasks deles (T09, T11, T13).

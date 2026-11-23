@@ -18,7 +18,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-DB_PATH = ROOT / "var" / "promessa.db"
 
 
 def _env() -> dict[str, str]:
@@ -72,12 +71,8 @@ def test_llm() -> int:
 
 
 def db_reset() -> int:
-    # Por enquanto só recria o arquivo vazio; as tabelas entram na T02.
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    DB_PATH.unlink(missing_ok=True)
-    DB_PATH.touch()
-    print(f"banco recriado: {DB_PATH.relative_to(ROOT).as_posix()}")
-    return 0
+    # Apaga e recria o banco de PROMESSA_DB_URL com tabelas e triggers (T02).
+    return py("promessa.db.session", "--reset")
 
 
 def mcp() -> int:
