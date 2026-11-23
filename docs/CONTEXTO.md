@@ -222,13 +222,17 @@ desafio-youshop/                  # repositório; projeto Python `promessa-rastr
 │   ├── rules/
 │   │   ├── schema.py             # modelos Pydantic dos YAML
 │   │   ├── loader.py             # carrega e valida; `python -m promessa.rules.loader --check`
-│   │   └── normalize.py          # normalização que preserva posições (seção 11.2)
+│   │   ├── normalize.py          # normalização que preserva posições (seção 11.2)
+│   │   └── match.py              # casamento de termos e padrões (sintaxe da D20)
 │   ├── llm/
 │   │   ├── client.py             # complete_json(): Gemini com saída estruturada (response_schema), retry, cache, log
 │   │   ├── cache.py
 │   │   └── prompts/              # checker_v1.md, classifier_v1.md, linker_v1.md, explainer_v1.md
-│   ├── facts/service.py          # ficha: criar versão, ler vigente, briefing, materializar regras
+│   ├── facts/
+│   │   ├── service.py            # ficha: criar versão, ler vigente, briefing, materializar regras
+│   │   └── seed.py               # carga de data/seeds/ (usada por scripts/seed.py e testes)
 │   ├── checker/
+│   │   ├── models.py             # CheckContext, Finding, resultado (D23)
 │   │   ├── segment.py            # divide em trechos com offsets
 │   │   ├── deterministic.py      # camada 1: listas e padrões
 │   │   ├── offer_conditions.py   # camada 1: condições anunciadas × ficha

@@ -79,6 +79,8 @@ class ListRule(_Strict):
     junto_de: list[str] = Field(default_factory=list)  # exige um destes termos no mesmo trecho
     explicacao: NonEmpty
     sugestao: NonEmpty
+    # Promessa verificável extraída do trecho (vira registered_promise do tipo resultado, T09)
+    extrai: Literal["resultado"] | None = None
     rule_key_vencida: RuleKey | None = None  # só URGENCIA: variante quando a peça é antiga
     explicacao_vencida: str | None = None
 

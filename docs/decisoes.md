@@ -175,3 +175,18 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Sessão:** `db.session.session_scope()` (commit/rollback) sobre um engine padrão de `PROMESSA_DB_URL`, trocável por `set_default_engine` nos testes. O servidor cria as tabelas na primeira chamada.
 - **Seeds:** 5 marcas, produtos e creators com nomes inventados; ficha v1 vale desde 01/10/2026 (antes do período simulado). `promessa.facts.seed.load_seed` é idempotente.
 **Consequência:** a T06 aplica as `claim_rule` da versão a partir do `payload`, com `promessa.rules.match.find_hits` (mesma sintaxe de termo da D20).
+
+## D23 · Checador camada 1: escolhas da T06 · 23/11/2026
+**Contexto:** a T06 é marcada [plan]. O Lucas pediu a implementação direta; o plano foi apresentado no início da sessão e seguido.
+**Decisão:**
+- **Contexto da checagem:** `checker.service.build_context` lê a versão da ficha e as `claim_rule` (com `payload`) e monta um `CheckContext` (`checker/models.py`). `run_layer1(text, ctx, published_since, now)` não toca banco nem modelo.
+- **Ordem por trecho:** (1) alegações permitidas da versão que aparecem literalmente viram `registrar` (`alegacao_permitida`) e protegem o trecho (D18); (2) `claim_rule` proibidas, descartando casamentos inteiros dentro de um trecho protegido (com log); (3) condições da oferta × ficha; (4) padrões da H2 (lidos do YAML, não materializados; D22).
+- **Escopo do achado:** um achado por regra e trecho, com `excerpt` do primeiro ao último casamento. Nas condições, casamentos da mesma regra com o mesmo valor viram um achado ("sem mensalidade, você paga uma vez só" → um `COND-RECORRENCIA`); valores diferentes geram achados separados.
+- **`reason_type`:** `alegacao_proibida` (lista, bloquear), `zona_cinzenta` (lista, revisar), `regra_da_marca`, `alegacao_permitida`, `condicao_contraria_a_ficha`, `condicao_igual_a_ficha`, e o `rule_key` em minúsculas para os padrões da H2 (`med_comparacao`, `prazo_resultado`, `urgencia_vencida`...).
+- **`extracted`:** `{type, attribute, value, unit}`. `type` (`condicao_oferta`, `resultado`, `alegacao`) foi acrescentado para a T09 criar a `registered_promise` sem adivinhar. Acesso em anos vira meses; garantia em dias; bônus leva o nome do bônus da ficha quando citado.
+- **Extração de resultado:** o campo novo `extrai: resultado` no `padroes_h2.yaml` marca `PRAZO-RESULTADO` e `RENDA-NUMERO`. O trecho inclui o verbo ou a palavra de renda (`junto_de`); "Secar até 5KG EM 7 DIAS" → `"5 kg em 7 dias"`; "RENDA EXTRA de 10K" → `"renda extra de 10k"`.
+- **Comparações:** acesso "N meses" diferente da ficha bloqueia mesmo quando promete menos (regra literal do CONTEXTO 11.2); "sem gastar nada" só gera achado quando a ficha tem custo extra (sem custo, não há o que registrar).
+- **Explicações e sugestões:** modelo de texto a partir do YAML e da ficha ("A ficha deste produto diz acesso por 12 meses. …"; `Troque por "12 meses de acesso".`). A T07 pode melhorar o texto com o modelo, sem mudar a saída.
+- **Identificação publicitária:** a lista curta (`#publi`, `publi`, `publicidade`, `parceria paga`, `#ad`) ficou no código de `checker/service.py`: não é termo proibido nem regra com fonte. Não muda o `overall` (D5).
+- **Nome do produto no texto da peça (11.2, item 6):** coberto pelas próprias listas; não há verificação separada.
+**Consequência:** `check_content` (T07) chama `build_context` + `run_layer1`, persiste e funde com a camada 2.

@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 20:05):
+**Andamento** (atualizado em 23/11, 20:10):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -53,10 +53,11 @@
 | T03 Regras como dados | ✅ Concluída | 7 YAML validados pelo `promessa.rules.loader --check`; `tests/test_rules.py` com 44 testes (D20). |
 | T04 Gabaritos | ✅ Concluída | 17 conferências OK; 60 anúncios e 172 compradores anonimizados; splits 20/40 e 40/132; amostra cega de 20+20 (D21). |
 | T05 Ficha de promessas | ✅ Concluída | Seeds, `facts/service.py`, ferramentas `get_product_facts` e `upsert_product_facts`; 27 testes (D22). |
-| T06 Checador camada 1 **[plan]** | **Próxima** | — |
-| T07–T16 | Não iniciadas | — |
+| T06 Checador camada 1 **[plan]** | ✅ Concluída | Os 15 casos da tabela passam; 31 testes; < 50 ms por peça (D23). Plano apresentado no início da sessão, sem aprovação prévia (pedido direto do Lucas). |
+| T07 Cliente do modelo + camada 2 **[plan]** | **Próxima** | — |
+| T08–T16 | Não iniciadas | — |
 
-Atraso de cerca de 35 min em relação ao cronograma abaixo (a T06 estava prevista para 19:30).
+Adiantado cerca de 1h em relação ao cronograma abaixo (a T07 estava prevista para 21:15).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -327,11 +328,13 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 | "Ganhe o e-book de receitas de bônus" | `prod_treino` | `registrar` `COND-BONUS` |
 | "Treino de 20 minutos para fazer em casa" | `prod_treino` | nenhum achado; `overall = limpo` |
 
-- [ ] Todos os casos acima passam.
-- [ ] Todo `bloquear` tem `rule_key` que existe em `claim_rule` da versão ou é `COND-*`.
-- [ ] `span` de cada achado recorta exatamente o `excerpt` no texto original.
-- [ ] `disclosure.present = false` para os textos acima e `true` para "... #publi".
-- [ ] A camada 1 roda em menos de 50 ms por peça (teste com `time.perf_counter`).
+- [x] Todos os casos acima passam. *(`tests/test_checker_deterministic.py`, 15 casos parametrizados.)*
+- [x] Todo `bloquear` tem `rule_key` que existe em `claim_rule` da versão ou é `COND-*`.
+- [x] `span` de cada achado recorta exatamente o `excerpt` no texto original.
+- [x] `disclosure.present = false` para os textos acima e `true` para "... #publi". *(e o `overall` não muda com o #publi, D5.)*
+- [x] A camada 1 roda em menos de 50 ms por peça (teste com `time.perf_counter`). *(inclusive numa peça com os 15 casos juntos.)*
+
+**Status:** ✅ concluída em 23/11 (20:10).
 
 **Não fazer:** chamar modelo; gravar no banco.
 

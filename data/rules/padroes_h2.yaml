@@ -1,7 +1,7 @@
 # Indícios da auditoria H2 (seções 4.4 e 4.7). Saída: revisar (indício sem certeza).
 # `padroes`: regex sobre o texto normalizado (minúsculas, sem acento, grafia disfarçada desfeita).
 # `termos` e `junto_de`: palavra ou frase inteira; `*` no fim = prefixo. `junto_de` exige um desses
-# termos no mesmo trecho.
+# termos no mesmo trecho. `extrai: resultado` = o trecho vira promessa verificável ("5 kg em 7 dias").
 id: padroes_h2
 versao: "2026-11-23"
 categoria: todas
@@ -13,6 +13,7 @@ regras:
   - rule_key: PRAZO-RESULTADO
     tema: prazo ou número junto de resultado
     saida: revisar
+    extrai: resultado
     padroes:
       - '\b\d+(?:[.,]\d+)?\s*(?:kg|kgs|kilos?|quilos?|medidas|dias|semanas)\b'
     junto_de: ["secar", "seca", "seque", "perder", "perca", "perde", "emagrec*", "elimin*",
@@ -23,6 +24,7 @@ regras:
   - rule_key: RENDA-NUMERO
     tema: renda com número
     saida: revisar
+    extrai: resultado
     padroes:
       - '\b\d+(?:[.,]\d+)?\s*(?:k|mil)\b'
       - 'r\$\s*\d'
