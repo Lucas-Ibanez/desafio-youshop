@@ -20,5 +20,9 @@ var/*
 data/raw/*
 !data/raw/.gitkeep
 
+# Fontes com nomes reais de anunciantes e pessoas (D13)
+docs/fontes/*
+!docs/fontes/README.md
+
 # Saídas de erro da avaliação
 eval/reports/*.csv

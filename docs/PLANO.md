@@ -23,6 +23,8 @@
 
 ## 2. Como usar este plano com o Claude Code
 
+> Nos documentos, `make <x>` significa `uv run python tasks.py <x>`; `make a b c` significa `uv run python tasks.py a b c`.
+
 1. Crie o repositório na T01 e copie `CONTEXTO.md` e `PLANO.md` para `docs/`. O `CLAUDE.md` da raiz segue o modelo da seção 17.3 do CONTEXTO.
 2. **Uma task por sessão de trabalho.** Use este prompt, trocando o número:
 
@@ -553,7 +555,7 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
    3. `check_content` corrigido → 2 × `registrar`; `register_content_and_link` → link;
    4. venda simulada + `classify_refund("perdi o acesso, achei que era para sempre")` → `contradiz`, não pesa no creator;
    5. `get_promise_outcome_report(product_id="prod_treino")` → sinal "vitalício" para a marca.
-2. Registrar o servidor no Claude Code (algo como `claude mcp add promessa -- uv run promessa-mcp`; confira a sintaxe com `claude mcp --help`) e documentar no README, com 3 pedidos de exemplo para uma conversa:
+2. Registrar o servidor no Claude Code (algo como `claude mcp add promessa -- uv run --directory <caminho absoluto do repo> python -m promessa.mcp_server`; confira a sintaxe com `claude mcp --help`) e documentar no README, com 3 pedidos de exemplo para uma conversa:
    - "Confira esta legenda para o produto prod_magnesio: ...";
    - "Por que as vendas da cr_ana estão voltando neste mês?";
    - "Quais promessas sobre o prod_treino mais geram devolução?".

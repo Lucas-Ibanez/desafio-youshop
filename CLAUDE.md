@@ -10,5 +10,7 @@ Regras de trabalho
 - Ficha, peça e review_event são imutáveis. Mudança = nova versão.
 - Textos para usuário: português do Brasil, simples. Código: inglês.
 - Ambiguidade: escolha a opção mais simples e registre em docs/decisoes.md.
+- Sempre abra arquivos com encoding='utf-8' (leitura e escrita, inclusive CSV e YAML).
+- Nunca chame executáveis do .venv; use `python -m <módulo>`.
 
-Comandos: make test | make test-llm | make lint | make seed | make simulate | make eval | make demo | make painel | make mcp
+Comandos: uv run python tasks.py <tarefa> (test | test-llm | lint | seed | simulate | eval | demo | painel | mcp). Nos documentos, `make <x>` = `uv run python tasks.py <x>`.

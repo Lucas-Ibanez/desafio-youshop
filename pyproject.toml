@@ -29,6 +29,7 @@ packages = ["src/promessa"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = '-m "not llm"'
 markers = [
     "llm: chama a API do Claude",

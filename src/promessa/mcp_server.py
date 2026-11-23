@@ -1,6 +1,7 @@
 """Servidor MCP do Promessa Rastreável (transporte stdio).
 
-SDK `mcp` 2.x: a classe `FastMCP` do CONTEXTO virou `MCPServer` (ver docs/decisoes.md, D8).
+Rodar: `uv run python -m promessa.mcp_server` (decisão D10).
+SDK `mcp` 2.x: classe `MCPServer` (decisão D8).
 """
 
 from mcp.server.mcpserver import MCPServer

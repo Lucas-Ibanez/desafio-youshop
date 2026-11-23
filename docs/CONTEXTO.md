@@ -159,7 +159,7 @@ DEPOIS DA VENDA
 |---|---|---|
 | Linguagem | Python 3.12 | Sugerida no guia; SDK oficial de MCP e da Anthropic. |
 | Ambiente e dependências | `uv` (+ `uv.lock`) | Instala e roda rápido; um comando para tudo. |
-| Servidor MCP | SDK oficial `mcp` (classe `FastMCP` em `mcp.server.fastmcp`), transporte stdio | Padrão para Claude Code/Desktop; mesmo servidor serve agentes externos na fase 2. |
+| Servidor MCP | SDK oficial `mcp` 2.x (classe `MCPServer` em `mcp.server.mcpserver`), transporte stdio; cliente `mcp.Client` (em memória nos testes ou stdio) | Padrão para Claude Code/Desktop; mesmo servidor serve agentes externos na fase 2. |
 | Modelo de linguagem | SDK `anthropic`, saída estruturada via *tool use* forçado (`tool_choice`), temperatura 0 | JSON validável com Pydantic; reprodutível. |
 | Modelos (configuráveis) | Checador: `claude-sonnet-5-5`; classificador e explicação: `claude-haiku-5-5` | Checador lida com nuance (grafia, comparação implícita); classificador é volume. Trocar por variável de ambiente; escolha final pelo split de desenvolvimento. |
 | Banco | SQLite (arquivo `var/promessa.db`) via SQLAlchemy 2.x | Protótipo sem servidor; troca para Postgres por URL. |
@@ -579,20 +579,24 @@ Também reportar: matriz de confusão; precisão e recall de `promessa_explicita
 | `URGENCY_STALE_DAYS` | `7` | Urgência vencida |
 | `LINK_BASE_URL` | `https://youshop.example/l/` | Link fictício |
 
-### 17.2 `Makefile`
+### 17.2 `tasks.py`
 
-| Alvo | Faz |
+Uso: `uv run python tasks.py <tarefa> [<tarefa> ...]` (em sequência; para na primeira falha). Sem argumentos, `help`.
+
+Nos documentos, `make <x>` significa `uv run python tasks.py <x>`; `make a b c` significa `uv run python tasks.py a b c`.
+
+| Tarefa | Faz |
 |---|---|
-| `make setup` | `uv sync` |
-| `make lint` / `make test` / `make test-llm` | ruff; pytest sem modelo; pytest com marcador `llm` |
-| `make db-reset` | apaga e recria `var/promessa.db` |
-| `make gold` | `scripts/import_gold.py` |
-| `make seed` | `scripts/seed.py` (marcas, produtos, fichas v1, creators) |
-| `make simulate` | `scripts/simulate.py` (peças, links, vendas, devoluções) |
-| `make eval-checador` / `make eval-classificador` / `make eval` | Teste 1 |
-| `make mcp` | sobe o servidor MCP em stdio |
-| `make demo` | `scripts/demo_e2e.py` |
-| `make painel` | `streamlit run app/painel.py` |
+| `setup` | `uv sync` |
+| `lint` / `format` / `test` / `test-llm` | ruff (check e format); pytest sem modelo; pytest com marcador `llm` |
+| `db-reset` | apaga e recria `var/promessa.db` |
+| `gold` | `scripts/import_gold.py` |
+| `seed` | `scripts/seed.py` (marcas, produtos, fichas v1, creators) |
+| `simulate` | `scripts/simulate.py` (peças, links, vendas, devoluções) |
+| `eval-checador` / `eval-classificador` / `eval` | Teste 1 |
+| `mcp` | sobe o servidor MCP em stdio (`python -m promessa.mcp_server`) |
+| `demo` | `scripts/demo_e2e.py` |
+| `painel` | `python -m streamlit run app/painel.py` |
 
 ### 17.3 Modelo de `CLAUDE.md` (raiz do repositório)
 
@@ -609,8 +613,10 @@ Regras de trabalho
 - Ficha, peça e review_event são imutáveis. Mudança = nova versão.
 - Textos para usuário: português do Brasil, simples. Código: inglês.
 - Ambiguidade: escolha a opção mais simples e registre em docs/decisoes.md.
+- Sempre abra arquivos com encoding='utf-8' (leitura e escrita, inclusive CSV e YAML).
+- Nunca chame executáveis do .venv; use `python -m <módulo>`.
 
-Comandos: make test | make test-llm | make lint | make seed | make simulate | make eval | make demo | make painel | make mcp
+Comandos: uv run python tasks.py <tarefa> (test | test-llm | lint | seed | simulate | eval | demo | painel | mcp). Nos documentos, `make <x>` = `uv run python tasks.py <x>`.
 ```
 
 ---
