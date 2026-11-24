@@ -1,5 +1,5 @@
 {
- "data": "23/11/2026 22:56",
+ "data": "24/11/2026 07:59",
  "rodada": {
   "versao": "v2",
   "mudancas": "mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora"
@@ -2006,7 +2006,7 @@
   {
    "versao": "v2",
    "mudancas": "mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora",
-   "data": "23/11/2026 22:56",
+   "data": "24/11/2026 07:59",
    "fingerprint": {
     "data/rules/condicoes_oferta.yaml": "29a0d89b6f8e",
     "data/rules/cosmetico_proibidas.yaml": "5c229258a112",

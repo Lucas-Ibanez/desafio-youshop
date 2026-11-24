@@ -1,6 +1,6 @@
 # Teste 1 do classificador (H1, 172 compradores)
 
-- **Data:** 24/11/2026 07:32
+- **Data:** 24/11/2026 07:59
 - **Rodada:** v2 (mudou: prompt classifier_v1, prompt classifier_v2. esquema de saída: cause restrita às causas da taxonomia (enum gerado do YAML); prompt classifier_v2 com a mesma instrução reforçando o nome exato da causa)
 - **Prompt:** `classifier_v2` · **Modelo:** `gemini-3.5-flash-lite`
 - **Exemplos no prompt (só do split dev):** H10, H08, P18, M10, T02, E09, P49, E08
@@ -68,4 +68,4 @@ Detalhe por reclamação em `eval/reports/erros_classificador.csv` (fora do git)
 | rodada | data | o que mudou | acurácia test | kappa test |
 |---|---|---|---|---|
 | v1 | 23/11/2026 22:56 | primeira rodada | 81% | 0.74 |
-| v2 | 24/11/2026 07:32 | mudou: prompt classifier_v1, prompt classifier_v2. esquema de saída: cause restrita às causas da taxonomia (enum gerado do YAML); prompt classifier_v2 com a mesma instrução reforçando o nome exato da causa | 83% | 0.77 |
+| v2 | 24/11/2026 07:59 | mudou: prompt classifier_v1, prompt classifier_v2. esquema de saída: cause restrita às causas da taxonomia (enum gerado do YAML); prompt classifier_v2 com a mesma instrução reforçando o nome exato da causa | 83% | 0.77 |

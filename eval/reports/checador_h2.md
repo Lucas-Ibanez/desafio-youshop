@@ -1,6 +1,6 @@
 # Teste 1 do checador (H2, 60 anúncios)
 
-- **Data:** 23/11/2026 22:56
+- **Data:** 24/11/2026 07:59
 - **Rodada:** v2 (mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora)
 - **Regras:** normalizacao.yaml@2026-11-23, suplemento_proibidas.yaml@2026-11-23.2, suplemento_in28_permitidas.yaml@2026-11-23, cosmetico_proibidas.yaml@2026-11-23, padroes_h2.yaml@2026-11-23, condicoes_oferta.yaml@2026-11-23, taxonomia_devolucao.yaml@2026-11-23
 - **Prompt:** `checker_v1` · **Modelo:** `gemini-3.5-flash-lite`
@@ -87,4 +87,4 @@ Detalhe por peça em `eval/reports/erros_checador.csv` (fora do git). Resumo (to
 | rodada | data | o que mudou | kappa test (regras) | kappa test (regras+modelo) |
 |---|---|---|---|---|
 | v1 | 23/11/2026 21:35 | primeira rodada | 0.37 | 0.32 |
-| v2 | 23/11/2026 22:56 | mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora | 0.37 | 0.32 |
+| v2 | 24/11/2026 07:59 | mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora | 0.37 | 0.32 |

@@ -12,6 +12,46 @@ ganha um novo registro que cita a anterior; registros antigos não são apagados
 
 As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 
+## Índice
+
+- **D1** · A ficha é a fonte das condições do checkout · 23/11/2026
+- **D2** · `revisar` não impede o link · 23/11/2026
+- **D3** · Painel chama serviços direto; demo e Claude Code usam MCP · 23/11/2026
+- **D4** · Regras oficiais copiadas para `claim_rule` em cada versão da ficha · 23/11/2026
+- **D5** · Identificação publicitária fora do `overall` · 23/11/2026
+- **D6** · `bloquear` só com `rule_key` de lista ou ficha · 23/11/2026
+- **D7** · Vendas e devoluções simuladas; avaliação com dados reais · 23/11/2026
+- **D8** · SDK `mcp` 2.x: `FastMCP` virou `MCPServer` · 23/11/2026
+- **D9** · `make` ausente na máquina de desenvolvimento (Windows) · 23/11/2026 · substituída pela D11
+- **D10** · Launcher `promessa-mcp.exe` bloqueado pelo Windows · 23/11/2026
+- **D11** · `tasks.py` no lugar do `Makefile` · 23/11/2026
+- **D12** · `.gitattributes` e UTF-8 em todo lugar · 23/11/2026
+- **D13** · `docs/fontes/` fora do git · 23/11/2026
+- **D14** · Modelo de linguagem: Gemini no lugar da API do Claude · 23/11/2026
+- **D15** · Árvore da seção 7 do CONTEXTO alinhada ao repositório · 23/11/2026
+- **D16** · Padrões do MVP confirmados pelo Lucas · 23/11/2026
+- **D17** · Alegações da IN 28 para magnésio e vitamina B6 · 23/11/2026
+- **D18** · Alegação permitida literal prevalece sobre termo proibido · 23/11/2026
+- **D19** · Modelo de dados: escolhas da T02 · 23/11/2026
+- **D20** · Regras como dados: escolhas da T03 · 23/11/2026
+- **D21** · Gabaritos: escolhas da T04 · 23/11/2026
+- **D22** · Ficha de promessas: escolhas da T05 · 23/11/2026
+- **D23** · Checador camada 1: escolhas da T06 · 23/11/2026
+- **D24** · Cliente do modelo, camada 2 e `check_content`: escolhas da T07 · 23/11/2026
+- **D25** · Checador passa a usar `gemini-3.5-flash-lite` · 23/11/2026
+- **D26** · Teste 1 do checador: escolhas e resultado da v1 · 23/11/2026
+- **D27** · Checkpoint 1: conferência manual e rodada v2 do checador · 23/11/2026
+- **D28** · Link rastreado e revisão humana: escolhas da T09 · 23/11/2026
+- **D29** · Classificador de devolução: escolhas da T10 · 23/11/2026
+- **D30** · Ligação com a promessa registrada: escolhas da T11 · 23/11/2026
+- **D31** · Teste 1 do classificador: escolhas e resultado da v1 · 23/11/2026
+- **D32** · Classificador v2: causa restrita à taxonomia; rodada pendente por cota · 23/11/2026
+- **D33** · Simulador, relatórios e explicação: escolhas da T13 · 23/11/2026
+- **D34** · Rodadas depois da cota: classificador v2 e simulação real · 24/11/2026
+- **D35** · Painel: escolhas da T14 · 24/11/2026
+- **D36** · Demo via MCP e conexão no Claude Code: escolhas da T15 · 24/11/2026
+- **D37** · Fechamento do MVP: escolhas da T16 · 24/11/2026
+
 ---
 
 ## D1 · A ficha é a fonte das condições do checkout · 23/11/2026
@@ -96,6 +136,7 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Contexto:** item 6 da T00 pedia confirmar os padrões da seção 18.2 do CONTEXTO. (Pedido feito como "D12"; esse número já era da decisão sobre `.gitattributes`, por isso o registro é D16.)
 **Decisão:** `MIN_SALES_FOR_INDICATOR=30`; limiar de confiança alta `CONFIDENCE_THRESHOLD=0.8`; modelos conforme o `.env` atual (D14): `CHECKER_MODEL=gemini-3.6-flash`, `CLASSIFIER_MODEL=gemini-3.5-flash-lite`, `EXPLAINER_MODEL=gemini-3.5-flash-lite`.
 **Consequência:** `.env.example` e `config.py` já tinham esses valores. Na seção 18.2 do CONTEXTO, as linhas de 30 vendas e 0,8 ganharam "confirmado (D16)" e a linha de modelos passou a nomear os modelos do `.env`. O split `dev` ainda pode trocar um modelo, com novo registro.
+**Atualização (23/11/2026):** o modelo do checador mudou para `gemini-3.5-flash-lite` (D25); 30 vendas e limiar 0,8 continuam.
 
 ## D17 · Alegações da IN 28 para magnésio e vitamina B6 · 23/11/2026
 **Contexto:** item 5 da T00. O Lucas colocou `data/rules/suplemento_in28_permitidas.yaml` com o texto do Anexo V da IN 28/2018 na versão compilada, que cita alterações até a IN 284/2024. (Pedido feito como "D13"; esse número já era da decisão sobre `docs/fontes`, por isso o registro é D17.)
@@ -339,3 +380,12 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Claude Code:** `claude mcp add promessa -- uv run --directory <repo> python -m promessa.mcp_server` no escopo local (privado nesta máquina; `~/.claude.json`). O servidor usa `var/promessa.db` (rodar `db-reset seed simulate` antes). Os 3 pedidos do PLANO rodaram com `claude -p` (modo não interativo), com permissão só para as ferramentas `mcp__promessa`; respostas resumidas no README. O pedido 1 grava a legenda como peça no banco (é o que o `check_content` faz).
 **Resultado:** demo em ~5 s com cache (9 verificações ok); `claude mcp list` → `promessa: ... ✔ Connected`; os 3 pedidos responderam com o esperado (bloqueio das alegações e a frase literal da IN 28; trecho "Secar até 5KG EM 7 DIAS" e o que não é com a cr_ana; promessas do prod_treino separando creator e marca).
 **Consequência:** todas as tarefas do `tasks.py` estão implementadas; falta o fechamento (T16).
+
+## D37 · Fechamento do MVP: escolhas da T16 · 24/11/2026
+**Contexto:** a T16 fecha o MVP para outra pessoa rodar e para a apresentação de 5 minutos.
+**Decisão:**
+- `docs/resultados.md` com todas as metas (✅/❌), os dois agentes por split, vazamentos, a recodificação cega não feita, a leitura e os próximos passos.
+- README final: o que é, requisitos, instalação, passo a passo, demo, painel, Claude Code com os 3 pedidos, resultados, limites do MVP e notas para Windows.
+- Este arquivo ganhou um índice no topo. Decisões revistas não foram apagadas: as que mudaram têm "substituída" ou "atualização" no próprio registro (ex.: D9 → D11, D16 → D25, D17 → D18).
+- Verificação do clone limpo: `git clone` + `.env` + `tasks.py setup db-reset seed simulate demo` num diretório temporário, com o simulador no modo `modelo` (sem cache, chamando o Gemini).
+- Tag `v0.1-mvp` local (sem push). O ensaio cronometrado da demo é do Lucas (roteiro na seção 6 do PLANO).

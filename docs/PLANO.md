@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 24/11, 07:50):
+**Andamento** (atualizado em 24/11, 08:10):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -65,7 +65,8 @@
 | T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída | Conferida no modo gabarito e com o classificador real: as personas batem nos dois (D33, D34). |
 | T14 Painel | ✅ Concluída | 5 páginas + início, só serviços; exemplo do guia pela interface; 30 testes com o AppTest do Streamlit (D35). |
 | T15 Demo via MCP + Claude Code | ✅ Concluída | `tasks.py demo` em ~5 s com 9 verificações; servidor registrado no Claude Code (✔ Connected); os 3 pedidos funcionaram numa conversa (D36). |
-| T16 Fechamento | **Próxima** | — |
+| T16 Fechamento | ✅ Concluída (falta o ensaio do Lucas) | Clone limpo rodou `setup db-reset seed simulate demo`; `docs/resultados.md`; README final; `lint test` e `eval` limpos; tag `v0.1-mvp` (D37). |
+| **Checkpoint 3** | **Lucas** | Ensaiar a demo (seção 6) duas vezes, uma do zero, cronometrando (≤ 5 min). |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -640,9 +641,11 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 5. Ensaiar a demo (seção 6) duas vezes, uma delas do zero (`make db-reset seed simulate`).
 
 **Critérios de aceite:**
-- [ ] Um clone limpo + `.env` + `make setup db-reset seed simulate demo` funciona.
-- [ ] `docs/resultados.md` mostra todos os números sem esconder metas não atingidas.
-- [ ] Ensaio cronometrado ≤ 5 minutos.
+- [x] Um clone limpo + `.env` + `make setup db-reset seed simulate demo` funciona. *(clone em diretório temporário, sem cache: 600 vendas, 76 devoluções classificadas pelo Gemini, personas iguais, "Demo concluída" com 9 verificações; 550 s no total, quase tudo da simulação na cota de 15 chamadas/min.)*
+- [x] `docs/resultados.md` mostra todos os números sem esconder metas não atingidas. *(kappa e extração do checador ❌; classificador ✅; recodificação cega declarada como não feita.)*
+- [ ] Ensaio cronometrado ≤ 5 minutos. *(com o Lucas; roteiro na seção 6. Antes do ensaio do zero: `uv run python tasks.py db-reset seed simulate`, cerca de 1 min com cache; durante: `tasks.py painel` em uma janela e `tasks.py demo` em outra.)*
+
+**Status:** ✅ concluída em 24/11 (08:10), exceto o ensaio cronometrado, que é do Lucas.
 
 ---
 

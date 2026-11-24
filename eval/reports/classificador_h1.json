@@ -1,5 +1,5 @@
 {
- "data": "24/11/2026 07:32",
+ "data": "24/11/2026 07:59",
  "rodada": {
   "versao": "v2",
   "mudancas": "mudou: prompt classifier_v1, prompt classifier_v2. esquema de saída: cause restrita às causas da taxonomia (enum gerado do YAML); prompt classifier_v2 com a mesma instrução reforçando o nome exato da causa"
@@ -1949,7 +1949,7 @@
   {
    "versao": "v2",
    "mudancas": "mudou: prompt classifier_v1, prompt classifier_v2. esquema de saída: cause restrita às causas da taxonomia (enum gerado do YAML); prompt classifier_v2 com a mesma instrução reforçando o nome exato da causa",
-   "data": "24/11/2026 07:32",
+   "data": "24/11/2026 07:59",
    "fingerprint": {
     "data/rules/taxonomia_devolucao.yaml": "637836235ab1",
     "prompt classifier_v2": "172c7546469f",
