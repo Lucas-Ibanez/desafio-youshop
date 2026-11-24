@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import random
 import re
@@ -23,6 +22,11 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
+from common import next_run, sha
+from common import num as _num
+from common import ok as _ok
+from common import pct as _pct
+from common import rel as _rel
 from metrics import cohen_kappa, confusion, precision_recall, wilson
 
 from promessa.checker.llm_layer import PROMPT, run_layer2
@@ -155,28 +159,11 @@ def split_rows(rows: list[dict], splits: dict) -> dict[str, list[dict]]:
 # --- Versão da rodada --------------------------------------------------------------------
 
 
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
-
-
 def fingerprint(model: str | None) -> dict[str, str]:
-    fp = {f"data/rules/{p.name}": _sha(p) for p in sorted(RULES_DIR.glob("*.yaml"))}
-    fp[f"prompt {PROMPT}"] = _sha(PROMPTS_DIR / f"{PROMPT}.md")
+    fp = {f"data/rules/{p.name}": sha(p) for p in sorted(RULES_DIR.glob("*.yaml"))}
+    fp[f"prompt {PROMPT}"] = sha(PROMPTS_DIR / f"{PROMPT}.md")
     fp["modelo"] = model or "(sem modelo)"
     return fp
-
-
-def next_run(history: list[dict], fp: dict[str, str], note: str | None) -> dict:
-    if not history:
-        return {"versao": "v1", "mudancas": note or "primeira rodada"}
-    last = history[-1]
-    if last["fingerprint"] == fp:
-        return {"versao": last["versao"], "mudancas": last["mudancas"]}
-    changed = sorted(
-        k for k in fp.keys() | last["fingerprint"].keys() if fp.get(k) != last["fingerprint"].get(k)
-    )
-    text = "mudou: " + ", ".join(changed) + (f". {note}" if note else "")
-    return {"versao": f"v{int(last['versao'][1:]) + 1}", "mudancas": text}
 
 
 # --- Conferência manual ------------------------------------------------------------------
@@ -233,25 +220,6 @@ def manual_sample(
 
 
 # --- Relatório ---------------------------------------------------------------------------
-
-
-def _rel(path: Path) -> str:
-    try:
-        return path.relative_to(ROOT).as_posix()
-    except ValueError:
-        return str(path)
-
-
-def _pct(v: float | None) -> str:
-    return "—" if v is None else f"{v:.0%}"
-
-
-def _num(v: float | None) -> str:
-    return "—" if v is None else f"{v:.2f}"
-
-
-def _ok(value: float | None, goal: float) -> str:
-    return "—" if value is None else ("✅" if value >= goal - 1e-9 else "❌")
 
 
 def render_md(report: dict, rows: list[dict], splits: dict, preds_by_cfg, sample, marks) -> str:

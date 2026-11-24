@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 22:35):
+**Andamento** (atualizado em 23/11, 23:00):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -60,8 +60,10 @@
 | T09 Promessa registrada e link | ✅ Concluída | `register_content_and_link`, `list_review_queue`, `submit_review` via MCP; 22 testes (D28). |
 | T10 Classificador de devolução **[plan]** | ✅ Concluída | `classify_refund` via MCP; 31 testes sem rede + 7 `llm` (passam ao vivo e com cache) (D29). |
 | T11 Ligação com a promessa | ✅ Concluída | `classify_refund` preenche `relation` e `linked_promise_id`; 12 de 12 cenários com modelo; 29 testes sem rede (D30). |
-| T12 Teste 1 do classificador | **Próxima** | — |
-| T13–T16 | Não iniciadas | — |
+| T12 Teste 1 do classificador | ✅ Concluída (1 critério ❌) | Rodada v1 em `eval/reports/classificador_h1.md`: test acurácia 81%, kappa 0,74, subtipo 74% (metas ✅); corte: sim. Rodada fria de 14,5 min (meta 10 ❌, cota do Gemini) (D31). |
+| **Checkpoint 2** | **Lucas** | Fluxo completo pelos serviços + dois relatórios; decidir modelo final (ver T12). |
+| T13 Simulador, relatórios e explicação **[plan]** | **Próxima** | — |
+| T14–T16 | Não iniciadas | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -519,10 +521,12 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 4. Grava `eval/reports/classificador_h1.md`, `.json`, `erros_classificador.csv`.
 
 **Critérios de aceite:**
-- [ ] `make eval-classificador` roda em menos de 10 minutos e em segundos com cache.
-- [ ] Relatório com metas ✅/❌, matriz de confusão legível e a seção de vazamentos.
-- [ ] O relatório aplica o **critério de corte** do guia em texto: "o classificador separa promessa de acesso e processo com acerto aceitável? sim/não", com os números.
-- [ ] `make eval` roda T08 e T12 juntos.
+- [ ] `make eval-classificador` roda em menos de 10 minutos e em segundos com cache. *(❌ sem cache: 872 s, limitado pela cota gratuita de 15 chamadas/min e por 503 em pico de demanda; ✅ com cache: 13 s. D31.)*
+- [x] Relatório com metas ✅/❌, matriz de confusão legível e a seção de vazamentos.
+- [x] O relatório aplica o **critério de corte** do guia em texto: "o classificador separa promessa de acesso e processo com acerto aceitável? sim/não", com os números. *(SIM: 83% e kappa 0,76 nas 121 reclamações do `test` de promessa, acesso ou processo.)*
+- [x] `make eval` roda T08 e T12 juntos.
+
+**Status:** ✅ concluída em 23/11 (23:00), com o critério de tempo sem cache não atingido (D31).
 
 **→ Checkpoint 2 (Lucas):** fluxo completo pelos serviços + dois relatórios de avaliação. Decidir o modelo final de cada agente pelo split `dev` e registrar em `docs/decisoes.md`.
 

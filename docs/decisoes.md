@@ -269,3 +269,18 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Cenários:** `data/seeds/cenarios_relacao.yaml`, 12 casos (9 determinísticos, 3 de resultado), com a classificação esperada para testar a ligação sem modelo.
 **Resultado:** 12 de 12 cenários com o classificador e o linker de verdade (`gemini-3.5-flash-lite`); 9 de 9 determinísticos sem modelo.
 **Consequência:** o ciclo inteiro do guia funciona pelos serviços (ficha → peça bloqueada → correção → link → devolução `contradiz`). A T12 mede o classificador nas 172 reclamações; a T13 agrega relações e o indicador.
+
+## D31 · Teste 1 do classificador: escolhas e resultado da v1 · 23/11/2026
+**Contexto:** a T12 mede o classificador contra os 172 compradores da H1.
+**Decisão:**
+- **Predição:** `classify_text` (sem banco) com o resumo em paráfrase e a categoria do produto do gabarito como dica; 4 threads com o limitador de 15 chamadas/min. Reclamação em que o modelo não respondeu conta como erro (`outros`) e aparece em aviso.
+- **Métricas por split:** causa principal (5 classes: acurácia, kappa, matriz), subtipo nas 44 de promessa (4 explícitos + expectativa; predição fora de promessa conta como erro), precisão e recall de `promessa_explicita`.
+- **Critério de corte do guia (definição):** nas reclamações do `test` cujo gabarito é promessa, acesso ou processo, acurácia ≥ 80% e kappa ≥ 0,6 → "sim".
+- **Rodada só com títulos:** opcional (`--com-titulos`), porque custa mais 172 chamadas; não rodou na v1.
+- **Rodadas:** versão pela impressão digital (taxonomia, prompt, ids dos exemplos, modelo). As 3 reclamações que falharam por 503 na primeira execução foram refeitas na mesma v1 (a configuração não mudou; as outras 169 vieram do cache). Partes comuns dos dois relatórios em `eval/common.py`.
+**Resultado da v1 (test):** acurácia 81% ✅, kappa 0,74 ✅, subtipo 74% ✅; corte: **sim** (83%, kappa 0,76). `promessa_explicita`: precisão 63%, recall 100% (30 previstas para 19 no gabarito): o modelo puxa para promessa, sobretudo reclamações de acesso (6 no `test`).
+**Critério não atingido:** rodada sem cache em 872 s (meta 10 min). A cota gratuita (15 chamadas/min) já dá 11,5 min para 172 chamadas, e houve 503 em pico de demanda. Com cache: 13 s. Para cumprir, seria preciso cota maior (plano pago) ou chamadas em lote, o que mudaria o que está sendo medido.
+**Achados para o Checkpoint 2:**
+- 4 reclamações de processo viraram `outros` porque o modelo devolveu a causa "process" ou "processamento", fora da taxonomia. Restringir `cause` a uma lista fechada no esquema de saída do Gemini (enum) corrige isso; é mudança de esquema, então vira v2.
+- A precisão de `promessa_explicita` (63%) é o ponto fraco: é ela que pesa no creator. O limiar de confiança e a revisão humana protegem o indicador, mas vale olhar os erros de acesso → promessa no `dev`.
+- Paráfrase escrita por quem codificou: o resultado é otimista; a rodada com títulos é a contraprova.

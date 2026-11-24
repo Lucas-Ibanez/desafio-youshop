@@ -90,12 +90,14 @@ def eval_checker() -> int:
     return run(sys.executable, "eval/eval_checker.py")
 
 
+def eval_classifier() -> int:
+    # Teste 1 do classificador contra os 172 compradores da H1 (T12).
+    return run(sys.executable, "eval/eval_classifier.py")
+
+
 def eval_all() -> int:
-    # Teste 1 dos dois agentes. O classificador entra na T12.
-    code = eval_checker()
-    if code == 0:
-        not_implemented("T12")()
-    return code
+    # Teste 1 dos dois agentes (T08 e T12).
+    return eval_checker() or eval_classifier()
 
 
 def mcp() -> int:
@@ -120,7 +122,7 @@ TASKS: dict[str, Task] = {
     "seed": Task("marcas, produtos, fichas v1 e creators", "T05", seed),
     "simulate": Task("peças, links, vendas e devoluções sintéticas", "T13", not_implemented("T13")),
     "eval-checador": Task("Teste 1 do checador (H2)", "T08", eval_checker),
-    "eval-classificador": Task("Teste 1 do classificador (H1)", "T12", not_implemented("T12")),
+    "eval-classificador": Task("Teste 1 do classificador (H1)", "T12", eval_classifier),
     "eval": Task("Teste 1 dos dois agentes", "T08, T12", eval_all),
     "mcp": Task("sobe o servidor MCP em stdio", "T01", mcp),
     "demo": Task("exemplo do guia de ponta a ponta via MCP", "T15", not_implemented("T15")),

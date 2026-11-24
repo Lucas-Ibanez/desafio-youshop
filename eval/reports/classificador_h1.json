@@ -1,0 +1,1935 @@
+{
+ "data": "23/11/2026 22:56",
+ "rodada": {
+  "versao": "v1",
+  "mudancas": "primeira rodada"
+ },
+ "modelo": "gemini-3.5-flash-lite",
+ "prompt": "classifier_v1",
+ "exemplos": [
+  "H10",
+  "H08",
+  "P18",
+  "M10",
+  "T02",
+  "E09",
+  "P49",
+  "E08"
+ ],
+ "metas": {
+  "acuracia": 0.8,
+  "kappa": 0.6,
+  "subtipo": 0.7
+ },
+ "avisos": [],
+ "metricas": {
+  "parafrase": {
+   "dev": {
+    "n": 40,
+    "acuracia": 0.95,
+    "kappa": 0.9290150842945873,
+    "matriz": {
+     "promessa": {
+      "promessa": 9,
+      "acesso": 0,
+      "processo": 1,
+      "fraude": 0,
+      "outros": 0
+     },
+     "acesso": {
+      "promessa": 1,
+      "acesso": 13,
+      "processo": 0,
+      "fraude": 0,
+      "outros": 0
+     },
+     "processo": {
+      "promessa": 0,
+      "acesso": 0,
+      "processo": 13,
+      "fraude": 0,
+      "outros": 0
+     },
+     "fraude": {
+      "promessa": 0,
+      "acesso": 0,
+      "processo": 0,
+      "fraude": 3,
+      "outros": 0
+     },
+     "outros": {
+      "promessa": 0,
+      "acesso": 0,
+      "processo": 0,
+      "fraude": 0,
+      "outros": 0
+     }
+    },
+    "subtipo": {
+     "n": 10,
+     "acuracia": 0.8
+    },
+    "promessa_explicita": {
+     "precisao": 0.875,
+     "recall": 0.875,
+     "n_gold": 8,
+     "n_pred": 8
+    },
+    "corte": {
+     "n": 37,
+     "acuracia": 0.9459459459459459,
+     "kappa": 0.918232044198895
+    },
+    "sem_modelo": 0
+   },
+   "test": {
+    "n": 132,
+    "acuracia": 0.8106060606060606,
+    "kappa": 0.7374910508312784,
+    "matriz": {
+     "promessa": {
+      "promessa": 30,
+      "acesso": 0,
+      "processo": 3,
+      "fraude": 1,
+      "outros": 0
+     },
+     "acesso": {
+      "promessa": 6,
+      "acesso": 35,
+      "processo": 1,
+      "fraude": 3,
+      "outros": 0
+     },
+     "processo": {
+      "promessa": 1,
+      "acesso": 1,
+      "processo": 36,
+      "fraude": 0,
+      "outros": 4
+     },
+     "fraude": {
+      "promessa": 1,
+      "acesso": 0,
+      "processo": 2,
+      "fraude": 6,
+      "outros": 0
+     },
+     "outros": {
+      "promessa": 1,
+      "acesso": 1,
+      "processo": 0,
+      "fraude": 0,
+      "outros": 0
+     }
+    },
+    "subtipo": {
+     "n": 34,
+     "acuracia": 0.7352941176470589
+    },
+    "promessa_explicita": {
+     "precisao": 0.6333333333333333,
+     "recall": 1.0,
+     "n_gold": 19,
+     "n_pred": 30
+    },
+    "corte": {
+     "n": 121,
+     "acuracia": 0.8347107438016529,
+     "kappa": 0.7599920658534167
+    },
+    "sem_modelo": 0
+   },
+   "total": {
+    "n": 172,
+    "acuracia": 0.8430232558139535,
+    "kappa": 0.7812941508900819,
+    "matriz": {
+     "promessa": {
+      "promessa": 39,
+      "acesso": 0,
+      "processo": 4,
+      "fraude": 1,
+      "outros": 0
+     },
+     "acesso": {
+      "promessa": 7,
+      "acesso": 48,
+      "processo": 1,
+      "fraude": 3,
+      "outros": 0
+     },
+     "processo": {
+      "promessa": 1,
+      "acesso": 1,
+      "processo": 49,
+      "fraude": 0,
+      "outros": 4
+     },
+     "fraude": {
+      "promessa": 1,
+      "acesso": 0,
+      "processo": 2,
+      "fraude": 9,
+      "outros": 0
+     },
+     "outros": {
+      "promessa": 1,
+      "acesso": 1,
+      "processo": 0,
+      "fraude": 0,
+      "outros": 0
+     }
+    },
+    "subtipo": {
+     "n": 44,
+     "acuracia": 0.75
+    },
+    "promessa_explicita": {
+     "precisao": 0.6842105263157895,
+     "recall": 0.9629629629629629,
+     "n_gold": 27,
+     "n_pred": 38
+    },
+    "corte": {
+     "n": 158,
+     "acuracia": 0.8607594936708861,
+     "kappa": 0.7959495157029645
+    },
+    "sem_modelo": 0
+   }
+  }
+ },
+ "predicoes": {
+  "parafrase": {
+   "H01": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata uma cobranca de renovacao automatica nao desejada, sem alegar que a informacao foi omitida no momento da venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H02": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que não encontra opção nem suporte para realizar o cancelamento da assinatura.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H03": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 0.9,
+    "explanation": "O comprador relata uma cobranca recorrente de um curso que diz nunca ter contratado, o que se enquadra em cobranca nao reconhecida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H04": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.85,
+    "explanation": "O comprador relata uma renovação anual indesejada do curso e que o contato de suporte não funciona, sem apontar omissão ou propaganda enganosa na venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H05": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que se arrependeu por escolha própria e que o cancelamento dentro do prazo não foi processado, caracterizando um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H06": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.99,
+    "explanation": "O comprador relata que o produto físico não chegou após o prazo e o rastreio não funciona.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H08": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que o anúncio prometia acesso vitalício, o que se enquadra em condição da oferta não cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "anunciada como vitalicia"
+    }
+   },
+   "H09": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que foram feitas compras que ele nao reconhece e que estao em nome de terceiro.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H10": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que a oferta prometia uma condição específica sobre o cancelamento que não foi cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "garantia",
+     "value": "cancelar_quando_quisesse",
+     "unit": null,
+     "text": "Oferta dizia que podia cancelar quando quisesse"
+    }
+   },
+   "H11": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.85,
+    "explanation": "O comprador está solicitando o estorno imediato do pagamento via Pix e reclamando do prazo estipulado, o que configura um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H13": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata um problema de 2FA sem código que o impede de entrar na conta para ver os cursos, caracterizando um problema de login e acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H14": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o programa exigia jejuns prolongados que não foram informados claramente na venda, configurando uma informação omitida na oferta.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "jejum prolongado",
+     "unit": null,
+     "text": "Programa de emagrecimento exigia jejuns prolongados nao informados claramente na venda"
+    }
+   },
+   "H15": {
+    "cause": "acesso_entrega",
+    "subcause": "conteudo_removido",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a ferramenta mudou e perdeu seus arquivos e créditos, o que se enquadra na subcausa de conteúdo removido dentro de acesso e entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H16": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o fluxo de reembolso está fora do ar e o chatbot não resolve, indicando um problema de funcionamento do serviço.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H17": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador desistiu da compra dentro do prazo legal de 7 dias sem apresentar nenhuma reclamação específica sobre o produto ou a oferta.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H18": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a promocao omitiu informacao crucial sobre a assinatura anual, configurando omissao de informacao na venda.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "recorrencia",
+     "value": "anual",
+     "unit": null,
+     "text": "Promocao de Black Friday nao mencionou assinatura anual"
+    }
+   },
+   "H19": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que o reembolso foi aprovado, mas o dinheiro ainda nao chegou.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H20": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que o curso prometia ensinar vídeos profissionais mas funcionou como isca para outro produto, encaixando-se em promessa explícita de conteúdo diferente do anunciado.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "ensinar videos profissionais",
+     "unit": null,
+     "text": "Curso prometia ensinar videos profissionais"
+    }
+   },
+   "H21": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que está com o login bloqueado há três semanas, o que caracteriza um problema de acesso ou conta.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H23": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador pede o reembolso dentro do prazo, afirmando apenas que o produto nao faz sentido para ele, sem citar problemas ou promessas nao cumpridas.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "H24": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador pede o cancelamento dentro do prazo por achar que o conteúdo não será útil para ele, sem citar problemas no produto ou promessas não cumpridas.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K01": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o reembolso foi confirmado, mas as parcelas continuam sendo debitadas, caracterizando um problema no processamento do estorno.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K02": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que o produto não era o que esperava, indicando qualidade abaixo da expectativa sem citar uma promessa específica do anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K03": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o estorno via Pix foi solicitado no prazo mas o dinheiro não foi devolvido, caracterizando um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K04": {
+    "cause": "outros",
+    "subcause": "outros",
+    "main_cause": "outros",
+    "confidence": 0.5,
+    "explanation": "O comprador relata que continua sendo cobrado mesmo após ter feito o cancelamento, caracterizando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K05": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador afirma explicitamente que o produto recebido é diferente do que foi mostrado no anúncio.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "itens ruins diferente do anuncio",
+     "unit": null,
+     "text": "nao e o que viu no anuncio"
+    }
+   },
+   "K06": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata explicitamente que recebeu algo diferente do que comprou, acusando de propaganda enganosa.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K07": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que a condição da garantia e liberação do acesso anunciada não foi cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "garantia",
+     "value": "7",
+     "unit": "dias",
+     "text": "acesso so liberado apos os 7 dias de garantia"
+    }
+   },
+   "K08": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que pagou via Pix mas nao recebeu o acesso ao produto.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K09": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o reembolso foi solicitado no prazo, mas o dinheiro ainda nao foi depositado apos cinco dias.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K10": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que cancelou o pedido de reembolso por engano e agora não consegue refazer, caracterizando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K11": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador está apenas perguntando quando o estorno será realizado, o que caracteriza um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K12": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata um problema de senha e alteracao de email que o impede de acessar a conta.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K13": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata dificuldade com o botão que resultou no cancelamento do pedido de reembolso, encaixando-se em cancelamento travado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K14": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o anúncio prometia um robô para gerar vídeos, mas ele recebeu apenas aulas, configurando que o produto entregue é diferente do anunciado.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "robo que gera videos para achadinhos",
+     "unit": null,
+     "text": "Anuncio prometia robo que gera videos para achadinhos"
+    }
+   },
+   "K15": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador solicitou o cancelamento rapidamente e relata que o vendedor não respondeu, configurando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K16": {
+    "cause": "fraude",
+    "subcause": "pagamento_fora_do_checkout",
+    "main_cause": "fraude",
+    "confidence": 1.0,
+    "explanation": "O comprador relata explicitamente que realizou um pagamento por Pix a um terceiro fora do checkout.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K17": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "A compradora relata insatisfação com o conteúdo mas o motivo principal e direto para o reembolso é que ela não acha a opção de cancelar.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K18": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que cancelou o pedido de reembolso por engano e agora não consegue refazer, caracterizando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K19": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata explicitamente que nao reconhece a cobranca da compra e menciona mistura de dados, o que se enquadra na categoria de fraude por cobranca nao reconhecida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "K20": {
+    "cause": "acesso_entrega",
+    "subcause": "conteudo_removido",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que foi removido do grupo de Telegram onde o conteúdo era entregue, caracterizando um problema de acesso ou remoção de conteúdo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E01": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que modulos do curso nao abrem e o suporte nao responde, o que caracteriza falha no acesso ou entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E02": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que recebeu um boleto em seu nome que não reconhece.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E03": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 1.0,
+    "explanation": "O comprador afirma explicitamente que nao reconhece a cobranca da compra realizada.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E04": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata arrependimento dentro do prazo e falta de resposta para o cancelamento, tratando-se de um problema de processo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E05": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que foi emitido um boleto em seu CPF sem sua autorização, caracterizando uma cobrança não reconhecida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E06": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o cancelamento foi feito mas o estorno não saiu, caracterizando um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E07": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que pagou o boleto mas ficou sem acesso ao produto, o que caracteriza um problema de entrega do acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E08": {
+    "cause": "fraude",
+    "subcause": "cobranca_nao_reconhecida",
+    "main_cause": "fraude",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que recebeu um boleto de uma empresa que não reconhece, o que se enquadra perfeitamente na subcausa de cobrança não reconhecida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E09": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a assinatura renovou automaticamente e continua sendo cobrada mesmo apos o cancelamento, o que se enquadra em processo e renovacao indesejada.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E10": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que nao consegue encontrar onde acessar o curso apos a compra, configurando um problema de acesso ou entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E11": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que pediu o reembolso e o valor não foi estornado, o que configura um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E12": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto foi anunciado como vitalício, mas parou de funcionar, configurando quebra na condição da oferta.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "Produto vitalicio"
+    }
+   },
+   "E13": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.85,
+    "explanation": "O comprador relata falha no pagamento da entrada e cobranças indevidas no cartão sem conseguir utilizar o serviço.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E14": {
+    "cause": "processo",
+    "subcause": "motivo_pessoal",
+    "main_cause": "processo",
+    "confidence": 1.0,
+    "explanation": "O comprador quer rescindir a compra devido a um problema de saude, que e um motivo pessoal e nao uma falha do produto ou promessa nao cumprida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E15": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o programa de treino só liberou a introdução e que esperava acesso imediato ao conteúdo completo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E16": {
+    "cause": "outros",
+    "subcause": "outros",
+    "main_cause": "outros",
+    "confidence": 0.5,
+    "explanation": "O comprador tentou cancelar logo no dia seguinte, mas enfrentou respostas automaticas e teve o pedido travado pelo prazo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E17": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o plano renovou automaticamente sem seu desejo, sem alegar que a renovação foi escondida na venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E18": {
+    "cause": "processo",
+    "subcause": "motivo_pessoal",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que os exercicios sao dificeis demais para o seu problema de saude, o que configura um motivo pessoal de saude e nao uma queixa sobre a promessa do produto.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "E19": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o segundo produto comprado não baixa, o que configura um problema de acesso ou entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B02": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o serviço não funcionou e acusa propaganda enganosa, o que se enquadra em promessa explícita por divergência com o anunciado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B03": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata um problema de serviço (canais travando) e que o estorno solicitado dentro do prazo não foi processado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B06": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que pagou por um serviço de IPTV e o vendedor não devolveu o dinheiro, o que caracteriza um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B07": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador tentou obter reembolso, mas o vendedor e a plataforma ficaram sem resposta, caracterizando um problema de cancelamento travado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B09": {
+    "cause": "fraude",
+    "subcause": "golpe",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata explicitamente que a oferta era um golpe e que o estorno nao veio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "B10": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que tenta cancelar há mais de 7 dias e o vendedor não realiza o cancelamento, caracterizando um problema no processo de atendimento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M01": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.5,
+    "explanation": "O comprador relata que nao cumpriram a palavra, mas o texto e curto e nao traz detalhes especificos sobre a promessa ou o produto anunciado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M02": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que o produto físico nunca foi entregue e a agência não possui o pacote.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M03": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador quer cancelar o servico sem citar nenhum problema especifico com o produto ou promessa nao cumprida.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M04": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que as compras foram canceladas no prazo, mas o dinheiro não foi estornado, caracterizando um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M05": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o produto digital não funciona e que o produtor não responde, o que caracteriza um problema de acesso ou funcionamento do serviço.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M06": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata claramente que realizou duas compras e não obteve o acesso ao conteúdo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M07": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que adquiriu um produto fisico por indicacao de uma influenciadora e nao recebeu confirmacao ou previsao de entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M10": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que recebeu o e-mail, mas nao consegue acessar o produto que comprou.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M11": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto físico não foi enviado, configurando um problema de entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M12": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o suplemento físico chegou atrasado e que não consegue logar, sendo o problema principal relacionado à entrega e ao acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M13": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.85,
+    "explanation": "O comprador relata um motivo pessoal para a desistencia mas o foco da reclamacao e que o curso nao aparece para o reembolso, caracterizando um cancelamento travado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M14": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto físico não foi postado após 15 dias e o vendedor não responde, caracterizando um problema de entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "M15": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto físico comprado há um mês não foi recebido.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T01": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que nao recebeu o curso que comprou, o que caracteriza falha na liberacao do acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T02": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o treinamento nao abre e o suporte automatizado nao resolveu o problema de acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T05": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama de uma renovação de assinatura que ocorreu sem aviso prévio, o que se enquadra na categoria de renovação indesejada por não mencionar omissão na venda original.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T06": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata um problema específico de login no aplicativo e falta de suporte, caracterizando uma falha de acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T07": {
+    "cause": "outros",
+    "subcause": "outros",
+    "main_cause": "outros",
+    "confidence": 0.5,
+    "explanation": "O comprador relata que o reembolso foi aprovado pela plataforma, mas o produtor nao efetuou o estorno do valor.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T08": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador achou que o produto não era o que esperava, avaliando a qualidade sem citar nenhuma promessa específica feita no anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T09": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador avalia que o conteudo e abaixo do esperado sem mencionar nenhuma promessa feita no anuncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "T10": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama da baixa qualidade do conteúdo e da aula sem citar nenhuma promessa específica feita no anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P00": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "A ferramenta de IA apresenta falhas técnicas de funcionamento e falta de suporte, o que se enquadra em serviço fora do ar.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P01": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que comprou os cursos mas o link indica que nao ha produto disponivel, caracterizando problema de acesso nao liberado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P02": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama que o conteúdo é superficial sem citar uma promessa ou oferta específica do anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P03": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que adquiriu um plano vitalício mas perdeu o acesso e foi cobrado novamente, o que caracteriza descumprimento de condição da oferta anunciada.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "Plano vitalicio perdeu acesso"
+    }
+   },
+   "P04": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que cancelou o produto rapidamente e reclama que o estorno não foi realizado dentro de uma semana.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P05": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que comprou na correria algo que não era o que pensava, indicando arrependimento por compra impulsiva, além de citar problema no atendimento sem especificar falha no produto ou na oferta anunciada.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P06": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a condição de plano vitalício oferecida por escrito não foi cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "plano vitalicio duplo"
+    }
+   },
+   "P07": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama de uma renovação automática sem aviso e afirma não usar o produto há meses, o que se enquadra em renovação indesejada.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P08": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o curso foi prometido como vitalício mas está fora do ar, o que configura quebra de condição da oferta anunciada.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "Curso prometido como vitalicio"
+    }
+   },
+   "P09": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a condição de acesso vitalício prometida na venda não foi cumprida após a migração do produto.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "Treinamento vendido como vitalicio"
+    }
+   },
+   "P10": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que um erro na renovacao bloqueou o acesso aos programas de treino, o que se enquadra em servico fora do ar ou bloqueado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P11": {
+    "cause": "fraude",
+    "subcause": "pagamento_fora_do_checkout",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que pagou via Pix direto ao CNPJ por indicacao do consultor, o que caracteriza pagamento fora do checkout e tem precedencia.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P12": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o curso renovou automaticamente sem o seu desejo, sem mencionar que a renovação foi omitida ou escondida durante a venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P13": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que deseja cancelar por motivo pessoal e que não encontra a opção para cancelar a renovação.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P14": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o curso parou de ser usado há anos mas continua a ser cobrado, tratando-se de uma renovação indesejada sem menção a promessas feitas na venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P15": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a página de vendas omitiu a necessidade de custos extras com ferramentas, encaixando-se em informação omitida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "custo",
+     "value": "sem_custo",
+     "unit": null,
+     "text": "metodo exige ferramentas pagas nao informadas"
+    }
+   },
+   "P16": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a renovação como assinatura não foi informada no momento da venda, caracterizando informação omitida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "recorrencia",
+     "value": "unica",
+     "unit": null,
+     "text": "Nunca foi informado que era assinatura; renovou ao pagar a ultima parcela"
+    }
+   },
+   "P17": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que as aulas sao impossiveis de marcar e o professor nao aparece, o que caracteriza um problema de funcionamento do servico.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P18": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador avalia o conteúdo como insatisfatório sem citar promessas específicas do anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P19": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador acusa o curso de propaganda enganosa, o que se enquadra na causa de promessa explícita por divergência com o anunciado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P20": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a renovação automática não foi informada com clareza na venda, o que se enquadra em informação omitida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "recorrencia",
+     "value": "unica",
+     "unit": null,
+     "text": "renovacao automatica nao foi informada com clareza"
+    }
+   },
+   "P21": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto entregue e diferente do que foi prometido no ebook.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "guia visual",
+     "unit": null,
+     "text": "Ebook prometia guia visual"
+    }
+   },
+   "P22": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que a renovação automática ocorreu sem o seu consentimento, o que caracteriza informação omitida na venda.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "recorrencia",
+     "value": "unica",
+     "unit": null,
+     "text": "Renovacao automatica sem consentimento"
+    }
+   },
+   "P23": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que foi prometido um prazo de 90 dias de desistencia, o que se enquadra em condicao da oferta nao cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "garantia",
+     "value": "90",
+     "unit": "dias",
+     "text": "Negociacao prometeu 90 dias de desistencia"
+    }
+   },
+   "P24": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata arrependimento e que não encontrou atendimento humano para conseguir realizar o cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P25": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama que uma condicao anunciada da oferta, o bonus, nao foi cumprida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "bonus",
+     "value": "citado",
+     "unit": null,
+     "text": "Comprou pela promocao com bonus e ficou de fora mesmo dentro do horario"
+    }
+   },
+   "P26": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador avaliou o conteúdo do curso como fraco e desatualizado, sem citar uma promessa ou oferta específica feita pelo influenciador.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P27": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o pagamento foi aprovado mas nao recebeu o codigo ou acesso para usar o produto.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P28": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que foi direcionado a uma assinatura recorrente que não desejava, indicando omissão de informação na venda sobre o modelo de cobrança.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "recorrencia",
+     "value": "unica",
+     "unit": null,
+     "text": "foi direcionada a assinatura mensal/anual que nao queria"
+    }
+   },
+   "P29": {
+    "cause": "processo",
+    "subcause": "motivo_pessoal",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador solicitou o cancelamento devido a motivos pessoais de saúde e finanças, o que se enquadra na categoria de processo por motivo pessoal.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P30": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que pagou e não recebeu o acesso e os bônus prometidos na oferta.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "nao recebeu acesso aos produtos e bonus prometidos"
+    }
+   },
+   "P31": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador avaliou negativamente o plano de treino recebido sem citar nenhuma promessa específica feita no anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P33": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador admite que comprou o produto errado por confusão própria e relata problema no suporte para o cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P34": {
+    "cause": "processo",
+    "subcause": "motivo_pessoal",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que perdeu o prazo devido a motivos de saúde e compra por impulso, o que se enquadra em motivo pessoal.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P35": {
+    "cause": "outros",
+    "subcause": "outros",
+    "main_cause": "outros",
+    "confidence": 0.5,
+    "explanation": "O comprador tentou cancelar dentro do prazo mas o vendedor dificulta o processo e some.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P36": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o produto não era o esperado sem citar promessas específicas do anúncio, configurando expectativa e qualidade abaixo do esperado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P37": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o conteúdo do curso não correspondia às promessas feitas durante a live.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "promessas nao correspondiam",
+     "unit": null,
+     "text": "promessas nao correspondiam ao curso"
+    }
+   },
+   "P38": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que a condição anunciada de garantia não foi cumprida no checkout.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "garantia",
+     "value": "30",
+     "unit": "dias",
+     "text": "Anuncio no Instagram prometia garantias de 30 dias"
+    }
+   },
+   "P39": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador solicitou o reembolso no prazo estipulado, mas enfrentou demora ou ausência de resposta para concluir o cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P40": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que um dos produtos não foi reembolsado, o que configura um problema no processo de reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P41": {
+    "cause": "fraude",
+    "subcause": "golpe",
+    "main_cause": "fraude",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que as sessoes foram desmarcadas e o terapeuta sumiu apos o pedido de cancelamento, caracterizando golpe.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P42": {
+    "cause": "processo",
+    "subcause": "arrependimento_sem_motivo",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a compra foi feita por engano por uma criança sem autorização, caracterizando um pedido de cancelamento sem falha no produto.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P43": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que a oferta prometia acesso permanente/vitalício, o que se enquadra em promessa explícita sobre a condição da oferta.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null,
+     "text": "plano vitalicio comprado pela oferta de acesso permanente"
+    }
+   },
+   "P44": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o reembolso depende do produtor, que não responde, e que abriu uma reclamação, caracterizando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P45": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que o treino foi anunciado para 45 minutos mas na pratica e impossivel de cumprir nesse tempo.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "45 minutos",
+     "unit": "minutos",
+     "text": "Treino gerado para 45 minutos"
+    }
+   },
+   "P46": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o cancelamento foi confirmado, mas as parcelas continuam sendo cobradas, caracterizando um problema no processamento do reembolso ou encerramento da cobrança.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P47": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o reembolso está dentro do prazo mas não é processado por falta de saldo do vendedor, configurando problema no processo.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P48": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que parte do material que deveria ter sido liberada continua bloqueada, caracterizando um problema de acesso ou entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P49": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata uma renovação de assinatura que aconteceu sem aviso, tratando-se de uma cobrança indesejada sem acusar uma omissão explícita na venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P51": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto entregue foi diferente do que foi prometido no anúncio, caracterizando uma queixa de promessa explícita.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "catalogo de produtos",
+     "unit": null,
+     "text": "Prometia catalogo de produtos; entregou videos gratis do YouTube"
+    }
+   },
+   "P52": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o curso não era o esperado sem citar promessas específicas do anúncio, indicando qualidade abaixo da expectativa, além de mencionar dificuldade com reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P53": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que pagou por extras prometidos que nao foram entregues, configurando quebra de condicao da oferta.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "bonus",
+     "value": "extras do curso",
+     "unit": null,
+     "text": "Pagou extras do curso e nao recebeu o prometido"
+    }
+   },
+   "P55": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o produto recebido é diferente do que foi comprado, caracterizando promessa explícita de produto diferente do anunciado.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "moldes infantis",
+     "unit": null,
+     "text": "Comprou moldes infantis e recebeu apenas desenhos quadrados"
+    }
+   },
+   "P56": {
+    "cause": "processo",
+    "subcause": "motivo_pessoal",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador quer cancelar o contrato por um motivo financeiro pessoal, o que se enquadra na categoria de processo e subcausa motivo pessoal.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P57": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o método adquirido não correspondeu ao que foi demonstrado na apresentação e na live.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P58": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 1.0,
+    "explanation": "O comprador relata que o sistema impede o cancelamento da assinatura e apresenta erro nas tentativas.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P60": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que comprou o curso novamente, mas transcorreu um mês sem que o acesso fosse liberado.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P61": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que nao consegue acessar o produto adquirido, o que se enquadra diretamente na categoria de acesso e entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P62": {
+    "cause": "promessa_expectativa",
+    "subcause": "qualidade_abaixo",
+    "main_cause": "promessa",
+    "confidence": 0.9,
+    "explanation": "O comprador avalia a qualidade do material como desorganizada, sem citar nenhuma promessa específica feita no anúncio.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P63": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que pediu o reembolso no mesmo dia da compra e não está conseguindo retorno, configurando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P64": {
+    "cause": "processo",
+    "subcause": "cancelamento_travado",
+    "main_cause": "processo",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o cancelamento no site não funciona e o vendedor não responde, caracterizando um problema no processo de cancelamento.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P65": {
+    "cause": "promessa_explicita",
+    "subcause": "diferente_do_anunciado",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o pacote entregue foi diferente do que foi prometido no anúncio sobre os seguidores.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "resultado",
+     "value": "seguidores brasileiros reais",
+     "unit": null,
+     "text": "Pacote prometia seguidores brasileiros reais; entregou perfis falsos"
+    }
+   },
+   "P66": {
+    "cause": "fraude",
+    "subcause": "golpe",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata ter pago por suplementos via Pix e que o vendedor sumiu após a promessa de contato, configurando um golpe.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P67": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o pedido físico não foi despachado e não possui código de rastreio, caracterizando um problema de entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P68": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que pagou pelo produto, mas não recebeu o acesso correspondente.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P69": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o pacote de seguidores comprado com promessa de entrega imediata nao foi entregue.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P70": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que comprou um produto físico e ele não foi entregue ou não possui rastreio após 19 dias.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P71": {
+    "cause": "processo",
+    "subcause": "reembolso_nao_processado",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama que a assinatura foi renovada sem seu conhecimento e que o reembolso prometido não foi pago.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P73": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que comprou um kit cosmético e o produto físico não foi enviado após mais de um mês, caracterizando um problema de entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P75": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o produto comprado em outubro nao foi entregue, o que configura um problema de acesso ou entrega.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P76": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto comprado em outubro nunca foi entregue, o que se enquadra diretamente na subcausa de produto fisico nao entregue.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P77": {
+    "cause": "fraude",
+    "subcause": "golpe",
+    "main_cause": "fraude",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o serviço parou de funcionar rapidamente e que o vendedor desapareceu, o que caracteriza golpe.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P78": {
+    "cause": "promessa_explicita",
+    "subcause": "informacao_omitida",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que faltou informacao tecnica relevante sobre os produtos, o que se enquadra em informacao omitida.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "outro",
+     "value": "informacao tecnica",
+     "unit": null,
+     "text": "falta de informacao tecnica dos produtos"
+    }
+   },
+   "P80": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que os canais de TV do plano não funcionam e que o reembolso não veio, sendo o principal problema a falha no serviço.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P82": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que realizou o pagamento via Pix, mas não recebeu o produto ou acesso correspondente.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P83": {
+    "cause": "promessa_explicita",
+    "subcause": "condicao_da_oferta",
+    "main_cause": "promessa",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que o acesso foi cortado exatamente no fim do prazo de garantia ou arrependimento prometido.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "garantia",
+     "value": "7",
+     "unit": "dias",
+     "text": "fim do prazo de arrependimento"
+    }
+   },
+   "P84": {
+    "cause": "acesso_entrega",
+    "subcause": "servico_fora_do_ar",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o servico de TV nao funciona e que nao ha suporte para resolver o problema de acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P85": {
+    "cause": "acesso_entrega",
+    "subcause": "fisico_nao_entregue",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que nunca recebeu o produto e que a plataforma nao realiza o reembolso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P86": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata claramente que comprou o curso mas não recebeu os dados de acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P87": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que pagou pela ativacao do aplicativo, mas o painel nao libera o acesso ao servico.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P88": {
+    "cause": "acesso_entrega",
+    "subcause": "acesso_nao_liberado",
+    "main_cause": "acesso",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o conteúdo pago não abre e o telefone de contato é inexistente, caracterizando uma falha no acesso ao produto.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P89": {
+    "cause": "processo",
+    "subcause": "renovacao_indesejada",
+    "main_cause": "processo",
+    "confidence": 0.9,
+    "explanation": "O comprador reclama de uma renovacao anual que nao deseja e que ocorreu sem aviso, sem relatar que a condicao foi omitida de forma enganosa na venda.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P91": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.85,
+    "explanation": "O comprador relata que a assinatura foi renovada, mas o sistema nao reconhece a conta, configurando um problema de acesso ou login apos a renovacao.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P93": {
+    "cause": "acesso_entrega",
+    "subcause": "login_conta",
+    "main_cause": "acesso",
+    "confidence": 0.9,
+    "explanation": "O comprador relata que o acesso ao sistema novo está bloqueado, o que configura um problema técnico de acesso.",
+    "source": "modelo",
+    "buyer_belief": null
+   },
+   "P94": {
+    "cause": "promessa_explicita",
+    "subcause": "resultado_prometido",
+    "main_cause": "promessa",
+    "confidence": 0.95,
+    "explanation": "O comprador relata que o produto não cumpriu o resultado de retorno financeiro que foi prometido.",
+    "source": "modelo",
+    "buyer_belief": {
+     "attribute": "resultado",
+     "value": "retorno garantido de traders",
+     "unit": null,
+     "text": "Promessas de retorno garantido de traders"
+    }
+   }
+  }
+ },
+ "historico": [
+  {
+   "versao": "v1",
+   "mudancas": "primeira rodada",
+   "data": "23/11/2026 22:56",
+   "fingerprint": {
+    "data/rules/taxonomia_devolucao.yaml": "637836235ab1",
+    "prompt classifier_v1": "a22301cfc467",
+    "exemplos": "H10,H08,P18,M10,T02,E09,P49,E08",
+    "modelo": "gemini-3.5-flash-lite"
+   },
+   "acuracia_test": 0.8106060606060606,
+   "kappa_test": 0.7374910508312784
+  }
+ ]
+}
