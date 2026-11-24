@@ -266,7 +266,7 @@ def create_facts_version(
     session.add(facts)
     session.flush()
 
-    claim_rules = _official_rules(rules, product.category) + _brand_rules(data.brand_rules)
+    claim_rules = official_rules(rules, product.category) + _brand_rules(data.brand_rules)
     for rule in claim_rules:
         rule.facts_id = facts.id
     session.add_all(claim_rules)
@@ -280,7 +280,7 @@ def _as_utc(value: datetime) -> datetime:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
 
-def _official_rules(rules: RuleSet, category: Category) -> list[ClaimRule]:
+def official_rules(rules: RuleSet, category: Category) -> list[ClaimRule]:
     """Cópia das regras oficiais da categoria, com `reference = arquivo.yaml@versao`."""
     out: list[ClaimRule] = []
     for f in rules.prohibited_files(category):

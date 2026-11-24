@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     checker_use_llm: bool = True
     llm_offline: bool = False
     llm_cache_dir: str = ".cache/llm"
+    llm_max_rpm: int = 15  # plano gratuito do Gemini: 15 chamadas/min por modelo (D26)
     confidence_threshold: float = 0.8
     min_sales_for_indicator: int = 30
     urgency_stale_days: int = 7

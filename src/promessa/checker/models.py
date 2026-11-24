@@ -26,20 +26,25 @@ class RuleSpec(BaseModel):
 
 
 class CheckContext(BaseModel):
-    """O que a camada 1 precisa da ficha (versão exata), sem acesso ao banco."""
+    """O que a camada 1 precisa da ficha (versão exata), sem acesso ao banco.
+
+    `generic=True` (avaliação, T08): ficha genérica da categoria, sem condições; o checador só
+    extrai e registra as condições anunciadas, sem comparar.
+    """
 
     product_id: str
     category: Category
-    facts_id: int
-    version: int
-    guarantee_days: int
-    access_type: AccessType
+    facts_id: int | None
+    version: int | None
+    guarantee_days: int | None
+    access_type: AccessType | None
     access_months: int | None
-    recurrence: Recurrence
+    recurrence: Recurrence | None
     auto_renewal: bool
     bonuses: list[str]
     extra_costs: list[dict[str, Any]]
     rules: list[RuleSpec]
+    generic: bool = False
 
     @property
     def prohibited(self) -> list[RuleSpec]:

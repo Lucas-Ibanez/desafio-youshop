@@ -19,6 +19,7 @@ def test_padroes_sem_env(monkeypatch, tmp_path):
     assert s.checker_use_llm is True
     assert s.llm_offline is False
     assert s.llm_cache_dir == ".cache/llm"
+    assert s.llm_max_rpm == 15
     assert s.confidence_threshold == 0.8
     assert s.min_sales_for_indicator == 30
     assert s.urgency_stale_days == 7

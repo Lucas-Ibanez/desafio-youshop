@@ -124,6 +124,29 @@ def condition_findings(
         for claim in _extract(rule, seg_norm):
             groups.setdefault((claim.value, claim.unit), []).append(claim)
         for (value, unit), claims in groups.items():
+            if ctx.generic:  # ficha genérica (T08): só extrai e registra, não compara
+                output, reason, suggestion = CheckOutput.REGISTRAR, "condicao_extraida", None
+                explanation = "Condição anunciada. Sem ficha do produto, não há com o que comparar."
+                start = seg.start + min(c.start for c in claims)
+                end = seg.start + max(c.end for c in claims)
+                findings.append(
+                    Finding(
+                        excerpt=text[start:end],
+                        span=(start, end),
+                        output=output,
+                        rule_key=rule.rule_key,
+                        reason_type=reason,
+                        explanation=explanation,
+                        suggestion=suggestion,
+                        extracted={
+                            "type": "condicao_oferta",
+                            "attribute": rule.atributo.value,
+                            "value": value,
+                            "unit": unit,
+                        },
+                    )
+                )
+                continue
             ok = _matches_facts(rule.atributo, claims[0], ctx)
             if ok is None:
                 continue

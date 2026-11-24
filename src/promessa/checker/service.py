@@ -30,7 +30,7 @@ from promessa.checker.models import (
 from promessa.checker.offer_conditions import condition_findings
 from promessa.checker.segment import segment
 from promessa.config import get_settings, has_api_key
-from promessa.db.enums import Channel, SubmittedBy
+from promessa.db.enums import Category, Channel, SubmittedBy
 from promessa.db.models import CheckResult, ContentPiece, Creator, utcnow
 from promessa.errors import CREATOR_INEXISTENTE, ENTRADA_INVALIDA, PECA_INEXISTENTE, DomainError
 from promessa.facts import service as facts_service
@@ -62,21 +62,44 @@ def build_context(session: Session, product_id: str, version: int | None = None)
         auto_renewal=facts.auto_renewal,
         bonuses=list(facts.bonuses),
         extra_costs=list(facts.extra_costs),
-        rules=[
-            RuleSpec(
-                rule_key=r.rule_key,
-                kind=r.kind.value,
-                text=r.text,
-                output=r.output.value if r.output else None,
-                source=r.source.value,
-                tema=(r.payload or {}).get("tema"),
-                termos=(r.payload or {}).get("termos", []),
-                padroes=(r.payload or {}).get("padroes", []),
-                junto_de=(r.payload or {}).get("junto_de", []),
-                sugestao=(r.payload or {}).get("sugestao"),
-            )
-            for r in rules
-        ],
+        rules=[_spec(r) for r in rules],
+    )
+
+
+def _spec(r) -> RuleSpec:
+    payload = r.payload or {}
+    return RuleSpec(
+        rule_key=r.rule_key,
+        kind=r.kind.value,
+        text=r.text,
+        output=r.output.value if r.output else None,
+        source=r.source.value,
+        tema=payload.get("tema"),
+        termos=payload.get("termos", []),
+        padroes=payload.get("padroes", []),
+        junto_de=payload.get("junto_de", []),
+        sugestao=payload.get("sugestao"),
+    )
+
+
+def generic_context(category: Category, rules: RuleSet | None = None) -> CheckContext:
+    """Ficha genérica da categoria (avaliação, T08): regras oficiais da categoria e nenhuma
+    condição da oferta; o checador só extrai e registra as condições anunciadas."""
+    claim_rules = facts_service.official_rules(rules or load_rules(), category)
+    return CheckContext(
+        product_id=f"generico_{category.value}",
+        category=category,
+        facts_id=None,
+        version=None,
+        guarantee_days=None,
+        access_type=None,
+        access_months=None,
+        recurrence=None,
+        auto_renewal=False,
+        bonuses=[],
+        extra_costs=[],
+        rules=[_spec(r) for r in claim_rules],
+        generic=True,
     )
 
 

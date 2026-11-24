@@ -209,3 +209,17 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Contexto:** na T07, o `gemini-3.6-flash` (padrão do checador desde a D14, confirmado na D16) levou cerca de 40 s por chamada e a chave recebeu 429 RESOURCE_EXHAUSTED nesse modelo (D24). O `gemini-3.5-flash-lite` respondeu o mesmo prompt do checador em cerca de 1,2 s, com o achado esperado.
 **Decisão (Lucas):** `CHECKER_MODEL=gemini-3.5-flash-lite` no `.env`, no `.env.example` e no padrão de `config.py`. Classificador e explicação continuam no mesmo modelo. Revoga a escolha do checador da D14/D16; o restante da D16 (30 vendas, limiar 0,8) continua.
 **Consequência:** a divisão "checador mais capaz, classificador de volume" deixa de existir no MVP; os três agentes usam o mesmo modelo. O cache antigo (chaves com `gemini-3.6-flash`) não é reaproveitado, porque o modelo entra na chave; os testes `llm` foram rodados de novo: 17 passaram ao vivo em 1 min 30 s (antes, 10 min 40 s com o 3.6-flash) e em 1,7 s com `LLM_OFFLINE=true`. Se sobrar cota, a T08 pode comparar os dois modelos no split `dev` e registrar o resultado.
+
+## D26 · Teste 1 do checador: escolhas e resultado da v1 · 23/11/2026
+**Contexto:** a T08 mede o checador contra os 60 anúncios codificados da H2.
+**Decisão:**
+- **Ficha genérica:** `checker.service.generic_context(categoria)` monta um `CheckContext` com as regras oficiais da categoria (mesma materialização da ficha) e sem condições (`generic=True`). Condição anunciada vira `registrar` com `reason_type = condicao_extraida`, sem comparação.
+- **Predição:** indício = `overall` em `bloquear` ou `revisar`; gabarito = não conforme. Sensibilidade nas evidentes = `overall == bloquear`. Recall verificável no nível da peça = ao menos uma promessa em `extracted` (de regra ou do modelo).
+- **Splits e metas:** todas as metas aparecem em dev, test e total, com ✅/❌ em cada coluna; o `test` é o principal (CONTEXTO 14.4).
+- **Rodadas:** versão pela impressão digital (hash de cada YAML de `data/rules/`, do prompt e nome do modelo). Igual à anterior → mesma versão (reexecução); diferente → próxima versão, com a lista do que mudou e o texto de `--mudancas`. Uma rodada de teste só com regras feita durante o desenvolvimento e outra em que o modelo falhou em 19 peças por cota foram descartadas antes da v1 oficial.
+- **Conferência manual:** 10 extrações sorteadas (semente 11) das peças verificáveis; as marcas do Lucas na última coluna são lidas do `.md` antigo e mantidas.
+- **Cota do Gemini:** o plano gratuito limita 15 chamadas/min por modelo. Novo `LLM_MAX_RPM=15` (limitador entre threads no cliente) e espera do tempo pedido pela API em 429 ("retry in Ns", até 60 s). Rodada fria: 284 s; com cache: 2 s.
+- **Lint:** os scripts de `eval/` podem ter linhas longas (texto do relatório em Markdown).
+**Resultado da v1 (test):** 4/4 evidentes nas duas configurações; kappa 0,37 (só regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 8/17 (47%) e 12/17 (71%), meta 80% ❌. No total: só regras tem precisão alta e recall baixo do indício (86% / 55%, 15 falsos negativos); com modelo, o recall sobe e a precisão cai (91% / 67%, 15 falsos positivos).
+**Achado:** mesmo com temperatura 0, o Gemini não é determinístico: uma rodada fria idêntica deu kappa 0,38 e verificável 65% (contra 0,32 e 71% da v1). A reprodutibilidade vem do cache; o número com modelo tem variação de alguns pontos e o relatório deve ser lido assim.
+**Consequência:** Checkpoint 1 com o Lucas. Ajustes de regra só olhando o split `dev` e registrados como v2.

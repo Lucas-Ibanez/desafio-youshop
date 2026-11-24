@@ -1,0 +1,1981 @@
+{
+ "data": "23/11/2026 21:35",
+ "rodada": {
+  "versao": "v1",
+  "mudancas": "primeira rodada"
+ },
+ "modelo": "gemini-3.5-flash-lite",
+ "prompt": "checker_v1",
+ "versoes_regras": [
+  "normalizacao.yaml@2026-11-23",
+  "suplemento_proibidas.yaml@2026-11-23",
+  "suplemento_in28_permitidas.yaml@2026-11-23",
+  "cosmetico_proibidas.yaml@2026-11-23",
+  "padroes_h2.yaml@2026-11-23",
+  "condicoes_oferta.yaml@2026-11-23",
+  "taxonomia_devolucao.yaml@2026-11-23"
+ ],
+ "metricas": {
+  "regras": {
+   "dev": {
+    "n": 20,
+    "kappa": 0.5192307692307693,
+    "acuracia": 0.75,
+    "precisao_indicio": 1.0,
+    "recall_indicio": 0.5454545454545454,
+    "matriz": {
+     "True": {
+      "True": 6,
+      "False": 5
+     },
+     "False": {
+      "True": 0,
+      "False": 9
+     }
+    },
+    "sensibilidade": {
+     "acertos": 2,
+     "n": 2,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 1,
+     "n": 5,
+     "valor": 0.2,
+     "ic95": [
+      0.03622316096978745,
+      0.6244717358814613
+     ]
+    }
+   },
+   "test": {
+    "n": 40,
+    "kappa": 0.36585365853658536,
+    "acuracia": 0.675,
+    "precisao_indicio": 0.8,
+    "recall_indicio": 0.5454545454545454,
+    "matriz": {
+     "True": {
+      "True": 12,
+      "False": 10
+     },
+     "False": {
+      "True": 3,
+      "False": 15
+     }
+    },
+    "sensibilidade": {
+     "acertos": 2,
+     "n": 2,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 8,
+     "n": 17,
+     "valor": 0.47058823529411764,
+     "ic95": [
+      0.26164801196088106,
+      0.6903710268845051
+     ]
+    }
+   },
+   "total": {
+    "n": 60,
+    "kappa": 0.41747572815533973,
+    "acuracia": 0.7,
+    "precisao_indicio": 0.8571428571428571,
+    "recall_indicio": 0.5454545454545454,
+    "matriz": {
+     "True": {
+      "True": 18,
+      "False": 15
+     },
+     "False": {
+      "True": 3,
+      "False": 24
+     }
+    },
+    "sensibilidade": {
+     "acertos": 4,
+     "n": 4,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 9,
+     "n": 22,
+     "valor": 0.4090909090909091,
+     "ic95": [
+      0.23255559668820378,
+      0.6126552261710619
+     ]
+    }
+   }
+  },
+  "regras+modelo": {
+   "dev": {
+    "n": 20,
+    "kappa": 0.46808510638297873,
+    "acuracia": 0.75,
+    "precisao_indicio": 0.6875,
+    "recall_indicio": 1.0,
+    "matriz": {
+     "True": {
+      "True": 11,
+      "False": 0
+     },
+     "False": {
+      "True": 5,
+      "False": 4
+     }
+    },
+    "sensibilidade": {
+     "acertos": 2,
+     "n": 2,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 1,
+     "n": 5,
+     "valor": 0.2,
+     "ic95": [
+      0.03622316096978745,
+      0.6244717358814613
+     ]
+    }
+   },
+   "test": {
+    "n": 40,
+    "kappa": 0.31937172774869116,
+    "acuracia": 0.675,
+    "precisao_indicio": 0.6551724137931034,
+    "recall_indicio": 0.8636363636363636,
+    "matriz": {
+     "True": {
+      "True": 19,
+      "False": 3
+     },
+     "False": {
+      "True": 10,
+      "False": 8
+     }
+    },
+    "sensibilidade": {
+     "acertos": 2,
+     "n": 2,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 12,
+     "n": 17,
+     "valor": 0.7058823529411765,
+     "ic95": [
+      0.468664666737861,
+      0.8672020613444361
+     ]
+    }
+   },
+   "total": {
+    "n": 60,
+    "kappa": 0.368421052631579,
+    "acuracia": 0.7,
+    "precisao_indicio": 0.6666666666666666,
+    "recall_indicio": 0.9090909090909091,
+    "matriz": {
+     "True": {
+      "True": 30,
+      "False": 3
+     },
+     "False": {
+      "True": 15,
+      "False": 12
+     }
+    },
+    "sensibilidade": {
+     "acertos": 4,
+     "n": 4,
+     "valor": 1.0
+    },
+    "recall_verificavel": {
+     "acertos": 13,
+     "n": 22,
+     "valor": 0.5909090909090909,
+     "ic95": [
+      0.38734477382893806,
+      0.7674444033117963
+     ]
+    }
+   }
+  }
+ },
+ "metas": {
+  "sensibilidade": 1.0,
+  "kappa": 0.6,
+  "recall_verificavel": 0.8
+ },
+ "avisos": [],
+ "config_conferencia": "regras + modelo",
+ "conferencia_manual": [
+  {
+   "id": "O05",
+   "texto": "comprar imóveis abaixo do valor... ACESSO VITALÍCIO. DE R$ 3.997 por apenas R$ 2.597",
+   "extraido": [
+    {
+     "type": "condicao_oferta",
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "O08",
+   "texto": "Certificado Gratuito Válido de 200h... Vagas Limitadas",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "200",
+     "unit": "horas"
+    }
+   ]
+  },
+  {
+   "id": "O09",
+   "texto": "Certificado incluso + acesso vitalício... Certificado válido em todo Brasil",
+   "extraido": [
+    {
+     "type": "condicao_oferta",
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "O11",
+   "texto": "Você desbloqueou acesso vitalício!",
+   "extraido": [
+    {
+     "type": "condicao_oferta",
+     "attribute": "acesso",
+     "value": "vitalicio",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "R01",
+   "texto": "tenha uma RENDA EXTRA de 10K",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "renda extra de 10k",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "R02",
+   "texto": "+3k alunas ja passaram pelo curso... nenhuma era confeiteira",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "3000",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "S04",
+   "texto": "Secar até 5KG EM 7 DIAS",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "5 kg em 7 dias",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "S14",
+   "texto": "estratégias para secar a barriga, começando pelo Seca Barriga de 7 dias",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "secar a barriga, comecando pelo seca barriga de 7 dias",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "S15",
+   "texto": "ELIMINAR A BARRIGA nas próximas semanas SEM SAIR DE CASA",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "semanas",
+     "unit": null
+    }
+   ]
+  },
+  {
+   "id": "S17",
+   "texto": "cardápios de emagrecimento saudável para 21 dias",
+   "extraido": [
+    {
+     "type": "resultado",
+     "attribute": "resultado",
+     "value": "emagrecimento saudavel para 21 dias",
+     "unit": null
+    }
+   ]
+  }
+ ],
+ "predicoes": {
+  "regras": {
+   "S01": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "Mounjaro",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S02": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "m0unj@r0",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S03": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S04": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "Secar até 5KG EM 7 DIAS",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "5 kg em 7 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S05": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "injeção",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S06": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "bloqueador de açúcar que seca barriga",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S07": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Seca Barriga",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S08": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S09": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S10": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S11": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Restam 14 vagas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S12": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S13": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S14": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "secar a barriga, começando pelo Seca Barriga de 7 dias",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "secar a barriga, comecando pelo seca barriga de 7 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S15": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S16": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S17": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "emagrecimento saudável para 21 dias",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "emagrecimento saudavel para 21 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S18": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S19": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S20": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S21": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S22": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-IMUN",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Imunidade",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S23": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S24": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S25": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "reduzir o acúmulo de gordura",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "insulina",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "colesterol",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "fígado",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S26": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "emagrec",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S27": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "emagrec",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S28": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "inflamação",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S29": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S30": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S31": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "COS-TERAPEUTICA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "queda hereditária",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S32": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S33": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S34": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S35": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-FOCO",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "foco",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S36": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R01": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "RENDA-NUMERO",
+      "source": "regra",
+      "reason_type": "renda_numero",
+      "excerpt": "RENDA EXTRA de 10K",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "renda extra de 10k",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "R02": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R03": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R04": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R05": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R06": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R07": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "poucas horas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "R08": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R09": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R10": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R11": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R12": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O01": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O02": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Só hoje",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O03": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O04": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S37": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O05": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "ACESSO VITALÍCIO",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O06": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso VITALÍCIO",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O07": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Últimas vagas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O08": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Vagas Limitadas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O09": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O10": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O11": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   }
+  },
+  "regras+modelo": {
+   "S01": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "Mounjaro",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "acelerar o metabolismo e secar a barriga",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S02": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "m0unj@r0",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S03": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "elimina a gordura teimosa",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "sem efeito sanfona",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S04": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "Secar até 5KG EM 7 DIAS",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "5 kg em 7 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S05": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "MED-COMPARACAO",
+      "source": "regra",
+      "reason_type": "med_comparacao",
+      "excerpt": "injeção",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Body modelador que estimula a perda de gordura",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S06": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "bloqueador de açúcar que seca barriga",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "firma pele em tempo recorde",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S07": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Seca Barriga",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Fat Red Burner",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "poder dos fitoterápicos",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S08": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "secar a pochete com fórmula 100% natural, sem exercicios e sem dietas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S09": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "o que a indústria da dieta nunca quis que você soubesse",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S10": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S11": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Restam 14 vagas",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Queime gordura e ganhe massa muscular",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S12": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "seguros",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S13": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Você vai diminuir suas dores, fortalecer seu corpo e emagrecer",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S14": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "secar a barriga, começando pelo Seca Barriga de 7 dias",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "secar a barriga, comecando pelo seca barriga de 7 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S15": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "ELIMINAR A BARRIGA",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "próximas semanas",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "semanas",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S16": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "queime gordura",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S17": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "PRAZO-RESULTADO",
+      "source": "regra",
+      "reason_type": "prazo_resultado",
+      "excerpt": "emagrecimento saudável para 21 dias",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "emagrecimento saudavel para 21 dias",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "S18": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "colocar seus hormônios no lugar",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "parar de acumular barriga",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S19": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "mudar na hora",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S20": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S21": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "acordam o metabolismo: mais gasto energetico",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S22": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-IMUN",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Imunidade",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "ajuda a controlar a fome",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S23": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "a compulsão desaparece",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "restaurar o equilibrio metabólico",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S24": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "controlam o apetite",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S25": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "reduzir o acúmulo de gordura",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "insulina",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "colesterol",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "fígado",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S26": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "emagrec",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "secar medidas",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "controle sobre o apetite",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S27": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "emagrec",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S28": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "inflamação",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "gordura essencial...",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S29": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "PREVENÇÃO",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "Nao espere a doença",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S30": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "destravar seus resultados",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S31": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "COS-TERAPEUTICA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "queda hereditária",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S32": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "COS-ZONA-CINZENTA",
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "acelerar o crescimento",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": "COS-ZONA-CINZENTA",
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Eficacia comprovada clinicamente",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S33": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "COS-TERAPEUTICA",
+      "source": "modelo",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "ciência alemã contra a queda de cabelo feminina",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S34": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "COS-ZONA-CINZENTA",
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Mega Crescimento",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S35": {
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-FOCO",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "foco",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Cansaco constante",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "atuar diretamente na sua energia",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "S36": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R01": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "RENDA-NUMERO",
+      "source": "regra",
+      "reason_type": "renda_numero",
+      "excerpt": "RENDA EXTRA de 10K",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "renda extra de 10k",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "R02": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "renda_implicita",
+      "excerpt": "+3k alunas ja passaram pelo curso",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "3000",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "R03": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "renda_implicita",
+      "excerpt": "pra fechar o mes",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "R04": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R05": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "renda_implicita",
+      "excerpt": "transforme esse conhecimento em renda extra no seu tempo livre",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "R06": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R07": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "poucas horas",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "renda_implicita",
+      "excerpt": "viver de renda passiva",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "R08": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "renda_implicita",
+      "excerpt": "trabalhe com o produto mais lucrativo do mercado",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "R09": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R10": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R11": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "R12": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O01": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "Em 60 dias você tem uma carteira de investimentos",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "carteira de investimentos",
+       "unit": "dias"
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O02": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Só hoje",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "outro",
+      "excerpt": "DESCONTO INÉDITO",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O03": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "O04": {
+    "overall": "limpo",
+    "findings": [],
+    "erro": null
+   },
+   "S37": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_sem_numero",
+      "excerpt": "soluções milagrosas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O05": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "ACESSO VITALÍCIO",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O06": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso VITALÍCIO",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O07": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Últimas vagas",
+      "extracted": null
+     }
+    ],
+    "erro": null
+   },
+   "O08": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "revisar",
+      "rule_key": "URGENCIA",
+      "source": "regra",
+      "reason_type": "urgencia",
+      "excerpt": "Vagas Limitadas",
+      "extracted": null
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "alegacao_fora_da_lista",
+      "excerpt": "Certificado Gratuito Válido de 200h",
+      "extracted": {
+       "type": "resultado",
+       "attribute": "resultado",
+       "value": "200",
+       "unit": "horas"
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O09": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O10": {
+    "overall": "revisar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     },
+     {
+      "output": "revisar",
+      "rule_key": null,
+      "source": "modelo",
+      "reason_type": "resultado_garantido",
+      "excerpt": "garantia total",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "garantia",
+       "value": "total",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   },
+   "O11": {
+    "overall": "registrar",
+    "findings": [
+     {
+      "output": "registrar",
+      "rule_key": "COND-ACESSO",
+      "source": "regra",
+      "reason_type": "condicao_extraida",
+      "excerpt": "acesso vitalício",
+      "extracted": {
+       "type": "condicao_oferta",
+       "attribute": "acesso",
+       "value": "vitalicio",
+       "unit": null
+      }
+     }
+    ],
+    "erro": null
+   }
+  }
+ },
+ "historico": [
+  {
+   "versao": "v1",
+   "mudancas": "primeira rodada",
+   "data": "23/11/2026 21:35",
+   "fingerprint": {
+    "data/rules/condicoes_oferta.yaml": "29a0d89b6f8e",
+    "data/rules/cosmetico_proibidas.yaml": "5c229258a112",
+    "data/rules/normalizacao.yaml": "12f5efdac865",
+    "data/rules/padroes_h2.yaml": "7a78ec32bd54",
+    "data/rules/suplemento_in28_permitidas.yaml": "313dc338ba19",
+    "data/rules/suplemento_proibidas.yaml": "132e0235e016",
+    "data/rules/taxonomia_devolucao.yaml": "637836235ab1",
+    "prompt checker_v1": "b335cb7432c0",
+    "modelo": "gemini-3.5-flash-lite"
+   },
+   "kappa_test": {
+    "regras": 0.36585365853658536,
+    "regras+modelo": 0.31937172774869116
+   }
+  }
+ ]
+}

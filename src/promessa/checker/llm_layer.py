@@ -55,9 +55,9 @@ Completer = Callable[..., LLMResult[CheckerLLMOutput]]
 # --- Entrada do prompt -------------------------------------------------------------------
 
 
-def prompt_variables(
-    text: str, segments: list[Segment], ctx: CheckContext, layer1: list[Finding]
-) -> dict:
+def _ficha_text(ctx: CheckContext) -> str:
+    if ctx.generic:
+        return "- (ficha genérica da categoria: condições da oferta não informadas)"
     access = {
         "vitalicio": "acesso vitalício",
         "prazo": f"acesso por {ctx.access_months} meses",
@@ -67,7 +67,7 @@ def prompt_variables(
     costs = ", ".join(
         f"{c['descricao']} ({c['valor_mensal_cents'] / 100:.2f} reais/mês)" for c in ctx.extra_costs
     )
-    ficha = "\n".join(
+    return "\n".join(
         [
             f"- garantia: {ctx.guarantee_days} dias",
             f"- acesso: {access}",
@@ -77,6 +77,12 @@ def prompt_variables(
             f"- custos extras: {costs or 'nenhum'}",
         ]
     )
+
+
+def prompt_variables(
+    text: str, segments: list[Segment], ctx: CheckContext, layer1: list[Finding]
+) -> dict:
+    ficha = _ficha_text(ctx)
     permitted = (
         "\n".join(f"- {r.rule_key}: {r.text}" for r in ctx.permitted) or "- (nenhuma lista oficial)"
     )

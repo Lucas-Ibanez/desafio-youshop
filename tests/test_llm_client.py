@@ -5,7 +5,14 @@ from pydantic import BaseModel
 
 from promessa.config import Settings
 from promessa.llm import client as llm
-from promessa.llm.client import LLMError, LLMOfflineMiss, LLMUnavailable, complete_json
+from promessa.llm.client import (
+    LLMError,
+    LLMOfflineMiss,
+    LLMUnavailable,
+    RateLimiter,
+    complete_json,
+    retry_after,
+)
 
 
 class Out(BaseModel):
@@ -26,6 +33,7 @@ def prompt(tmp_path, monkeypatch):
 
 
 def settings(tmp_path, **kw):
+    kw.setdefault("llm_max_rpm", 0)  # sem limitador nos testes (ele é testado à parte)
     return Settings(
         _env_file=None, gemini_api_key="chave-falsa", llm_cache_dir=str(tmp_path / "cache"), **kw
     )
@@ -118,3 +126,30 @@ def test_json_fora_do_esquema_tenta_de_novo(prompt, tmp_path, monkeypatch):
         prompt, {"coisa": "a"}, Out, "m", settings=settings(tmp_path), sleep=lambda _: None
     )
     assert result.data.ok is True and len(calls) == 2
+
+
+def test_429_espera_o_tempo_pedido_pela_api(prompt, tmp_path, monkeypatch):
+    err = ApiError(429)
+    err.args = ("429 RESOURCE_EXHAUSTED. Please retry in 19.7s.",)
+    fake_calls(monkeypatch, [err, '{"ok": true}'])
+    waits = []
+    complete_json(prompt, {"coisa": "a"}, Out, "m", settings=settings(tmp_path), sleep=waits.append)
+    assert waits == [19.7]
+
+
+def test_retry_after():
+    assert retry_after(Exception("Please retry in 19.71s.")) == 19.71
+    assert retry_after(Exception("'retryDelay': '18s'")) == 18.0
+    assert retry_after(Exception("retry in 500s")) == 60.0  # teto
+    assert retry_after(Exception("503 UNAVAILABLE")) is None
+
+
+def test_limitador_espaca_as_chamadas():
+    clock = [100.0]
+    waits = []
+    limiter = RateLimiter()
+    for _ in range(3):
+        limiter.wait(15, clock=lambda: clock[0], sleep=waits.append)
+    assert waits == [4.0, 8.0]  # 60/15 = 4 s entre inícios
+    limiter.wait(0, clock=lambda: clock[0], sleep=waits.append)
+    assert len(waits) == 2

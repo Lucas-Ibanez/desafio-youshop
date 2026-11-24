@@ -586,6 +586,7 @@ Também reportar: matriz de confusão; precisão e recall de `promessa_explicita
 | `CHECKER_USE_LLM` | `true` | Desliga a camada 2 |
 | `LLM_OFFLINE` | `false` | `true` = só cache; erro se não houver |
 | `LLM_CACHE_DIR` | `.cache/llm` | Cache em disco |
+| `LLM_MAX_RPM` | `15` | Chamadas por minuto ao modelo (cota do plano gratuito; D26) |
 | `CONFIDENCE_THRESHOLD` | `0.8` | Fila de revisão e indicador |
 | `MIN_SALES_FOR_INDICATOR` | `30` | Mínimo de vendas para mostrar indicador por creator |
 | `URGENCY_STALE_DAYS` | `7` | Urgência vencida |

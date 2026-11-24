@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import re
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -27,6 +28,7 @@ log = logging.getLogger(__name__)
 PROMPTS_DIR = Path(__file__).resolve().parent / "prompts"
 RETRY_CODES = {429, 500, 502, 503, 504}
 MAX_ATTEMPTS = 3
+MAX_RETRY_WAIT = 60.0  # segundos
 
 
 class LLMError(Exception):
@@ -93,6 +95,40 @@ def _call_gemini(model: str, rendered: str, output_model: type[BaseModel], setti
     return response.text or "", tokens
 
 
+class RateLimiter:
+    """Espaça o início das chamadas para não passar de `rpm` por minuto (entre threads)."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._next = 0.0
+
+    def wait(self, rpm: int, clock=time.monotonic, sleep=time.sleep) -> None:
+        if rpm <= 0:
+            return
+        with self._lock:
+            now = clock()
+            start = max(now, self._next)
+            self._next = start + 60.0 / rpm
+        if start > now:
+            sleep(start - now)
+
+
+_limiter = RateLimiter()
+
+
+def retry_after(exc: Exception) -> float | None:
+    """Segundos que a API pede para esperar ("Please retry in 19.7s" / retryDelay: '19s')."""
+    m = re.search(r"retry in ([\d.]+)\s*s|retryDelay'?:\s*'?([\d.]+)s", str(exc))
+    if not m:
+        return None
+    return min(float(m.group(1) or m.group(2)), MAX_RETRY_WAIT)
+
+
+def _short(exc: Exception, limit: int = 160) -> str:
+    text = " ".join(str(exc).split())
+    return text if len(text) <= limit else text[:limit] + "…"
+
+
 def _is_retryable(exc: Exception) -> bool:
     code = getattr(exc, "code", None)
     if isinstance(code, int) and code in RETRY_CODES:
@@ -133,7 +169,9 @@ def complete_json[T: BaseModel](
 
     last: Exception | None = None
     for attempt in range(1, MAX_ATTEMPTS + 1):
+        _limiter.wait(settings.llm_max_rpm, sleep=sleep)
         started = time.perf_counter()
+        wait = 2 ** (attempt - 1)
         try:
             text, tokens = _call_gemini(model, rendered, output_model, settings)
             data = output_model.model_validate_json(text)
@@ -144,10 +182,15 @@ def complete_json[T: BaseModel](
             )
         except Exception as e:  # noqa: BLE001
             if not _is_retryable(e):
-                raise LLMError(f"erro do modelo {model}: {e}") from e
+                raise LLMError(f"erro do modelo {model}: {_short(e)}") from e
             last = e
+            wait = max(wait, retry_after(e) or 0)
             log.warning(
-                "llm model=%s prompt=%s tentativa=%d erro=%s", model, prompt_name, attempt, e
+                "llm model=%s prompt=%s tentativa=%d erro=%s",
+                model,
+                prompt_name,
+                attempt,
+                _short(e),
             )
         else:
             elapsed = int((time.perf_counter() - started) * 1000)
@@ -169,5 +212,7 @@ def complete_json[T: BaseModel](
             )
             return LLMResult(data, model, prompt_name, cached=False, usage=tokens)
         if attempt < MAX_ATTEMPTS:
-            sleep(2 ** (attempt - 1))
-    raise LLMError(f"modelo {model} sem resposta válida após {MAX_ATTEMPTS} tentativas: {last}")
+            sleep(wait)
+    raise LLMError(
+        f"modelo {model} sem resposta válida após {MAX_ATTEMPTS} tentativas: {_short(last)}"
+    )

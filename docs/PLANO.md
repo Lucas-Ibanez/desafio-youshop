@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 20:30):
+**Andamento** (atualizado em 23/11, 21:40):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -55,10 +55,12 @@
 | T05 Ficha de promessas | ✅ Concluída | Seeds, `facts/service.py`, ferramentas `get_product_facts` e `upsert_product_facts`; 27 testes (D22). |
 | T06 Checador camada 1 **[plan]** | ✅ Concluída | Os 15 casos da tabela passam; 31 testes; < 50 ms por peça (D23). Plano apresentado no início da sessão, sem aprovação prévia (pedido direto do Lucas). |
 | T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24); checador trocado para `gemini-3.5-flash-lite` (D25). |
-| T08 Teste 1 do checador | **Próxima** | Modelo do checador decidido: `gemini-3.5-flash-lite` (D25). |
-| T09–T16 | Não iniciadas | — |
+| T08 Teste 1 do checador | ✅ Concluída | Rodada v1 em `eval/reports/checador_h2.md`: 4/4 evidentes; kappa test 0,37 (regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 47% e 71%, meta 80% ❌ (D26). |
+| **Checkpoint 1** | **Lucas** | Olhar o relatório e os erros (ver T08). |
+| T09 Promessa registrada e link | **Próxima** | — |
+| T10–T16 | Não iniciadas | — |
 
-Adiantado cerca de 2h15 em relação ao cronograma abaixo (a T08 estava prevista para 22:45).
+Adiantado cerca de 1h45 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|
@@ -393,11 +395,13 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 3. O `.md` começa com: data, versões dos prompts e das regras, modelo, e a seção "Vazamentos conhecidos" (CONTEXTO 14.4).
 
 **Critérios de aceite:**
-- [ ] `make eval-checador` termina em menos de 5 minutos (e em segundos com cache).
-- [ ] O relatório mostra cada meta do guia com o valor obtido e ✅ ou ❌. **Não esconder ❌.**
-- [ ] A sensibilidade nas 4 peças irregulares evidentes lista as 4 pelo id com o resultado de cada uma.
-- [ ] O recall de promessa verificável vem acompanhado de 10 extrações sorteadas para conferência manual (Lucas marca certo ou errado no próprio `.md`).
-- [ ] A primeira rodada no split `test` fica registrada como "v1" no relatório; ajustes posteriores geram "v2" com o que mudou.
+- [x] `make eval-checador` termina em menos de 5 minutos (e em segundos com cache). *(284 s sem cache, limitado pela cota de 15 chamadas/min; 2 s com cache.)*
+- [x] O relatório mostra cada meta do guia com o valor obtido e ✅ ou ❌. **Não esconder ❌.** *(por configuração e por split: dev, test e total.)*
+- [x] A sensibilidade nas 4 peças irregulares evidentes lista as 4 pelo id com o resultado de cada uma. *(S06, S22, S25, S26: `bloquear` nas duas configurações.)*
+- [x] O recall de promessa verificável vem acompanhado de 10 extrações sorteadas para conferência manual (Lucas marca certo ou errado no próprio `.md`). *(as marcas são preservadas nas próximas rodadas.)*
+- [x] A primeira rodada no split `test` fica registrada como "v1" no relatório; ajustes posteriores geram "v2" com o que mudou. *(versão pela impressão digital de regras, prompt e modelo; histórico no `.md` e no `.json`.)*
+
+**Status:** ✅ concluída em 23/11 (21:40).
 
 **→ Checkpoint 1 (Lucas):** olhar o relatório e os erros. Se o kappa estiver muito abaixo de 0,6, ver nos erros se o problema é regra faltando (corrigir no YAML, só olhando o split `dev`) ou discordância de critério (anotar para a recodificação cega).
 
