@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 23:40):
+**Andamento** (atualizado em 24/11, 07:40):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -61,8 +61,8 @@
 | T10 Classificador de devolução **[plan]** | ✅ Concluída | `classify_refund` via MCP; 31 testes sem rede + 7 `llm` (passam ao vivo e com cache) (D29). |
 | T11 Ligação com a promessa | ✅ Concluída | `classify_refund` preenche `relation` e `linked_promise_id`; 12 de 12 cenários com modelo; 29 testes sem rede (D30). |
 | T12 Teste 1 do classificador | ✅ Concluída (1 critério ❌) | Rodada v1 em `eval/reports/classificador_h1.md`: test acurácia 81%, kappa 0,74, subtipo 74% (metas ✅); corte: sim. Rodada fria de 14,5 min (meta 10 ❌, cota do Gemini) (D31). |
-| **Checkpoint 2** | Em andamento | Decidido: v2 do classificador com a causa restrita à taxonomia (D32). Código pronto; rodada v2 pendente até a cota diária do Gemini voltar (~05h de 24/11; faltam ~96 chamadas). |
-| T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída (modo gabarito) | Personas e relatórios conferidos sem rede; 18 testes. Rodada com o classificador real pendente da cota (~05h) (D33). |
+| **Checkpoint 2** | ✅ Feito | v2 do classificador (causa restrita à taxonomia): test acurácia 81% → 83%, kappa 0,74 → 0,77, nenhuma causa inválida; modelo mantido `gemini-3.5-flash-lite` (D34). |
+| T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída | Conferida no modo gabarito e com o classificador real: as personas batem nos dois (D33, D34). |
 | T14 Painel | **Próxima** | — |
 | T15–T16 | Não iniciadas | — |
 
@@ -569,7 +569,7 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 - [x] Teste: nenhuma frase de `reason_text` (5 palavras seguidas ou mais) aparece na explicação ou em relatório com papel `creator` (invariante 5). *(descontando o que está na própria peça do creator, que o comprador pode citar.)*
 - [x] Sem chave, a explicação sai pelo modelo de texto fixo.
 
-**Status:** ✅ concluída em 23/11 (23:40), conferida no modo gabarito. Rodar `PROMESSA_SIMULATE_ARGS="" tasks.py db-reset seed simulate` (modo modelo) quando a cota voltar e reconferir as personas. Plano apresentado no início da sessão (pedido direto do Lucas).
+**Status:** ✅ concluída em 23/11 (23:40), conferida no modo gabarito e, em 24/11, com o classificador real (modo modelo): mesmas personas (D34). Plano apresentado no início da sessão (pedido direto do Lucas).
 
 ---
 

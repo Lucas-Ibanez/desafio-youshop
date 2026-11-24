@@ -307,3 +307,13 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Cliente do modelo:** quando a API pede espera maior que 60 s (cota diária), falha na hora (`LLMQuotaExhausted`) em vez de repetir.
 **Resultado (modo gabarito):** cr_ana tem o maior indicador (4,7%) e "5 kg em 7 dias" no topo; prod_treino tem "acesso vitalicio" no topo dos sinais (7, de cr_ana e cr_bia); cr_caio tem a maior taxa de devolução (17,5%) e indicador 0; cr_duda tem "dados insuficientes"; a explicação da cr_ana cita "Secar até 5KG EM 7 DIAS" e o que não é com ela (101 palavras).
 **Pendente:** rodar no modo `modelo` quando a cota voltar e conferir as personas com o classificador real.
+
+## D34 · Rodadas depois da cota: classificador v2 e simulação real · 24/11/2026
+**Contexto:** com a cota diária do Gemini de volta (07h de 24/11), rodaram as pendências da D32 e da D33.
+**Resultado:**
+- **Classificador v2 (`classifier_v2`, causa restrita à taxonomia):** `test` acurácia 81% → **83%**, kappa 0,74 → **0,77**, subtipo 74% (igual); precisão de `promessa_explicita` 63% → 61%. Nenhuma causa fora da taxonomia (eram 4 na v1). Critério de corte: sim. Uma reclamação levou 429 por limite por minuto e foi refeita na mesma v2 (as demais vieram do cache).
+- **Modelo final (Checkpoint 2):** mantido `gemini-3.5-flash-lite` nos três agentes (D25). A comparação com outro modelo no split `dev` não foi feita, para preservar a cota do dia para a demo.
+- **Simulação com o classificador real (modo `modelo`):** 600 vendas, 76 devoluções, a mesma distribuição de causas do modo gabarito; as personas batem: cr_ana com o maior indicador (4,7%) e "5 kg em 7 dias" no topo; cr_caio com a maior taxa de devolução (17,5%) e indicador 0; cr_duda com "dados insuficientes"; prod_treino com "acesso vitalicio" no topo dos sinais (7). Uma devolução levou 503 e foi refeita (resto do cache).
+- **Testes `llm`:** 27 de 27 ao vivo com os prompts novos.
+**Achado na explicação do modelo (cr_ana, 93 palavras):** cita o trecho certo e o que não é com ela, mas diz que "a maior parte" das devoluções veio da peça (foram 7 de 18). O filtro atual confere tamanho e trecho, não os números ditos em texto. Ajuste possível na T15/T16: instrução no prompt para não usar quantificadores ("maior parte") sem o número, ou preferir o texto fixo na demo.
+**Consumo de cota no dia:** ~210 chamadas de 500 no `gemini-3.5-flash-lite`.
