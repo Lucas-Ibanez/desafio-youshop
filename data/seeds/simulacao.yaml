@@ -1,0 +1,182 @@
+# Simulação do MVP (PLANO T13): personas, peças, vendas e devoluções FICTÍCIAS.
+# Os motivos são escritos para o MVP (não vêm do gabarito). Cada motivo traz a classificação
+# pretendida: o modo `gabarito` do simulador a usa sem modelo (testes); o modo `modelo` classifica
+# com o classify_refund real.
+versao: "2026-11-23"
+nota: "600 vendas, ~12% de devoluções, mistura de causas próxima da H1 (acesso ~34%, processo ~32%, promessa ~26%, fraude ~7%)."
+periodo: {inicio: "2026-10-26", fim: "2026-11-22"}
+semente: 42
+
+personas:
+  - creator: cr_ana
+    nota: "Tenta vitalício + 30 dias (bloqueada), corrige; mantém \"5 kg em 7 dias\" (revisar)."
+    pecas:
+      - produto: prod_treino
+        canal: instagram
+        bloqueada: "Treino em casa com acesso vitalício e 30 dias para testar!"
+        texto: "Treino em casa com 12 meses de acesso e 7 dias de garantia. Secar até 5KG EM 7 DIAS!"
+        vendas: 150
+        devolucoes: {resultado_5kg: 7, vitalicio: 3, acesso_nao_liberado: 2, login_conta: 2, arrependimento: 2, renovacao_indesejada: 1, cobranca_nao_reconhecida: 1}
+
+  - creator: cr_bia
+    nota: "Peças limpas, só condições registradas."
+    pecas:
+      - produto: prod_treino
+        canal: tiktok
+        texto: "#publi Treinos de 20 minutos. 12 meses de acesso, 7 dias de garantia e o e-book de receitas de bônus."
+        vendas: 120
+        devolucoes: {vitalicio: 4, acesso_nao_liberado: 2, servico_fora_do_ar: 1, arrependimento: 2, motivo_pessoal: 1, qualidade: 1}
+
+  - creator: cr_caio
+    nota: "Vende muito prod_ingles, que tem problema de acesso na simulação."
+    pecas:
+      - produto: prod_ingles
+        canal: youtube
+        texto: "#publi Aulas de conversação toda semana. Assinatura mensal com renovação automática; cancele quando quiser."
+        vendas: 200
+        devolucoes: {servico_fora_do_ar: 8, acesso_nao_liberado: 5, login_conta: 3, renovacao_indesejada: 6, cancelamento_travado: 4, arrependimento: 2, renovacao_omitida: 2, cobranca_nao_reconhecida: 3, qualidade: 2}
+
+  - creator: cr_duda
+    nota: "Menos de 30 vendas."
+    pecas:
+      - produto: prod_canal
+        canal: instagram
+        texto: "Aprenda a criar um canal sem aparecer. Acesso vitalício e 7 dias de garantia."
+        vendas: 20
+        devolucoes: {custo_omitido: 2, arrependimento: 1}
+
+  - creator: cr_eli
+    nota: "Suplemento e cosmético, com trechos revisar."
+    pecas:
+      - produto: prod_magnesio
+        canal: instagram
+        texto: "O magnésio auxilia no funcionamento muscular. Só hoje com frete grátis!"
+        vendas: 60
+        devolucoes: {fisico_nao_entregue: 3, arrependimento: 1, cobranca_nao_reconhecida: 1}
+      - produto: prod_capilar
+        canal: instagram
+        texto: "Shampoo com crescimento comprovado clinicamente para fios mais fortes."
+        vendas: 50
+        devolucoes: {fisico_nao_entregue: 2, qualidade: 1, motivo_pessoal: 1}
+
+precos_cents: {prod_treino: 19700, prod_magnesio: 8990, prod_capilar: 4990, prod_canal: 49700, prod_ingles: 7990}
+comissao_pct: 30
+
+variacoes: ["", " Quero meu dinheiro de volta.", " Aguardo uma solução.", " Já tentei resolver e nada.", " Peço o reembolso."]
+
+motivos:
+  resultado_5kg:
+    classificacao: {cause: promessa_explicita, subcause: resultado_prometido,
+                    buyer_belief: {attribute: resultado, value: "5 kg em 7 dias", unit: null, text: "5 kg em uma semana"}}
+    relacao: confirma
+    textos:
+      - "Prometeram que eu ia secar 5 kg em 7 dias e não perdi nada."
+      - "No vídeo falava em 5 kg em uma semana. Fiz tudo certinho e nada mudou."
+      - "Comprei por causa da promessa de perder 5 kg em 7 dias, não aconteceu."
+      - "A creator garantiu 5 kg a menos em uma semana e eu continuo igual."
+      - "Disseram 5 kg em 7 dias, já passou um mês e não emagreci."
+  vitalicio:
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: acesso, value: vitalicio, unit: null, text: "achei que era para sempre"}}
+    textos:
+      - "Perdi o acesso, achei que era para sempre."
+      - "Comprei achando que o acesso era vitalício e agora dizem que acabou."
+      - "Me venderam como acesso vitalício e o acesso foi cortado."
+      - "Pensei que o treino era para sempre, não sabia que tinha prazo."
+      - "O acesso era vitalício no anúncio que vi e agora sumiu."
+  renovacao_omitida:
+    classificacao: {cause: promessa_explicita, subcause: informacao_omitida, buyer_belief: null}
+    textos:
+      - "Cobraram renovação que ninguém me avisou na compra."
+      - "Não fui informado de que era assinatura com renovação automática."
+      - "Na venda não falaram de cobrança todo mês, só descobri na fatura."
+      - "Ninguém disse que renovava sozinho, fui cobrada sem saber."
+      - "A renovação automática não foi informada quando comprei."
+  custo_omitido:
+    classificacao: {cause: promessa_explicita, subcause: informacao_omitida, buyer_belief: null}
+    textos:
+      - "Para usar o curso precisa pagar ferramentas que ninguém avisou."
+      - "Descobri depois que preciso assinar um programa de voz por mês."
+      - "O curso exige ferramentas pagas que não foram informadas."
+      - "Tem custo mensal escondido com as ferramentas de edição."
+      - "Não avisaram que eu teria que pagar mais ferramentas todo mês."
+  qualidade:
+    classificacao: {cause: promessa_expectativa, subcause: qualidade_abaixo, buyer_belief: null}
+    textos:
+      - "O curso é fraco, esperava mais."
+      - "Conteúdo muito básico, não era o que eu esperava."
+      - "Material desorganizado e raso."
+      - "Achei o produto de qualidade ruim."
+      - "As aulas são fracas e repetitivas."
+  acesso_nao_liberado:
+    classificacao: {cause: acesso_entrega, subcause: acesso_nao_liberado, buyer_belief: null}
+    textos:
+      - "Paguei há 5 dias e até hoje não liberaram o acesso."
+      - "Comprei e não recebi o acesso à área de membros."
+      - "O pagamento foi aprovado mas o acesso não chegou."
+      - "Ainda não consigo acessar o que comprei, não liberaram."
+      - "Faz uma semana que paguei e nada de acesso."
+  login_conta:
+    classificacao: {cause: acesso_entrega, subcause: login_conta, buyer_belief: null}
+    textos:
+      - "Não consigo entrar na área de membros, a senha não funciona."
+      - "Minha conta foi bloqueada e não consigo fazer login."
+      - "O login dá erro toda vez que tento entrar."
+      - "Esqueci a senha e o sistema não manda o código."
+      - "Não consigo acessar minha conta de jeito nenhum."
+  servico_fora_do_ar:
+    classificacao: {cause: acesso_entrega, subcause: servico_fora_do_ar, buyer_belief: null}
+    textos:
+      - "A plataforma das aulas vive fora do ar."
+      - "As aulas ao vivo não abrem, o sistema cai toda hora."
+      - "O aplicativo parou de funcionar e não voltou."
+      - "Os vídeos não carregam há dias."
+      - "O serviço está fora do ar desde a semana passada."
+  fisico_nao_entregue:
+    classificacao: {cause: acesso_entrega, subcause: fisico_nao_entregue, buyer_belief: null}
+    textos:
+      - "O pedido nunca foi entregue."
+      - "Meu produto não chegou e o rastreio parou."
+      - "Paguei e o pacote não foi enviado."
+      - "Já passou o prazo e o produto não chegou."
+      - "A entrega não aconteceu, o pedido sumiu."
+  arrependimento:
+    classificacao: {cause: processo, subcause: arrependimento_sem_motivo, buyer_belief: null}
+    textos:
+      - "Me arrependi, quero cancelar."
+      - "Desisti da compra, quero o reembolso."
+      - "Comprei por impulso e quero cancelar."
+      - "Não quero mais o produto, peço o cancelamento."
+      - "Mudei de ideia sobre a compra."
+  renovacao_indesejada:
+    classificacao: {cause: processo, subcause: renovacao_indesejada, buyer_belief: null}
+    textos:
+      - "Não quero mais a assinatura, cancelem a renovação."
+      - "A assinatura renovou e eu não quero continuar."
+      - "Quero parar a renovação mensal."
+      - "Não desejo renovar, quero o estorno da última cobrança."
+      - "Renovou de novo e eu não uso mais."
+  cancelamento_travado:
+    classificacao: {cause: processo, subcause: cancelamento_travado, buyer_belief: null}
+    textos:
+      - "Não acho onde cancelar e ninguém responde."
+      - "Tento cancelar a assinatura e o site dá erro."
+      - "Pedi o cancelamento três vezes e nada."
+      - "O botão de cancelar não funciona."
+      - "Não consigo cancelar, o suporte não atende."
+  motivo_pessoal:
+    classificacao: {cause: processo, subcause: motivo_pessoal, buyer_belief: null}
+    textos:
+      - "Fiquei sem dinheiro e não vou conseguir usar."
+      - "Por motivo de saúde não vou poder fazer o curso."
+      - "Mudei de cidade e não vou usar o produto."
+      - "Perdi o emprego e preciso do dinheiro de volta."
+      - "Não tenho mais tempo para usar."
+  cobranca_nao_reconhecida:
+    classificacao: {cause: fraude, subcause: cobranca_nao_reconhecida, buyer_belief: null}
+    textos:
+      - "Não reconheço essa cobrança no meu cartão."
+      - "Apareceu uma compra que eu não fiz."
+      - "Cobrança desconhecida na minha fatura."
+      - "Não fiz essa compra, quero contestar."
+      - "Alguém usou meu cartão para comprar isso."

@@ -39,6 +39,10 @@ class LLMUnavailable(LLMError):
     """Sem chave da API ou modelo desligado."""
 
 
+class LLMQuotaExhausted(LLMError):
+    """A API pediu para esperar mais que `MAX_RETRY_WAIT` (ex.: cota diária): não repetir."""
+
+
 class LLMOfflineMiss(LLMError):
     """`LLM_OFFLINE=true` e a resposta não está no cache."""
 
@@ -121,7 +125,7 @@ def retry_after(exc: Exception) -> float | None:
     m = re.search(r"retry in ([\d.]+)\s*s|retryDelay'?:\s*'?([\d.]+)s", str(exc))
     if not m:
         return None
-    return min(float(m.group(1) or m.group(2)), MAX_RETRY_WAIT)
+    return float(m.group(1) or m.group(2))
 
 
 def _short(exc: Exception, limit: int = 160) -> str:
@@ -184,7 +188,12 @@ def complete_json[T: BaseModel](
             if not _is_retryable(e):
                 raise LLMError(f"erro do modelo {model}: {_short(e)}") from e
             last = e
-            wait = max(wait, retry_after(e) or 0)
+            asked = retry_after(e) or 0
+            if asked > MAX_RETRY_WAIT:
+                raise LLMQuotaExhausted(
+                    f"cota do modelo {model} esgotada: a API pede esperar {asked / 3600:.1f} h"
+                ) from e
+            wait = max(wait, asked)
             log.warning(
                 "llm model=%s prompt=%s tentativa=%d erro=%s",
                 model,

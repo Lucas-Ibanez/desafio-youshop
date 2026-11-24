@@ -140,7 +140,7 @@ def test_429_espera_o_tempo_pedido_pela_api(prompt, tmp_path, monkeypatch):
 def test_retry_after():
     assert retry_after(Exception("Please retry in 19.71s.")) == 19.71
     assert retry_after(Exception("'retryDelay': '18s'")) == 18.0
-    assert retry_after(Exception("retry in 500s")) == 60.0  # teto
+    assert retry_after(Exception("retry in 500s")) == 500.0
     assert retry_after(Exception("503 UNAVAILABLE")) is None
 
 
@@ -153,3 +153,17 @@ def test_limitador_espaca_as_chamadas():
     assert waits == [4.0, 8.0]  # 60/15 = 4 s entre inícios
     limiter.wait(0, clock=lambda: clock[0], sleep=waits.append)
     assert len(waits) == 2
+
+
+def test_cota_diaria_falha_na_hora(prompt, tmp_path, monkeypatch):
+    from promessa.llm.client import LLMQuotaExhausted
+
+    err = ApiError(429)
+    err.args = ("429 RESOURCE_EXHAUSTED. 'retryDelay': '20035s'",)
+    calls = fake_calls(monkeypatch, [err, '{"ok": true}'])
+    waits = []
+    with pytest.raises(LLMQuotaExhausted, match="esgotada"):
+        complete_json(
+            prompt, {"coisa": "a"}, Out, "m", settings=settings(tmp_path), sleep=waits.append
+        )
+    assert len(calls) == 1 and waits == []

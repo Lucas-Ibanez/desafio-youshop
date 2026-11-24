@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+# Repassado ao simulador: PROMESSA_SIMULATE_ARGS="--modo gabarito"
+SIMULATE_ARGS = os.environ.get("PROMESSA_SIMULATE_ARGS", "").split()
 
 
 def _env() -> dict[str, str]:
@@ -100,6 +102,11 @@ def eval_all() -> int:
     return eval_checker() or eval_classifier()
 
 
+def simulate() -> int:
+    # Peças, links, vendas e devoluções fictícias (T13). Passe --modo gabarito sem cota de modelo.
+    return run(sys.executable, "scripts/simulate.py", *SIMULATE_ARGS)
+
+
 def mcp() -> int:
     return py("promessa.mcp_server")
 
@@ -120,7 +127,7 @@ TASKS: dict[str, Task] = {
     "db-reset": Task("apaga e recria var/promessa.db", "T02", db_reset),
     "gold": Task("importa e confere os gabaritos (scripts/import_gold.py)", "T04", gold),
     "seed": Task("marcas, produtos, fichas v1 e creators", "T05", seed),
-    "simulate": Task("peças, links, vendas e devoluções sintéticas", "T13", not_implemented("T13")),
+    "simulate": Task("peças, links, vendas e devoluções sintéticas", "T13", simulate),
     "eval-checador": Task("Teste 1 do checador (H2)", "T08", eval_checker),
     "eval-classificador": Task("Teste 1 do classificador (H1)", "T12", eval_classifier),
     "eval": Task("Teste 1 dos dois agentes", "T08, T12", eval_all),

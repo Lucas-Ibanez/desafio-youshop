@@ -25,6 +25,10 @@ from promessa.links import service as links_service
 from promessa.links.service import LinkResponse
 from promessa.refunds import service as refunds_service
 from promessa.refunds.service import RefundResponse
+from promessa.reports import explain as explain_service
+from promessa.reports import service as reports_service
+from promessa.reports.explain import Explanation
+from promessa.reports.service import PromiseOutcomeReport
 from promessa.review import service as review_service
 from promessa.review.service import ReviewQueue, ReviewResult
 
@@ -190,6 +194,37 @@ def classify_refund(sale_id: int, reason_text: str, type: str = "reembolso") -> 
     """
     with session_scope() as session:
         return refunds_service.classify_refund(session, sale_id, reason_text, type)
+
+
+@mcp.tool()
+@domain_errors
+def get_promise_outcome_report(
+    creator_id: str | None = None,
+    product_id: str | None = None,
+    start: str = "2026-10-26",
+    end: str = "2026-11-22",
+) -> PromiseOutcomeReport:
+    """Relatório de devoluções de um creator OU de um produto no período (AAAA-MM-DD).
+
+    Taxas por causa, indicador de promessa confirmada (com mínimo de vendas), promessas mais
+    contestadas, sinais para a marca (crenças que contradizem o registrado), cobertura,
+    operação e integridade. Só dados agregados: nenhum texto de comprador.
+    """
+    with session_scope() as session:
+        return reports_service.promise_outcome_report(session, creator_id, product_id, start, end)
+
+
+@mcp.tool()
+@domain_errors
+def explain_refunds_to_creator(
+    creator_id: str, start: str = "2026-10-26", end: str = "2026-11-22"
+) -> Explanation:
+    """Explicação curta, para o creator, de por que as vendas voltaram e qual trecho mudar.
+
+    Gerada só de dados agregados (sem texto de comprador); `data_used` mostra os números usados.
+    """
+    with session_scope() as session:
+        return explain_service.explain_refunds_to_creator(session, creator_id, start, end)
 
 
 def main() -> None:

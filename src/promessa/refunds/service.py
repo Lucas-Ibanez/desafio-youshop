@@ -5,6 +5,7 @@ promessa registrada na peça da venda (T11; CONTEXTO 12.2 e 12.3).
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel
@@ -58,6 +59,7 @@ def classify_refund(
     *,
     completer=None,
     link_completer=None,
+    at: datetime | None = None,
 ) -> RefundResponse:
     """Grava o evento de devolução (motivo limpo) e a classificação do motivo."""
     sale = session.get(Sale, sale_id)
@@ -73,7 +75,10 @@ def classify_refund(
         raise DomainError(ENTRADA_INVALIDA, "O motivo da devolução está vazio.")
 
     clean = scrub(reason_text)
+    # `at` data a devolução (simulador, T13); sem ele, agora
     event = RefundEvent(sale_id=sale.id, type=refund_type, reason_text=clean)
+    if at is not None:
+        event.created_at = at
     session.add(event)
     session.flush()
 
@@ -103,6 +108,8 @@ def classify_refund(
         model=result.model,
         prompt_version=result.prompt_version,
     )
+    if at is not None:
+        row.created_at = at
     session.add(row)
     session.flush()
     log.info(

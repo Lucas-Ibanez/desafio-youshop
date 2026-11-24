@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 23:00):
+**Andamento** (atualizado em 23/11, 23:40):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -62,8 +62,9 @@
 | T11 Ligação com a promessa | ✅ Concluída | `classify_refund` preenche `relation` e `linked_promise_id`; 12 de 12 cenários com modelo; 29 testes sem rede (D30). |
 | T12 Teste 1 do classificador | ✅ Concluída (1 critério ❌) | Rodada v1 em `eval/reports/classificador_h1.md`: test acurácia 81%, kappa 0,74, subtipo 74% (metas ✅); corte: sim. Rodada fria de 14,5 min (meta 10 ❌, cota do Gemini) (D31). |
 | **Checkpoint 2** | Em andamento | Decidido: v2 do classificador com a causa restrita à taxonomia (D32). Código pronto; rodada v2 pendente até a cota diária do Gemini voltar (~05h de 24/11; faltam ~96 chamadas). |
-| T13 Simulador, relatórios e explicação **[plan]** | **Próxima** | — |
-| T14–T16 | Não iniciadas | — |
+| T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída (modo gabarito) | Personas e relatórios conferidos sem rede; 18 testes. Rodada com o classificador real pendente da cota (~05h) (D33). |
+| T14 Painel | **Próxima** | — |
+| T15–T16 | Não iniciadas | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -559,14 +560,16 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 4. Ferramentas MCP `get_promise_outcome_report` e `explain_refunds_to_creator`.
 
 **Critérios de aceite:**
-- [ ] `make db-reset seed simulate` roda em menos de 3 minutos com cache e imprime um resumo (vendas, devoluções, por causa).
-- [ ] Relatório de `cr_ana` tem a maior taxa de promessa confirmada e "5 kg em 7 dias" no topo das promessas contestadas.
-- [ ] Relatório de `prod_treino` mostra "acesso vitalício" no topo das crenças em `contradiz`.
-- [ ] `cr_caio`: taxa de devolução entre as maiores e indicador de promessa entre os menores.
-- [ ] `cr_duda`: "dados insuficientes" no lugar do indicador.
-- [ ] Explicação de `cr_ana` cita o trecho a mudar e diz o que não é com ela; tem no máximo ~120 palavras.
-- [ ] Teste: nenhuma frase de `reason_text` (5 palavras seguidas ou mais) aparece na explicação ou em relatório com papel `creator` (invariante 5).
-- [ ] Sem chave, a explicação sai pelo modelo de texto fixo.
+- [x] `make db-reset seed simulate` roda em menos de 3 minutos com cache e imprime um resumo (vendas, devoluções, por causa). *(modo gabarito: 5 s; modo modelo: ~76 classificações, ~5 min na primeira vez e segundos com cache; rodar depois da cota voltar.)*
+- [x] Relatório de `cr_ana` tem a maior taxa de promessa confirmada e "5 kg em 7 dias" no topo das promessas contestadas. *(4,7%; trecho "Secar até 5KG EM 7 DIAS".)*
+- [x] Relatório de `prod_treino` mostra "acesso vitalício" no topo das crenças em `contradiz`. *(7 devoluções, de cr_ana e cr_bia.)*
+- [x] `cr_caio`: taxa de devolução entre as maiores e indicador de promessa entre os menores. *(17,5%, a maior; indicador 0.)*
+- [x] `cr_duda`: "dados insuficientes" no lugar do indicador. *(20 vendas.)*
+- [x] Explicação de `cr_ana` cita o trecho a mudar e diz o que não é com ela; tem no máximo ~120 palavras. *(texto fixo: 101 palavras; o do modelo só é aceito se citar o trecho e couber no limite.)*
+- [x] Teste: nenhuma frase de `reason_text` (5 palavras seguidas ou mais) aparece na explicação ou em relatório com papel `creator` (invariante 5). *(descontando o que está na própria peça do creator, que o comprador pode citar.)*
+- [x] Sem chave, a explicação sai pelo modelo de texto fixo.
+
+**Status:** ✅ concluída em 23/11 (23:40), conferida no modo gabarito. Rodar `PROMESSA_SIMULATE_ARGS="" tasks.py db-reset seed simulate` (modo modelo) quando a cota voltar e reconferir as personas. Plano apresentado no início da sessão (pedido direto do Lucas).
 
 ---
 
