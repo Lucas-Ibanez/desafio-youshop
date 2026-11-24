@@ -1,14 +1,14 @@
 {
- "data": "23/11/2026 21:35",
+ "data": "23/11/2026 22:12",
  "rodada": {
-  "versao": "v1",
-  "mudancas": "primeira rodada"
+  "versao": "v2",
+  "mudancas": "mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora"
  },
  "modelo": "gemini-3.5-flash-lite",
  "prompt": "checker_v1",
  "versoes_regras": [
   "normalizacao.yaml@2026-11-23",
-  "suplemento_proibidas.yaml@2026-11-23",
+  "suplemento_proibidas.yaml@2026-11-23.2",
   "suplemento_in28_permitidas.yaml@2026-11-23",
   "cosmetico_proibidas.yaml@2026-11-23",
   "padroes_h2.yaml@2026-11-23",
@@ -19,14 +19,14 @@
   "regras": {
    "dev": {
     "n": 20,
-    "kappa": 0.5192307692307693,
-    "acuracia": 0.75,
+    "kappa": 0.7058823529411764,
+    "acuracia": 0.85,
     "precisao_indicio": 1.0,
-    "recall_indicio": 0.5454545454545454,
+    "recall_indicio": 0.7272727272727273,
     "matriz": {
      "True": {
-      "True": 6,
-      "False": 5
+      "True": 8,
+      "False": 3
      },
      "False": {
       "True": 0,
@@ -81,14 +81,14 @@
    },
    "total": {
     "n": 60,
-    "kappa": 0.41747572815533973,
-    "acuracia": 0.7,
-    "precisao_indicio": 0.8571428571428571,
-    "recall_indicio": 0.5454545454545454,
+    "kappa": 0.478827361563518,
+    "acuracia": 0.7333333333333333,
+    "precisao_indicio": 0.8695652173913043,
+    "recall_indicio": 0.6060606060606061,
     "matriz": {
      "True": {
-      "True": 18,
-      "False": 15
+      "True": 20,
+      "False": 13
      },
      "False": {
       "True": 3,
@@ -559,8 +559,17 @@
     "erro": null
    },
    "S24": {
-    "overall": "limpo",
-    "findings": [],
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-EMAG",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "controlam o apetite",
+      "extracted": null
+     }
+    ],
     "erro": null
    },
    "S25": {
@@ -644,8 +653,25 @@
     "erro": null
    },
    "S29": {
-    "overall": "limpo",
-    "findings": [],
+    "overall": "bloquear",
+    "findings": [
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "PREVENÇÃO",
+      "extracted": null
+     },
+     {
+      "output": "bloquear",
+      "rule_key": "SUP-DOENCA",
+      "source": "regra",
+      "reason_type": "alegacao_proibida",
+      "excerpt": "doença",
+      "extracted": null
+     }
+    ],
     "erro": null
    },
    "S30": {
@@ -1361,7 +1387,7 @@
      {
       "output": "bloquear",
       "rule_key": "SUP-EMAG",
-      "source": "modelo",
+      "source": "regra",
       "reason_type": "alegacao_proibida",
       "excerpt": "controlam o apetite",
       "extracted": null
@@ -1479,7 +1505,7 @@
      {
       "output": "bloquear",
       "rule_key": "SUP-DOENCA",
-      "source": "modelo",
+      "source": "regra",
       "reason_type": "alegacao_proibida",
       "excerpt": "PREVENÇÃO",
       "extracted": null
@@ -1487,9 +1513,9 @@
      {
       "output": "bloquear",
       "rule_key": "SUP-DOENCA",
-      "source": "modelo",
+      "source": "regra",
       "reason_type": "alegacao_proibida",
-      "excerpt": "Nao espere a doença",
+      "excerpt": "doença",
       "extracted": null
      }
     ],
@@ -1968,6 +1994,26 @@
     "data/rules/padroes_h2.yaml": "7a78ec32bd54",
     "data/rules/suplemento_in28_permitidas.yaml": "313dc338ba19",
     "data/rules/suplemento_proibidas.yaml": "132e0235e016",
+    "data/rules/taxonomia_devolucao.yaml": "637836235ab1",
+    "prompt checker_v1": "b335cb7432c0",
+    "modelo": "gemini-3.5-flash-lite"
+   },
+   "kappa_test": {
+    "regras": 0.36585365853658536,
+    "regras+modelo": 0.31937172774869116
+   }
+  },
+  {
+   "versao": "v2",
+   "mudancas": "mudou: data/rules/suplemento_proibidas.yaml. regras ajustadas só com evidência do dev: SUP-EMAG + controlam/controlar o apetite (S24); SUP-DOENCA + prevenção/doença (S29). Sem evidência no dev, emagrecimento sem número em infoproduto ficou de fora",
+   "data": "23/11/2026 22:12",
+   "fingerprint": {
+    "data/rules/condicoes_oferta.yaml": "29a0d89b6f8e",
+    "data/rules/cosmetico_proibidas.yaml": "5c229258a112",
+    "data/rules/normalizacao.yaml": "12f5efdac865",
+    "data/rules/padroes_h2.yaml": "7a78ec32bd54",
+    "data/rules/suplemento_in28_permitidas.yaml": "313dc338ba19",
+    "data/rules/suplemento_proibidas.yaml": "89f51d4e7072",
     "data/rules/taxonomia_devolucao.yaml": "637836235ab1",
     "prompt checker_v1": "b335cb7432c0",
     "modelo": "gemini-3.5-flash-lite"

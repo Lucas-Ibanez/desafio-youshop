@@ -223,3 +223,14 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 **Resultado da v1 (test):** 4/4 evidentes nas duas configurações; kappa 0,37 (só regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 8/17 (47%) e 12/17 (71%), meta 80% ❌. No total: só regras tem precisão alta e recall baixo do indício (86% / 55%, 15 falsos negativos); com modelo, o recall sobe e a precisão cai (91% / 67%, 15 falsos positivos).
 **Achado:** mesmo com temperatura 0, o Gemini não é determinístico: uma rodada fria idêntica deu kappa 0,38 e verificável 65% (contra 0,32 e 71% da v1). A reprodutibilidade vem do cache; o número com modelo tem variação de alguns pontos e o relatório deve ser lido assim.
 **Consequência:** Checkpoint 1 com o Lucas. Ajustes de regra só olhando o split `dev` e registrados como v2.
+
+## D27 · Checkpoint 1: conferência manual e rodada v2 do checador · 23/11/2026
+**Contexto:** no Checkpoint 1, o Lucas pediu que o Claude marcasse as 10 extrações e fizesse a rodada v2 com os ajustes de regra propostos, usando só evidência do split `dev`.
+**Decisão:**
+- **Conferência manual (marcada pelo Claude, a pedido do Lucas):** 6 certas (O05, O09, O11, R01, S04, S17) e 4 erradas (O08: atributo errado, certificado de 200 h não é resultado; R02: "3000" sem unidade, é prova social; S14: valor não normalizado; S15: perdeu o resultado). Critério: atributo e valor descrevem a promessa verificável do trecho. Commit da v1 com as marcas: `4b54fe7`.
+- **Ajustes da v2 (`suplemento_proibidas.yaml@2026-11-23.2`):** `SUP-EMAG` + "controlam o apetite", "controlar o apetite" (S24, dev); `SUP-DOENCA` + "prevencao", "doenca", "doencas" (S29, dev).
+- **Ficou de fora:** emagrecimento sem número em infoproduto (S03, S08, S13, S15, S18, S19). Todos os exemplos estão no `test`; não há evidência no `dev`, e ajustar com o `test` vazaria o gabarito.
+- **Conferência estável:** a rodada seguinte reaproveita as mesmas 10 peças (se ainda tiverem extração); a marca só é mantida se a extração for idêntica, senão a célula pede "rever" e mostra a marca anterior.
+**Resultado da v2:** kappa só regras no `dev` 0,52 → 0,71; `test` igual (0,37 só regras; 0,32 com modelo), porque os ajustes só tocam peças do `dev`. Evidentes 4/4 e promessa verificável sem mudança.
+**Leitura:** a meta de kappa não foi atingida no `test`. O que falta é regra para emagrecimento em infoproduto (sem evidência no `dev`) e critério para contraexemplos educativos e zona cinzenta de cosmético (discordância de critério, para a recodificação cega). O extrator de resultado acerta 6 de 10; os erros são de normalização e de atributo.
+**Consequência:** seguir para a T09. Outros candidatos com evidência no `dev` que não estavam na lista aprovada: metabolismo acelerado/"acordam o metabolismo" (S21), "compulsão" (S23), "produto mais lucrativo" (R08). Ficam para uma v3, se o Lucas quiser.

@@ -58,7 +58,15 @@ def test_marcas_manuais_sobrevivem(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     monkeypatch.setattr(eval_checker, "MD", md)
-    assert eval_checker.old_marks() == {"S04": "certo", "R01": "errado"}
+    marks = eval_checker.old_marks()
+    assert marks == {
+        "S04": {"extraido": "resultado=5 kg em 7 dias", "marca": "certo"},
+        "R01": {"extraido": "resultado=10k", "marca": "errado"},
+    }
+    same = {"id": "S04", "extraido": [{"attribute": "resultado", "value": "5 kg em 7 dias"}]}
+    assert eval_checker.mark_for(same, marks) == "certo"
+    changed = {"id": "R01", "extraido": [{"attribute": "resultado", "value": "renda 10k"}]}
+    assert eval_checker.mark_for(changed, marks).startswith("rever: a extração mudou")
 
 
 # --- Avaliação só com regras (determinística) --------------------------------------------
@@ -114,3 +122,11 @@ def test_relatorio_mostra_metas_e_evidentes(gold, tmp_path, monkeypatch):
     report = json.loads((tmp_path / "checador_h2.json").read_text(encoding="utf-8"))
     assert report["historico"][0]["versao"] == "v1"
     assert (tmp_path / "erros_checador.csv").exists()
+
+
+def test_amostra_manual_reaproveita_as_pecas_anteriores(gold):
+    rows, _ = gold
+    preds = eval_checker.predict(rows, with_model=False)
+    first = [item["id"] for item in eval_checker.manual_sample(rows, preds)]
+    again = [item["id"] for item in eval_checker.manual_sample(rows, preds, first[:4] + ["S99"])]
+    assert set(first[:4]) <= set(again) and "S99" not in again and len(again) == len(first)

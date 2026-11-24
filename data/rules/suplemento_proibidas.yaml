@@ -2,12 +2,12 @@
 # Termos já normalizados (minúsculas, sem acento). Palavra ou frase inteira; `*` no fim = prefixo.
 # Exceção (D18): trecho que reproduz literalmente uma alegação permitida da IN 28 não é bloqueado.
 id: suplemento_proibidas
-versao: "2026-11-23"
+versao: "2026-11-23.2"
 categoria: suplemento
 origem: ANVISA
 fonte: "Anvisa: RDC 243/2018 e IN 28/2018 (só valem as alegações do Anexo V); perguntas e respostas sobre suplementos"
 referencia: "https://www.gov.br/anvisa/pt-br/centraisdeconteudo/publicacoes/alimentos/perguntas-e-respostas-arquivos/suplementos-alimentares.pdf"
-nota: "Lista curada a partir da auditoria H2 (seções 3 e 4.2). Não é exaustiva; a camada 2 cobre o que escapa. Termos ruidosos devem ser ajustados olhando só o split dev (T08)."
+nota: "Lista curada a partir da auditoria H2 (seções 3 e 4.2). Não é exaustiva; a camada 2 cobre o que escapa. Termos ruidosos devem ser ajustados olhando só o split dev (T08). Versão .2 (rodada v2 do Teste 1, só com evidência do dev): SUP-EMAG ganhou \"controlam/controlar o apetite\" (S24); SUP-DOENCA ganhou \"prevencao\", \"doenca\", \"doencas\" (S29)."
 regras:
   - rule_key: SUP-EMAG
     tema: emagrecimento
@@ -15,7 +15,7 @@ regras:
     termos: ["emagrec*", "seca barriga", "secar a barriga", "secar barriga", "queima gordura",
              "queimar gordura", "queima de gordura", "perda de gordura", "perder gordura",
              "reduz gordura", "reduzir gordura", "reduzir o acumulo de gordura", "acumulo de gordura",
-             "bloqueador de acucar", "controle do apetite", "controla o apetite", "inibe o apetite",
+             "bloqueador de acucar", "controle do apetite", "controla o apetite", "controlam o apetite", "controlar o apetite", "inibe o apetite",
              "inibidor de apetite", "perda de peso", "perder peso"]
     explicacao: "Emagrecimento não tem alegação aprovada para suplementos. A Anvisa só aceita as alegações da lista da IN 28."
     sugestao: "Retire a promessa de emagrecimento. Use só alegações da lista permitida para os ingredientes do produto."
@@ -49,6 +49,7 @@ regras:
     saida: bloquear
     termos: ["glicose", "glicemia", "insulina", "colesterol", "figado", "inflamacao",
              "inflamacoes", "anti-inflamatorio", "diabetes", "pressao alta", "pressao arterial",
-             "hipertensao", "previne", "previnem", "prevenir", "cura", "curar", "trata", "tratar"]
+             "hipertensao", "previne", "previnem", "prevenir", "prevencao", "doenca", "doencas",
+             "cura", "curar", "trata", "tratar"]
     explicacao: "Suplemento não pode prometer tratar, curar ou prevenir doença, nem agir sobre glicose, insulina, colesterol, fígado, inflamação ou pressão."
     sugestao: "Retire a menção a doença ou a efeito no organismo. Use só alegações da lista permitida."

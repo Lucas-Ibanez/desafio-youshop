@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 21:40):
+**Andamento** (atualizado em 23/11, 22:15):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -56,11 +56,11 @@
 | T06 Checador camada 1 **[plan]** | ✅ Concluída | Os 15 casos da tabela passam; 31 testes; < 50 ms por peça (D23). Plano apresentado no início da sessão, sem aprovação prévia (pedido direto do Lucas). |
 | T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24); checador trocado para `gemini-3.5-flash-lite` (D25). |
 | T08 Teste 1 do checador | ✅ Concluída | Rodada v1 em `eval/reports/checador_h2.md`: 4/4 evidentes; kappa test 0,37 (regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 47% e 71%, meta 80% ❌ (D26). |
-| **Checkpoint 1** | **Lucas** | Olhar o relatório e os erros (ver T08). |
+| **Checkpoint 1** | ✅ Feito | Conferência manual: 6 de 10 extrações certas. Rodada v2 com ajustes de regra só do `dev`: kappa (só regras) dev 0,52 → 0,71; test igual, 0,37 (D27). |
 | T09 Promessa registrada e link | **Próxima** | — |
 | T10–T16 | Não iniciadas | — |
 
-Adiantado cerca de 1h45 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30).
+Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
 | Quando | Task | Quem | Duração |
 |---|---|---|---|

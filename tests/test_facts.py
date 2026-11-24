@@ -81,7 +81,7 @@ def test_regras_oficiais_copiadas_por_categoria(s):
 
 def test_regra_materializada_guarda_termos_e_referencia(s):
     rule = s.scalars(select(ClaimRule).where(ClaimRule.rule_key == "SUP-EMAG")).one()
-    assert rule.reference == "suplemento_proibidas.yaml@2026-11-23"
+    assert rule.reference == "suplemento_proibidas.yaml@2026-11-23.2"
     assert rule.source == RuleSource.ANVISA and rule.output == "bloquear"
     assert "seca barriga" in rule.payload["termos"]
     in28 = s.scalars(select(ClaimRule).where(ClaimRule.rule_key == "IN28-B6-02")).one()

@@ -182,26 +182,54 @@ def next_run(history: list[dict], fp: dict[str, str], note: str | None) -> dict:
 # --- Conferência manual ------------------------------------------------------------------
 
 
-def old_marks() -> dict[str, str]:
-    """Marcas que o Lucas já fez na conferência manual (sobrevivem a novas rodadas)."""
+def extracted_text(extracted: list[dict]) -> str:
+    return "; ".join(
+        f"{e['attribute']}={e['value']}" + (f" {e['unit']}" if e.get("unit") else "")
+        for e in extracted
+    )
+
+
+def old_marks() -> dict[str, dict[str, str]]:
+    """Marcas já feitas na conferência manual: {id: {"extraido": ..., "marca": ...}}."""
     if not MD.exists():
         return {}
     marks = {}
     section = MD.read_text(encoding="utf-8").split("## Conferência manual", 1)
     for line in section[1].splitlines() if len(section) == 2 else []:
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) >= 4 and re.fullmatch(r"[A-Z]\d\d", cells[0]):
-            marks[cells[0]] = cells[-1]
+        cells = [c.strip() for c in line.strip().strip("|").split(" | ")]
+        if len(cells) >= 4 and re.fullmatch(r"[A-Z]\d\d", cells[0]) and cells[-1]:
+            marks[cells[0]] = {"extraido": cells[-2], "marca": cells[-1]}
     return marks
 
 
-def manual_sample(rows: list[dict], preds: dict[str, Prediction]) -> list[dict]:
+def mark_for(item: dict, marks: dict[str, dict[str, str]]) -> str:
+    """Mantém a marca se a extração não mudou; se mudou, pede revisão mostrando a anterior."""
+    old = marks.get(item["id"])
+    if not old:
+        return ""
+    if old["extraido"] == extracted_text(item["extraido"]):
+        return old["marca"]
+    if old["marca"].startswith("rever"):
+        return old["marca"]
+    return f"rever: a extração mudou (antes: {old['extraido']} → {old['marca']})"
+
+
+def manual_sample(
+    rows: list[dict], preds: dict[str, Prediction], previous_ids: list[str] | None = None
+) -> list[dict]:
+    """10 peças verificáveis com extração. Reaproveita as da rodada anterior (as marcas
+    continuam valendo) e completa com sorteio (semente fixa)."""
     candidates = sorted(
         r["id"] for r in rows if r["promessa_verificavel"] and preds[r["id"]].extracted
     )
-    chosen = sorted(random.Random(MANUAL_SEED).sample(candidates, min(MANUAL_N, len(candidates))))
+    kept = [i for i in (previous_ids or []) if i in candidates][:MANUAL_N]
+    rest = [i for i in candidates if i not in kept]
+    extra = random.Random(MANUAL_SEED).sample(rest, min(MANUAL_N - len(kept), len(rest)))
     by_id = {r["id"]: r for r in rows}
-    return [{"id": i, "texto": by_id[i]["texto"], "extraido": preds[i].extracted} for i in chosen]
+    return [
+        {"id": i, "texto": by_id[i]["texto"], "extraido": preds[i].extracted}
+        for i in sorted(kept + extra)
+    ]
 
 
 # --- Relatório ---------------------------------------------------------------------------
@@ -360,12 +388,10 @@ def render_md(report: dict, rows: list[dict], splits: dict, preds_by_cfg, sample
         "|---|---|---|---|",
     ]
     for item in sample:
-        extracted = "; ".join(
-            f"{e['attribute']}={e['value']}" + (f" {e['unit']}" if e.get("unit") else "")
-            for e in item["extraido"]
-        )
         text = item["texto"].replace("|", "/")
-        lines.append(f"| {item['id']} | {text} | {extracted} | {marks.get(item['id'], '')} |")
+        lines.append(
+            f"| {item['id']} | {text} | {extracted_text(item['extraido'])} | {mark_for(item, marks)} |"
+        )
     lines.append("")
 
     lines += [
@@ -498,7 +524,8 @@ def main(argv: list[str] | None = None) -> int:
     history = [h for h in history if h["versao"] != run["versao"]] + [entry]
 
     cfg_sample = "regras+modelo" if "regras+modelo" in preds_by_cfg else "regras"
-    sample = manual_sample(rows, preds_by_cfg[cfg_sample])
+    previous_ids = [item["id"] for item in previous.get("conferencia_manual", [])]
+    sample = manual_sample(rows, preds_by_cfg[cfg_sample], previous_ids)
     rules = load_rules()
     report = {
         "data": now,
