@@ -11,17 +11,29 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 from painel_comum import domain_error, product_select, sidebar  # noqa: E402
+from ui.components import page_header  # noqa: E402
+from ui.labels import CAUSE, CAUSE_FOR_CREATOR  # noqa: E402
+from ui.theme import apply_theme  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
-from promessa.display import CAUSE_FOR_CREATOR, num, pct  # noqa: E402
+from promessa.display import num, pct  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.reports import explain as explain_service  # noqa: E402
 from promessa.reports import service as reports_service  # noqa: E402
 
-st.set_page_config(page_title="Relatórios", page_icon="📊", layout="wide")
+apply_theme("Devoluções e promessas")
 ctx = sidebar()
-st.title("4 · Relatórios")
-st.caption(f"Vendas de {ctx['start']} a {ctx['end']} e as devoluções dessas vendas.")
+
+
+def _br(iso: str) -> str:
+    return f"{iso[8:10]}/{iso[5:7]}"
+
+
+page_header(
+    "Devoluções e promessas",
+    "Por que as vendas voltaram e o que cada lado pode mudar.",
+    f"Vendas de {_br(ctx['start'])} a {_br(ctx['end'])} e as devoluções dessas vendas.",
+)
 
 
 def weighs_label(c) -> str:
@@ -37,7 +49,7 @@ def causes_table(report, for_creator: bool = False) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "causa": CAUSE_FOR_CREATOR.get(c.causa, c.rotulo) if for_creator else c.rotulo,
+                "causa": (CAUSE_FOR_CREATOR if for_creator else CAUSE).get(c.causa, c.rotulo),
                 "devoluções": c.devolucoes,
                 "% das devoluções": pct(c.pct_devolucoes, 0),
                 "% das vendas": pct(c.taxa_sobre_vendas),
@@ -74,6 +86,8 @@ try:
         st.caption(ind.texto)
         if report.devolucoes:
             st.dataframe(causes_table(report, for_creator=True), hide_index=True)
+        else:
+            st.info("Nenhuma devolução neste período. Tente um período maior.")
         if report.promessas_mais_contestadas:
             st.subheader("Trechos da sua peça que os compradores cobraram")
             for p in report.promessas_mais_contestadas:
@@ -110,7 +124,10 @@ try:
             report.integridade["condicoes_contrarias_barradas"],
         )
         st.subheader("Devoluções por causa")
-        st.dataframe(causes_table(report), hide_index=True)
+        if report.devolucoes:
+            st.dataframe(causes_table(report), hide_index=True)
+        else:
+            st.info("Nenhuma devolução neste período. Tente um período maior.")
         if report.por_creator:
             st.subheader("Por creator")
             st.dataframe(

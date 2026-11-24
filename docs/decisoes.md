@@ -53,6 +53,7 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **D37** · Fechamento do MVP: escolhas da T16 · 24/11/2026
 - **D38** · Ensaio da demo: o que pesa no creator e a expectativa no texto fixo · 24/11/2026
 - **D39** · Ensaio da demo: textos e números na tela (problemas de gravidade baixa) · 24/11/2026
+- **D40** · Nome de exibição: Vincula (promessa rastreável) · 24/11/2026
 
 ---
 
@@ -413,3 +414,13 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Métrica de devoluções:** sem delta (a seta sugeria aumento); a taxa vai numa legenda.
 - **`eval`:** `run_date` (em `eval/common.py`) mantém a data da primeira execução quando a rodada e todos os números são os mesmos; rodada nova ou número diferente gravam a data de agora.
 **Consequência:** o prompt do modelo, as regras e a taxonomia não mudaram (o cache continua valendo). `scripts/demo_e2e.py` mostra o rótulo com acento e continua conferindo a chave normalizada.
+
+## D40 · Nome de exibição: Vincula (promessa rastreável) · 24/11/2026
+**Contexto:** `docs/BRAND.md` define a identidade visual "Vincula" para o painel. O guia pede o registro como "D8", mas a D8 já existe (SDK `mcp` 2.x); fica com o próximo número livre.
+**Decisão:** nome de exibição **Vincula**, com o descritor "promessa rastreável". Código, pacote (`promessa`), ferramentas MCP e enums não mudam: a mudança é só na camada de apresentação (`app/`, `.streamlit/`, `app/static/`). Aplicação na ordem da seção 9 do guia (P0, P1, P2), um commit por prioridade.
+- **Tema:** `.streamlit/config.toml` com as chaves do guia, todas conferidas com `streamlit config show` na 1.67 (nenhuma precisou sair); mais `client.toolbarMode = "minimal"`, que esconde o botão "Deploy".
+- **Fontes locais:** Schibsted Grotesk, Newsreader itálico e IBM Plex Mono, subconjunto latin, baixadas da API do Google Fonts para `app/static/fonts/` (licença OFL; a demo funciona sem internet).
+- **Camada `app/ui/`:** `theme.css` (tokens e componentes), `theme.py` (`apply_theme`: aba "Título · Vincula", favicon e CSS), `components.py` (só formatação; todo texto de usuário passa por `html.escape`) e `labels.py` (rótulos da seção 7.2). A visão do creator mantém "Cobrança não reconhecida" no lugar de "Fraude" (D39).
+- **Seletores do Streamlit** conferidos no DOM real com o Playwright: a barra lateral vira coluna flex para o menu ficar por último (`order`); o papel é um `st.segmented_control`; avisos nativos recebem as cores da marca pelo `stAlertContainer`. O `st.html` remove `<svg>` embutido, então o símbolo do fio é servido como `app/static/fio.svg`.
+- **Menu e títulos:** os títulos das páginas da seção 5.2 também viram os nomes do menu; os arquivos e endereços não mudam. Os roteiros de gravação (`scripts/ensaio/`) acham o papel e as páginas pelos novos nomes.
+

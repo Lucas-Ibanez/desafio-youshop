@@ -10,19 +10,13 @@ from datetime import date
 from typing import Any
 
 import streamlit as st
+from ui.components import wordmark_html
+from ui.labels import ROLE as ROLES
+from ui.labels import SEVERITY
 
 from promessa.db.session import session_scope
 from promessa.facts import service as facts_service
 
-ROLES = {"marca": "Marca", "creator": "Creator", "operacoes": "Operações"}
-COLORS = {"bloquear": "#f5b7b1", "revisar": "#fdebd0", "registrar": "#d5f5e3"}
-LABELS = {
-    "bloquear": "🔴 bloquear",
-    "revisar": "🟡 revisar",
-    "registrar": "🟢 registrar",
-    "limpo": "⚪ limpo",
-}
-SEVERITY = {"registrar": 1, "revisar": 2, "bloquear": 3}
 DEFAULT_START, DEFAULT_END = date(2026, 10, 26), date(2026, 11, 22)
 
 
@@ -35,13 +29,13 @@ def sidebar() -> dict[str, Any]:
     """Seletor de papel, creator, nome do revisor e período. Devolve o contexto escolhido."""
     with session_scope() as session:
         creators = facts_service.list_creators(session)
-    st.sidebar.title("Promessa Rastreável")
-    role_keys = list(ROLES)
-    role = st.sidebar.selectbox(
-        "Papel",
-        role_keys,
-        index=role_keys.index(_remember("papel", "creator")),
+    st.sidebar.html(wordmark_html())
+    role = st.sidebar.segmented_control(
+        "Você está vendo como",
+        list(ROLES),
+        default=_remember("papel", "creator"),
         format_func=ROLES.get,
+        required=True,
         key="papel",
     )
     st.session_state["_papel"] = role
@@ -80,6 +74,10 @@ def products() -> list:
         return facts_service.list_products(session)
 
 
+def product_name(product_id: str) -> str:
+    return next((p.name for p in products() if p.id == product_id), product_id)
+
+
 def product_select(label: str = "Produto", key: str = "produto") -> str:
     items = products()
     ids = [p.id for p in items]
@@ -113,13 +111,9 @@ def highlight(text: str, findings: list[dict]) -> str:
             j += 1
         chunk = html.escape(text[i:j]).replace("\n", "<br>")
         out = output_at[i]
-        parts.append(
-            f'<span style="background:{COLORS[out]};padding:1px 2px;border-radius:3px">{chunk}</span>'
-            if out
-            else chunk
-        )
+        parts.append(f'<mark class="vc-marca vc-marca--{out}">{chunk}</mark>' if out else chunk)
         i = j
-    return '<div style="line-height:1.9;font-size:1.05em">' + "".join(parts) + "</div>"
+    return '<div class="vc-peca"><p>' + "".join(parts) + "</p></div>"
 
 
 def domain_error(e: Exception) -> None:

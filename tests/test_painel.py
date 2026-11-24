@@ -1,5 +1,6 @@
 """Painel (T14) com o AppTest do Streamlit, sem navegador e sem rede."""
 
+import html
 import re
 import subprocess
 from pathlib import Path
@@ -66,7 +67,14 @@ def all_text(at: AppTest) -> str:
         parts += [str(e.value) for e in getattr(at, kind)]
     parts += [f"{m.label} {m.value}" for m in at.metric]
     parts += [e.value.to_string() for e in at.dataframe]
+    parts += html_text(at)
     return "\n".join(parts)
+
+
+def html_text(at: AppTest) -> list[str]:
+    """Texto visível dos blocos `st.html` (componentes do Vincula), sem tags nem CSS."""
+    bodies = [h.proto.body for h in at.get("html") if not h.proto.body.startswith("<style>")]
+    return [html.unescape(re.sub(r"<[^>]+>", " ", b)) for b in bodies]
 
 
 # --- Abre sem erro -----------------------------------------------------------------------
@@ -105,7 +113,7 @@ def test_exemplo_do_guia_pela_interface(engine):
     assert not at.exception
     blocked = at.session_state["checagem"]
     assert blocked["overall"] == "bloquear"
-    assert "Link bloqueado" in all_text(at)
+    assert "Ainda há 2 trechos bloqueados" in all_text(at)
     assert "gerar_link" not in [b.key for b in at.button]  # sem link enquanto bloqueado
 
     at.text_area(key="texto_peca").input("12 meses de acesso, 7 dias de garantia").run()
@@ -181,8 +189,8 @@ def test_tabela_do_creator_diz_quantas_pesam(engine):
     at.run()
     assert not at.exception
     table = at.dataframe[0].value.set_index("causa")["pesa no creator"]
-    assert re.fullmatch(r"\d+ de \d+", table["Promessa explícita"])
-    assert (table.drop("Promessa explícita") == "não").all()
+    assert re.fullmatch(r"\d+ de \d+", table["Promessa do anúncio"])
+    assert (table.drop("Promessa do anúncio") == "não").all()
 
 
 def test_relatorio_da_marca_mostra_sinal_vitalicio(engine):
@@ -222,7 +230,14 @@ def test_menu_com_nomes_em_portugues():
         for kw in node.keywords
         if kw.arg == "title"
     ]
-    assert titles == ["Início", "Ficha", "Checador", "Fila de revisão", "Relatórios", "Avaliação"]
+    assert titles == [
+        "Início",
+        "Ficha do produto",
+        "Checar peça",
+        "Fila de revisão",
+        "Devoluções e promessas",
+        "Teste dos agentes",
+    ]  # docs/BRAND.md, seção 5.2
 
 
 def test_avaliacao_mostra_metas(engine):

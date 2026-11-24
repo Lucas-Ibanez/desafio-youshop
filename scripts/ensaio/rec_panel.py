@@ -236,8 +236,21 @@ def select_option(
 
 
 def choose_role(page, role_label: str) -> None:
-    """Papel na barra lateral: "Marca", "Creator" ou "Operações"."""
-    select_option(page, "Papel", role_label)
+    """Papel na barra lateral: "Marca", "Creator" ou "Operações".
+
+    O seletor é um `st.segmented_control` ("Você está vendo como"): no DOM, botões
+    `role="radio"` com `aria-checked` dentro de `[data-testid=stButtonGroup]`. Depois do clique,
+    espera o campo próprio do papel aparecer (prova de que a página rodou de novo).
+    """
+    group = sidebar(page).locator('[data-testid="stButtonGroup"]').first
+    button = group.get_by_role("radio", name=role_label, exact=True)
+    if button.get_attribute("aria-checked") != "true":
+        button.click()
+    if role_label == "Creator":
+        selectbox(page, "Creator").wait_for()
+    else:
+        sidebar(page).get_by_text("Seu nome (fica registrado nas decisões)").wait_for()
+    wait_idle(page)
 
 
 def choose_creator(page, creator_label: str) -> None:

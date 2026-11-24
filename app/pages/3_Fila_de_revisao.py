@@ -7,16 +7,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import streamlit as st  # noqa: E402
 from painel_comum import domain_error, sidebar  # noqa: E402
+from ui.components import page_header  # noqa: E402
+from ui.theme import apply_theme  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.review import service as review_service  # noqa: E402
 from promessa.rules.loader import load_rules  # noqa: E402
 
-st.set_page_config(page_title="Fila de revisão", page_icon="🧑‍⚖️", layout="wide")
+apply_theme("Fila de revisão")
 ctx = sidebar()
-st.title("3 · Fila de revisão")
-st.caption("Decisão humana: nenhum bloqueio ou classificação tem consequência sozinho.")
+page_header(
+    "Fila de revisão",
+    "Bloqueios contestados e classificações com pouca confiança. A decisão é sua.",
+)
 
 if ctx["role"] not in ("marca", "operacoes"):
     st.info(
@@ -41,7 +45,15 @@ kind = st.radio(
 with session_scope() as session:
     queue = review_service.list_review_queue(session, None if kind == "todos" else kind).items
 if not queue:
-    st.success("Nada pendente.")
+    st.info("Nada esperando revisão agora.")
+
+
+CONFIRMATION = {  # BRAND, seção 7.3
+    ("check_result", "manter"): "Bloqueio mantido",
+    ("check_result", "reverter"): "Bloqueio revertido",
+    ("refund_classification", "manter"): "Classificação mantida",
+    ("refund_classification", "reclassificar"): "Classificação atualizada",
+}
 
 
 def decide(target_type: str, target_id: str, action: str, payload=None) -> None:
@@ -59,8 +71,8 @@ def decide(target_type: str, target_id: str, action: str, payload=None) -> None:
     except DomainError as e:
         domain_error(e)
     else:
-        st.session_state["ultima_decisao"] = (
-            f"{action}: {target_type} {target_id} → {result.review_status.value}"
+        st.session_state["ultima_decisao"] = CONFIRMATION.get(
+            (target_type, action), f"{action}: {result.review_status.value}"
         )
         st.rerun()
 
@@ -83,7 +95,7 @@ for item in queue:
             b1, b2 = st.columns(2)
             if b1.button("Manter bloqueio", key=f"manter_{item.target_id}"):
                 decide(item.target_type, item.target_id, "manter")
-            if b2.button("Reverter (liberar)", key=f"reverter_{item.target_id}"):
+            if b2.button("Reverter bloqueio", key=f"reverter_{item.target_id}"):
                 decide(item.target_type, item.target_id, "reverter")
         else:
             st.write(f"Motivo (até 80 caracteres): {c['reason_preview']}")

@@ -9,17 +9,20 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 from painel_comum import sidebar  # noqa: E402
+from ui.components import page_header  # noqa: E402
+from ui.theme import apply_theme  # noqa: E402
 
 from promessa import display  # noqa: E402
 
 REPORTS = Path(__file__).resolve().parents[2] / "eval" / "reports"
 
-st.set_page_config(page_title="Avaliação", page_icon="🧪", layout="wide")
+apply_theme("Teste dos agentes")
 sidebar()
-st.title("5 · Avaliação (Teste 1)")
-st.caption(
-    "Os dois agentes contra os gabaritos das validações. O split `test` é o principal; nada é escondido."
+page_header(
+    "Teste dos agentes",
+    "Como o checador e o classificador se saíram contra os gabaritos.",
 )
+st.caption("O split `test` é o principal; nenhum resultado fica escondido.")
 
 
 def load(name: str) -> dict | None:

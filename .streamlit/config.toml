@@ -1,0 +1,52 @@
+# Tema "Vincula" (docs/BRAND.md, seção 8.2). Chaves conferidas com `streamlit config show` (1.67).
+# A pasta app/static/ é servida em app/static/... porque o script de entrada é app/painel.py.
+
+[server]
+enableStaticServing = true
+
+[client]
+# esconde o botão "Deploy" (ruído fora do guia); chave conferida na 1.67
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#4B2FA8"
+backgroundColor = "#F6F5F9"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1E1A2E"
+linkColor = "#4B2FA8"
+borderColor = "#DCD8E6"
+showWidgetBorder = true
+baseRadius = "4px"
+baseFontSize = 16
+font = "Schibsted Grotesk"
+headingFont = "Schibsted Grotesk"
+codeFont = "IBM Plex Mono"
+chartCategoricalColors = ["#4B2FA8", "#9C8AE0", "#0E7C7B", "#7D8A9C", "#8C2F5A", "#B9B4C7"]
+
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+
+[[theme.fontFaces]]
+family = "Schibsted Grotesk"
+url = "app/static/fonts/SchibstedGrotesk-Variable.woff2"
+weight = "400 900"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "Newsreader"
+url = "app/static/fonts/Newsreader-Italic-Variable.woff2"
+weight = "200 800"
+style = "italic"
+
+[[theme.fontFaces]]
+family = "IBM Plex Mono"
+url = "app/static/fonts/IBMPlexMono-Regular.woff2"
+weight = "400"
+style = "normal"
+
+[[theme.fontFaces]]
+family = "IBM Plex Mono"
+url = "app/static/fonts/IBMPlexMono-Medium.woff2"
+weight = "500"
+style = "normal"

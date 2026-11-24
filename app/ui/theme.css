@@ -1,0 +1,119 @@
+/* Vincula · tema do painel (docs/BRAND.md). Seletores do Streamlit conferidos no DOM da 1.67. */
+
+/* ── Tokens (8.3) ─────────────────────────────────────────────────────────────────────── */
+:root {
+  --vc-papel: #F6F5F9;  --vc-folha: #FFFFFF;  --vc-tinta: #1E1A2E;
+  --vc-grafite: #5C5770; --vc-risco: #DCD8E6;
+  --vc-carimbo: #4B2FA8; --vc-carimbo-escuro: #3E2590; --vc-carimbo-claro: #ECE7FB;
+  --vc-linha: #0E7C7B;   --vc-linha-claro: #DDF1F0;
+
+  --vc-bloquear: #A3261F;  --vc-bloquear-mt: #FCE4E1;  --vc-bloquear-bd: #E9A39B;
+  --vc-revisar: #8A5300;   --vc-revisar-mt: #FFE59A;   --vc-revisar-bd: #E8C15A;
+  --vc-registrar: #17663F; --vc-registrar-mt: #D6F0E0; --vc-registrar-bd: #8CCBA8;
+  --vc-sem-relacao: #9A95AB;
+
+  --vc-f-sistema: "Schibsted Grotesk", system-ui, sans-serif;
+  --vc-f-dito: "Newsreader", Georgia, serif;
+  --vc-f-id: "IBM Plex Mono", ui-monospace, monospace;
+
+  --vc-raio-p: 4px; --vc-raio-m: 10px; --vc-raio-carimbo: 3px;
+  --vc-ease: cubic-bezier(.2,.7,.2,1);
+}
+
+/* ── Tipografia (3.2) ─────────────────────────────────────────────────────────────────── */
+.vc-h1, [data-testid="stHeading"] h1 {
+  font: 800 40px/44px var(--vc-f-sistema); letter-spacing: -0.025em; color: var(--vc-tinta);
+}
+[data-testid="stHeading"] h2 { font: 700 28px/34px var(--vc-f-sistema); letter-spacing: -0.015em; }
+[data-testid="stHeading"] h3 { font: 700 21px/28px var(--vc-f-sistema); letter-spacing: -0.01em; }
+[data-testid="stHeading"] h4 { font: 600 16px/24px var(--vc-f-sistema); }
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {
+  color: var(--vc-grafite); font: 500 13px/20px var(--vc-f-sistema); letter-spacing: .005em;
+}
+.vc-dito  { font-family: var(--vc-f-dito); font-style: italic; font-size: 1.08em; }
+.vc-id    { font: 500 13px/20px var(--vc-f-id); }
+.vc-texto { max-width: 68ch; }
+.vc-pequeno { font: 500 13px/20px var(--vc-f-sistema); letter-spacing: .005em; color: var(--vc-grafite); }
+[data-testid="stMarkdownContainer"] p, [data-testid="stText"] { max-width: 68ch; }
+[data-testid="stTable"] td, [data-testid="stTable"] th, [data-testid="stMetricValue"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Foco (4) ─────────────────────────────────────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--vc-carimbo) !important; outline-offset: 2px; }
+
+/* ── Barra lateral (5.1): folha + borda risco; menu por último ────────────────────────── */
+[data-testid="stSidebar"] { border-right: 1px solid var(--vc-risco); }
+[data-testid="stSidebarContent"] { display: flex; flex-direction: column; }
+[data-testid="stSidebarHeader"] { order: 0; }
+[data-testid="stSidebarUserContent"] { order: 1; padding-top: 0; }
+[data-testid="stSidebarNav"] { order: 2; border-top: 1px solid var(--vc-risco); padding-top: 12px; }
+[data-testid="stSidebarNavSeparator"] { display: none; }
+
+.vc-wordmark { display: flex; align-items: baseline; gap: 8px; margin: 0 0 2px; }
+.vc-wordmark img { flex: none; transform: translateY(1px); }
+.vc-wordmark__nome {
+  font: 800 24px/28px var(--vc-f-sistema); letter-spacing: -0.035em; color: var(--vc-tinta);
+}
+.vc-wordmark__desc { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); margin-left: 48px; }
+
+/* ── Cabeçalho de página (5.2) ────────────────────────────────────────────────────────── */
+.vc-header { margin: 0 0 8px; }
+.vc-header h1 { margin: 0 0 8px; padding: 0; }
+.vc-header__apoio { font: 400 16px/26px var(--vc-f-sistema); color: var(--vc-grafite); max-width: 68ch; margin: 0; }
+.vc-header__meta { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); margin: 8px 0 0; }
+
+/* ── Chips das decisões (2.2) ─────────────────────────────────────────────────────────── */
+.vc-chip {
+  display: inline-block; font: 600 13px/20px var(--vc-f-sistema); padding: 1px 8px;
+  border-radius: var(--vc-raio-p); white-space: nowrap; vertical-align: baseline;
+}
+.vc-chip--bloquear  { color: var(--vc-bloquear);  background: var(--vc-bloquear-mt); }
+.vc-chip--revisar   { color: var(--vc-revisar);   background: var(--vc-revisar-mt); }
+.vc-chip--registrar { color: var(--vc-registrar); background: var(--vc-registrar-mt); }
+.vc-chip--limpo     { color: var(--vc-grafite); background: var(--vc-folha); box-shadow: inset 0 0 0 1px var(--vc-risco); }
+.vc-chip--registrada { color: var(--vc-registrar); background: var(--vc-registrar-mt); }
+.vc-chip--em_revisao { color: var(--vc-revisar);   background: var(--vc-revisar-mt); }
+
+/* ── Resultado e texto checado (2.2, 5.3) ─────────────────────────────────────────────── */
+.vc-resultado { font: 700 21px/28px var(--vc-f-sistema); letter-spacing: -0.01em; margin: 8px 0 0; }
+.vc-resultado .vc-chip { margin-left: 8px; vertical-align: 2px; }
+.vc-peca {
+  background: var(--vc-folha); border: 1px solid var(--vc-risco); border-radius: var(--vc-raio-m);
+  padding: 20px 24px;
+}
+.vc-peca p {
+  font: italic 400 20px/31px var(--vc-f-dito); color: var(--vc-tinta); margin: 0; max-width: 68ch;
+}
+.vc-marca {
+  color: inherit;
+  background-image: linear-gradient(var(--tom), var(--tom));
+  background-repeat: no-repeat; background-size: 100% 78%; background-position: 0 70%;
+  background-color: transparent;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding: 0 .12em; border-radius: 2px;
+}
+.vc-marca--bloquear  { --tom: var(--vc-bloquear-mt); text-decoration: underline 2px var(--vc-bloquear-bd); text-underline-offset: 4px; }
+.vc-marca--revisar   { --tom: var(--vc-revisar-mt); }
+.vc-marca--registrar { --tom: var(--vc-registrar-mt); }
+
+/* ── Seletor de papel (segmented_control) numa linha só ───────────────────────────────── */
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button { padding-left: 10px; padding-right: 10px; }
+
+/* ── Avisos nativos com as cores da marca (stAlertContainer leva o fundo) ─────────────── */
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentInfo"]) {
+  background: var(--vc-carimbo-claro); color: var(--vc-tinta);
+}
+[data-testid="stAlertContentInfo"], [data-testid="stAlertContentInfo"] * { color: var(--vc-tinta); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentSuccess"]) { background: var(--vc-registrar-mt); }
+[data-testid="stAlertContentSuccess"], [data-testid="stAlertContentSuccess"] * { color: var(--vc-registrar); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentWarning"]) { background: var(--vc-revisar-mt); }
+[data-testid="stAlertContentWarning"], [data-testid="stAlertContentWarning"] * { color: var(--vc-revisar); }
+[data-testid="stAlertContainer"]:has([data-testid="stAlertContentError"]) { background: var(--vc-bloquear-mt); }
+[data-testid="stAlertContentError"], [data-testid="stAlertContentError"] * { color: var(--vc-bloquear); }
+
+/* ── Métricas nativas: número da escala (3.2, `numero`) ───────────────────────────────── */
+[data-testid="stMetricValue"], [data-testid="stMetricValue"] p {
+  font: 800 40px/40px var(--vc-f-sistema); letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+}
+[data-testid="stMetricLabel"] p { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); }

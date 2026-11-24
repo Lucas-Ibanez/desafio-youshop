@@ -1,25 +1,25 @@
 """Página 1 · Ficha de promessas (marca): versões, condições, regras com fonte e nova versão."""
 
 import sys
+from html import escape
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
-from painel_comum import domain_error, product_select, sidebar  # noqa: E402
+from painel_comum import domain_error, product_name, product_select, sidebar  # noqa: E402
+from ui.components import ident, page_header  # noqa: E402
+from ui.theme import apply_theme  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
 from promessa.display import ACCESS_TYPE, RECURRENCE, label, money, num  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.facts import service as facts_service  # noqa: E402
 
-st.set_page_config(page_title="Ficha", page_icon="📋", layout="wide")
+apply_theme("Ficha do produto")
 ctx = sidebar()
-st.title("1 · Ficha de promessas")
-st.caption(
-    "O que o produto pode prometer: condições da oferta e alegações permitidas e proibidas, com fonte e versão."
-)
+head = st.container()
 
 product_id = product_select()
 with session_scope() as session:
@@ -36,6 +36,12 @@ version = st.selectbox(
 )
 with session_scope() as session:
     facts = facts_service.get_product_facts(session, product_id, version)
+page_header(
+    "Ficha do produto",
+    "O que este produto pode prometer, com a fonte de cada regra.",
+    f"{escape(product_name(product_id))}, ficha {ident(f'v{facts.version}')}",
+    container=head,
+)
 
 left, right = st.columns(2)
 with left:
@@ -162,6 +168,8 @@ else:
         except DomainError as e:
             domain_error(e)
         else:
-            st.success(f"Versão v{result.version} criada.")
+            st.success(
+                f"Versão {result.version} criada. A versão {result.version - 1} continua guardada."
+            )
             for w in result.warnings:
                 st.warning(f"{w.rule_key}: {w.message}")

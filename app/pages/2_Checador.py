@@ -1,13 +1,16 @@
 """Página 2 · Checador (creator): briefing, checagem da peça, link rastreado e contestação."""
 
 import sys
+from html import escape
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
-from painel_comum import LABELS, domain_error, highlight, product_select, sidebar  # noqa: E402
+from painel_comum import domain_error, highlight, product_name, product_select, sidebar  # noqa: E402
+from ui.components import chip, dito, ident, page_header  # noqa: E402
+from ui.theme import apply_theme  # noqa: E402
 
 from promessa.checker import service as checker_service  # noqa: E402
 from promessa.db.session import session_scope  # noqa: E402
@@ -17,14 +20,15 @@ from promessa.facts import service as facts_service  # noqa: E402
 from promessa.links import service as links_service  # noqa: E402
 from promessa.review import service as review_service  # noqa: E402
 
-st.set_page_config(page_title="Checador", page_icon="🔎", layout="wide")
+TITLE = "Checar peça"
+SUBTITLE = "Cole a legenda ou o roteiro. O Vincula compara com a ficha antes de gerar o link."
+
+apply_theme(TITLE)
 ctx = sidebar()
-st.title("2 · Checador de conteúdo")
-st.caption(
-    "Cole o texto da peça (legenda, roteiro ou transcrição). Cada trecho volta como bloquear, revisar ou registrar."
-)
+head = st.container()
 
 if ctx["role"] != "creator":
+    page_header(TITLE, SUBTITLE, container=head)
     st.info("Esta página é do creator. Troque o papel para **Creator** na barra lateral.")
     st.stop()
 
@@ -32,6 +36,12 @@ creator_id = ctx["creator_id"]
 product_id = product_select(key="produto_checador")
 with session_scope() as session:
     facts = facts_service.get_product_facts(session, product_id)
+page_header(
+    TITLE,
+    SUBTITLE,
+    f"{escape(product_name(product_id))}, ficha {ident(f'v{facts.version}')}",
+    container=head,
+)
 with st.expander("Briefing do produto: o que você pode prometer", expanded=True):
     st.text(facts.briefing)
 
@@ -57,7 +67,7 @@ use_llm = c2.checkbox(
     help="Desligado, a checagem usa só as regras (rápido e sem gastar cota).",
 )
 
-if st.button("Checar", type="primary", key="checar"):
+if st.button("Checar peça", type="primary", key="checar"):
     try:
         with session_scope() as session:
             resp = checker_service.check_content(
@@ -78,7 +88,7 @@ if st.button("Checar", type="primary", key="checar"):
         last = state["checagem"]
 
 if last and last["product_id"] == product_id:
-    st.subheader(f"Resultado: {LABELS[last['overall']]}")
+    st.html(f'<h3 class="vc-resultado">Resultado {chip(last["overall"])}</h3>')
     st.caption(
         f"Peça {last['piece_id']} · ficha v{last['facts_version']} · camadas: {', '.join(last['layers_used'])}"
     )
@@ -90,16 +100,14 @@ if last and last["product_id"] == product_id:
 
     for f in last["findings"]:
         with st.container(border=True):
-            st.markdown(
-                f'**{LABELS[f["output"]]}** · "{f["excerpt"]}" · `{f["rule_key"] or "modelo"}`'
-            )
+            st.html(f"{chip(f['output'])} {dito(f['excerpt'])} {ident(f['rule_key'] or 'modelo')}")
             st.write(f["explanation"])
             if f.get("suggestion"):
                 st.caption(f"Sugestão: {f['suggestion']}")
             if f["output"] == "bloquear":
                 if f["id"] in state.get("contestados", []):
-                    st.info("Contestação enviada. A marca decide na Fila de revisão.")
-                elif st.button("Contestar este bloqueio", key=f"contestar_{f['id']}"):
+                    st.info("Contestação enviada para a marca")
+                elif st.button("Contestar bloqueio", key=f"contestar_{f['id']}"):
                     try:
                         with session_scope() as session:
                             review_service.submit_review(
@@ -114,9 +122,17 @@ if last and last["product_id"] == product_id:
     st.divider()
     can_try = last["can_generate_link"] or bool(state.get("contestados"))
     if not last["can_generate_link"]:
-        st.error(
-            'Link bloqueado: corrija os trechos em vermelho (nova peça, marcando "corrige a anterior") ou conteste o bloqueio.'
-        )
+        pending = [
+            f
+            for f in last["findings"]
+            if f["output"] == "bloquear" and f["id"] not in state.get("contestados", [])
+        ]
+        if pending:
+            n = len(pending)
+            st.error(
+                f"Ainda há {n} {'trecho bloqueado' if n == 1 else 'trechos bloqueados'}. "
+                "Ajuste o texto ou conteste o bloqueio."
+            )
     if can_try and st.button("Gerar link", type="primary", key="gerar_link"):
         try:
             with session_scope() as session:
@@ -127,7 +143,8 @@ if last and last["product_id"] == product_id:
             state["link"] = link.model_dump(mode="json")
     if state.get("link") and state["link"]["piece_id"] == last["piece_id"]:
         link = state["link"]
-        st.success(f"Link gerado: {link['url']}")
+        st.success("Link gerado. As promessas ficaram registradas.")
+        st.html(f"<p>Link: {ident(link['url'])}</p>")
         st.caption(link["disclosure_text"])
         if link["registered_promises"]:
             st.write("Promessas registradas na venda:")
@@ -144,3 +161,5 @@ if last and last["product_id"] == product_id:
                 ),
                 hide_index=True,
             )
+elif not last:
+    st.caption("Nenhuma peça checada ainda. Cole a legenda ou o roteiro acima para começar.")
