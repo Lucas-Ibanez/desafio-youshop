@@ -257,3 +257,15 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **`classify_refund`:** limpa o motivo antes de gravar e antes de enviar ao modelo; grava `refund_event` e `refund_classification` (relação provisória `nao_aplicavel`, ligação na T11); `needs_review = confiança < CONFIDENCE_THRESHOLD`. A resposta ganhou `classification_id` (alvo da revisão), `main_cause`, `channel_mentioned` e `notes`.
 - **Testes:** fixture `make_sale` (peça checada → link → venda) para T10, T11 e T13.
 **Consequência:** a T11 só precisa preencher `relation` e `linked_promise_id` a partir do `buyer_belief` e das promessas da peça da venda.
+
+## D30 · Ligação com a promessa registrada: escolhas da T11 · 23/11/2026
+**Contexto:** a T11 decide se a devolução `confirma`, `contradiz` ou não tem relação com o que a peça registrou.
+**Decisão:**
+- **Condições (determinístico):** a crença do comprador é comparada com as promessas registradas do mesmo atributo. Garantia compara o número; acesso normaliza para "vitalicio" ou meses (1 ano = 12); bônus aceita um texto contido no outro (ou "citado"); recorrência e custo comparam o valor normalizado. Igual → `confirma` (liga a promessa igual); diferente → `contradiz` (liga a primeira promessa do atributo); nada registrado do atributo → `sem_relacao`.
+- **Resultado e alegação (modelo, `linker_v1`):** só se a peça registrou promessa desse tipo; senão `sem_relacao` sem chamar o modelo. O modelo escolhe a relação e o id; id fora da lista é descartado. Sem modelo ou com erro, `sem_relacao` com explicação pedindo revisão. Usa o `CLASSIFIER_MODEL` (CONTEXTO 17.1).
+- **Promessas `em_revisao` também ligam** (o caso "5 kg em 7 dias" do guia).
+- **Invariante 4:** `confirma`/`contradiz` sem promessa ligada e sem crença vira `sem_relacao`.
+- **`weighs_on_creator`:** regra única do que pesa no creator (`promessa_explicita` + `confirma` + confiança ≥ limiar + não revertida). A T13 usa a mesma função. A resposta de `classify_refund` traz `weighs_on_creator` e `relation_explanation`.
+- **Cenários:** `data/seeds/cenarios_relacao.yaml`, 12 casos (9 determinísticos, 3 de resultado), com a classificação esperada para testar a ligação sem modelo.
+**Resultado:** 12 de 12 cenários com o classificador e o linker de verdade (`gemini-3.5-flash-lite`); 9 de 9 determinísticos sem modelo.
+**Consequência:** o ciclo inteiro do guia funciona pelos serviços (ficha → peça bloqueada → correção → link → devolução `contradiz`). A T12 mede o classificador nas 172 reclamações; a T13 agrega relações e o indicador.

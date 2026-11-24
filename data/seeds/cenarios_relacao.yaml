@@ -1,0 +1,116 @@
+# Cenários da relação devolução × promessa registrada (PLANO T11; CONTEXTO 12.3).
+# Cada cenário: promessas registradas na peça da venda + motivo do comprador + relação esperada.
+# `classificacao` é a classificação esperada do motivo: o teste determinístico liga a partir dela,
+# sem modelo; o teste `llm` classifica o motivo de verdade e liga em seguida.
+# `deterministico: true` = a relação sai só de regra (condição da oferta, nada registrado ou causa
+# que não é promessa); `false` = precisa do modelo (resultado ou alegação).
+versao: "2026-11-23"
+nota: "Casos escritos para o MVP a partir dos padrões da H1 e da H2; não vêm do gabarito."
+
+cenarios:
+  - id: C01
+    descricao: condição igual (acesso) → confirma
+    promessas: [{type: condicao_oferta, attribute: acesso, value: "12", unit: meses, approval: registrada}]
+    motivo: "Prometeram 12 meses de acesso e cortaram meu acesso depois de 3 meses."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: acesso, value: "12", unit: meses, text: "12 meses de acesso"}}
+    relacao_esperada: confirma
+    deterministico: true
+
+  - id: C02
+    descricao: condição igual (garantia) → confirma
+    promessas: [{type: condicao_oferta, attribute: garantia, value: "30", unit: dias, approval: registrada}]
+    motivo: "O anúncio dizia 30 dias de garantia e agora, no dia 20, não aceitam a devolução."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: garantia, value: "30", unit: dias, text: "30 dias de garantia"}}
+    relacao_esperada: confirma
+    deterministico: true
+
+  - id: C03
+    descricao: condição diferente (acesso; exemplo do guia) → contradiz
+    promessas: [{type: condicao_oferta, attribute: acesso, value: "12", unit: meses, approval: registrada}]
+    motivo: "Perdi o acesso, achei que era para sempre."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: acesso, value: vitalicio, unit: null, text: "achei que era para sempre"}}
+    relacao_esperada: contradiz
+    deterministico: true
+
+  - id: C04
+    descricao: condição diferente (garantia 30 × 7) → contradiz
+    promessas: [{type: condicao_oferta, attribute: garantia, value: "7", unit: dias, approval: registrada}]
+    motivo: "Anunciaram garantia de 30 dias, mas só aceitam pedido em 7."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: garantia, value: "30", unit: dias, text: "garantia de 30 dias"}}
+    relacao_esperada: contradiz
+    deterministico: true
+
+  - id: C05
+    descricao: bônus diferente do registrado → contradiz
+    promessas: [{type: condicao_oferta, attribute: bonus, value: "E-book de receitas", unit: null, approval: registrada}]
+    motivo: "Prometeram uma mentoria individual de bônus que nunca aconteceu."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: bonus, value: "mentoria individual", unit: null, text: "mentoria individual de bônus"}}
+    relacao_esperada: contradiz
+    deterministico: true
+
+  - id: C06
+    descricao: bônus igual ao registrado → confirma
+    promessas: [{type: condicao_oferta, attribute: bonus, value: "E-book de receitas", unit: null, approval: registrada}]
+    motivo: "O e-book de receitas que vinha de bônus nunca chegou."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: bonus, value: "e-book de receitas", unit: null, text: "e-book de receitas que vinha de bônus"}}
+    relacao_esperada: confirma
+    deterministico: true
+
+  - id: C07
+    descricao: resultado prometido e cobrado (em revisão) → confirma
+    promessas: [{type: resultado, attribute: resultado, value: "5 kg em 7 dias", unit: null, approval: em_revisao}]
+    motivo: "Prometeram 5 kg em uma semana e não perdi nada."
+    classificacao: {cause: promessa_explicita, subcause: resultado_prometido,
+                    buyer_belief: {attribute: resultado, value: "5 kg em 7 dias", unit: null, text: "5 kg em uma semana"}}
+    relacao_esperada: confirma
+    deterministico: false
+
+  - id: C08
+    descricao: renda prometida e cobrada → confirma
+    promessas: [{type: resultado, attribute: resultado, value: "renda extra de 10k", unit: null, approval: em_revisao}]
+    motivo: "Disseram que eu ia ter uma renda extra de 10 mil por mês e não ganhei nada."
+    classificacao: {cause: promessa_explicita, subcause: resultado_prometido,
+                    buyer_belief: {attribute: resultado, value: "renda extra de 10 mil por mes", unit: null, text: "renda extra de 10 mil por mês"}}
+    relacao_esperada: confirma
+    deterministico: false
+
+  - id: C09
+    descricao: resultado diferente do registrado → contradiz
+    promessas: [{type: resultado, attribute: resultado, value: "5 kg em 7 dias", unit: null, approval: em_revisao}]
+    motivo: "Prometeram que eu ia perder 15 kg em um mês e não perdi quase nada."
+    classificacao: {cause: promessa_explicita, subcause: resultado_prometido,
+                    buyer_belief: {attribute: resultado, value: "15 kg em 1 mes", unit: null, text: "perder 15 kg em um mês"}}
+    relacao_esperada: contradiz
+    deterministico: false
+
+  - id: C10
+    descricao: crença de resultado sem resultado registrado → sem_relacao
+    promessas: [{type: condicao_oferta, attribute: acesso, value: "12", unit: meses, approval: registrada}]
+    motivo: "Prometeram que eu ia perder 5 kg no primeiro mês e não aconteceu nada."
+    classificacao: {cause: promessa_explicita, subcause: resultado_prometido,
+                    buyer_belief: {attribute: resultado, value: "5 kg em 1 mes", unit: null, text: "perder 5 kg no primeiro mês"}}
+    relacao_esperada: sem_relacao
+    deterministico: true
+
+  - id: C11
+    descricao: crença de condição sem condição registrada → sem_relacao
+    promessas: [{type: resultado, attribute: resultado, value: "5 kg em 7 dias", unit: null, approval: em_revisao}]
+    motivo: "Anunciaram garantia de 30 dias e agora não aceitam meu pedido de reembolso."
+    classificacao: {cause: promessa_explicita, subcause: condicao_da_oferta,
+                    buyer_belief: {attribute: garantia, value: "30", unit: dias, text: "garantia de 30 dias"}}
+    relacao_esperada: sem_relacao
+    deterministico: true
+
+  - id: C12
+    descricao: causa que não é promessa → nao_aplicavel
+    promessas: [{type: condicao_oferta, attribute: acesso, value: "12", unit: meses, approval: registrada}]
+    motivo: "Paguei há 5 dias e até hoje não liberaram o acesso."
+    classificacao: {cause: acesso_entrega, subcause: acesso_nao_liberado, buyer_belief: null}
+    relacao_esperada: nao_aplicavel
+    deterministico: true

@@ -340,7 +340,7 @@ Servidor: `src/promessa/mcp_server.py`, nome `promessa-rastreavel`, transporte s
 | 2 | `upsert_product_facts` | `product_id`, condições, `brand_rules[]`, `created_by` | `{version, warnings[]}` (ex.: nome do produto contém alegação) | marca |
 | 3 | `check_content` | `product_id`, `creator_id`, `text`, `channel`, `submitted_by?`, `published_since?`, `parent_piece_id?` | `{piece_id, facts_version, overall, findings[], disclosure, can_generate_link, layers_used, notes}` | creator, marca |
 | 4 | `register_content_and_link` | `piece_id`, `actor_type?` | `{link_id, url, registered_promises[], disclosure_text}` | creator |
-| 5 | `classify_refund` | `sale_id`, `reason_text`, `type?` | `{refund_id, classification_id, cause, subcause, main_cause, buyer_belief, channel_mentioned, relation, linked_promise, confidence, needs_review, explanation, notes}` | pipeline de reembolso, Operações |
+| 5 | `classify_refund` | `sale_id`, `reason_text`, `type?` | `{refund_id, classification_id, cause, subcause, main_cause, buyer_belief, channel_mentioned, relation, linked_promise, confidence, needs_review, weighs_on_creator, explanation, relation_explanation, notes}` | pipeline de reembolso, Operações |
 | 6 | `get_promise_outcome_report` | `creator_id` **ou** `product_id`, `start`, `end` | taxas por causa, promessas mais contestadas, sinais para a marca, cobertura | marca, Operações |
 | 7 | `explain_refunds_to_creator` | `creator_id`, `start`, `end` | `{text, data_used}` | creator |
 | 8 | `list_review_queue` | `kind?` (`bloqueio`, `classificacao`) | itens pendentes com contexto | marca, Operações |

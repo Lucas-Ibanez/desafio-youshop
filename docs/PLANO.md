@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 22:30):
+**Andamento** (atualizado em 23/11, 22:35):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -59,8 +59,9 @@
 | **Checkpoint 1** | ✅ Feito | Conferência manual: 6 de 10 extrações certas. Rodada v2 com ajustes de regra só do `dev`: kappa (só regras) dev 0,52 → 0,71; test igual, 0,37 (D27). |
 | T09 Promessa registrada e link | ✅ Concluída | `register_content_and_link`, `list_review_queue`, `submit_review` via MCP; 22 testes (D28). |
 | T10 Classificador de devolução **[plan]** | ✅ Concluída | `classify_refund` via MCP; 31 testes sem rede + 7 `llm` (passam ao vivo e com cache) (D29). |
-| T11 Ligação com a promessa | **Próxima** | — |
-| T12–T16 | Não iniciadas | — |
+| T11 Ligação com a promessa | ✅ Concluída | `classify_refund` preenche `relation` e `linked_promise_id`; 12 de 12 cenários com modelo; 29 testes sem rede (D30). |
+| T12 Teste 1 do classificador | **Próxima** | — |
+| T13–T16 | Não iniciadas | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -497,10 +498,12 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 3. `data/seeds/cenarios_relacao.yaml` com 12 cenários (promessa registrada + motivo + relação esperada), cobrindo: condição igual (`confirma`), condição diferente (`contradiz`), resultado prometido e cobrado (`confirma`), crença sem nada registrado (`sem_relacao`), causa não promessa (`nao_aplicavel`).
 
 **Critérios de aceite:**
-- [ ] Passo 4 do exemplo do guia: promessa registrada "acesso 12 meses"; motivo "perdi o acesso, achei que era para sempre" → `promessa_explicita` / `condicao_da_oferta`, `relation = contradiz`, **não** conta no indicador do creator.
-- [ ] Promessa registrada "5 kg em 7 dias" (`em_revisao`); motivo "prometeram 5 kg em uma semana e não perdi nada" → `confirma`.
-- [ ] Pelo menos 11 dos 12 cenários acertam (`make test-llm`); os determinísticos acertam 100% sem modelo.
-- [ ] Invariante 4 da seção 8.3 testada.
+- [x] Passo 4 do exemplo do guia: promessa registrada "acesso 12 meses"; motivo "perdi o acesso, achei que era para sempre" → `promessa_explicita` / `condicao_da_oferta`, `relation = contradiz`, **não** conta no indicador do creator. *(com o modelo de verdade e pelo serviço; `weighs_on_creator = false`.)*
+- [x] Promessa registrada "5 kg em 7 dias" (`em_revisao`); motivo "prometeram 5 kg em uma semana e não perdi nada" → `confirma`.
+- [x] Pelo menos 11 dos 12 cenários acertam (`make test-llm`); os determinísticos acertam 100% sem modelo. *(12 de 12 com modelo; 9 de 9 determinísticos sem modelo.)*
+- [x] Invariante 4 da seção 8.3 testada.
+
+**Status:** ✅ concluída em 23/11 (22:35).
 
 ---
 

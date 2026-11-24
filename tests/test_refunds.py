@@ -157,10 +157,16 @@ def test_grava_evento_limpo_e_classificacao(s, make_sale):
     assert (row.cause, row.subcause, row.relation.value) == (
         "promessa_explicita",
         "condicao_da_oferta",
-        "nao_aplicavel",
+        "contradiz",  # T11: registrado "acesso 12 meses", comprador acha que era vitalício
     )
     assert row.buyer_belief["value"] == "vitalicio" and row.prompt_version == "classifier_v1"
-    assert (resp.needs_review, resp.linked_promise, resp.main_cause) == (False, None, "promessa")
+    assert (resp.needs_review, resp.main_cause, resp.weighs_on_creator) == (
+        False,
+        "promessa",
+        False,
+    )
+    assert resp.linked_promise["normalized_text"] == "acesso 12 meses"
+    assert row.linked_promise_id == resp.linked_promise["id"]
 
 
 def test_confianca_baixa_entra_na_fila(s, make_sale):
