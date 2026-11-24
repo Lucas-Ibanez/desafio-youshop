@@ -114,7 +114,7 @@ def test_exemplo_do_guia_pela_interface(engine):
     blocked = at.session_state["checagem"]
     assert blocked["overall"] == "bloquear"
     assert "Ainda há 2 trechos bloqueados" in all_text(at)
-    assert "gerar_link" not in [b.key for b in at.button]  # sem link enquanto bloqueado
+    assert at.button(key="gerar_link").disabled  # sem link enquanto bloqueado (5.7)
 
     at.text_area(key="texto_peca").input("12 meses de acesso, 7 dias de garantia").run()
     at.button(key="checar").click().run()

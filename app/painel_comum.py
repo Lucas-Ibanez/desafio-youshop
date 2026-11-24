@@ -1,18 +1,17 @@
-"""Partes comuns do painel: barra lateral (papel, creator, revisor, período) e destaque de trechos.
+"""Partes comuns do painel: barra lateral (marca, papel, creator, revisor, período) e produto.
 
-O painel chama só serviços (decisão D3); não importa `promessa.db.models`.
+O painel chama só serviços (decisão D3); não importa `promessa.db.models`. A formatação visual
+fica em `app/ui/`.
 """
 
 from __future__ import annotations
 
-import html
 from datetime import date
 from typing import Any
 
 import streamlit as st
 from ui.components import wordmark_html
 from ui.labels import ROLE as ROLES
-from ui.labels import SEVERITY
 
 from promessa.db.session import session_scope
 from promessa.facts import service as facts_service
@@ -92,28 +91,6 @@ def product_select(label: str = "Produto", key: str = "produto") -> str:
     )
     st.session_state[f"_{key}"] = chosen
     return chosen
-
-
-def highlight(text: str, findings: list[dict]) -> str:
-    """HTML do texto com cada trecho marcado pela cor da saída mais grave que o cobre."""
-    level = [0] * len(text)
-    output_at: list[str | None] = [None] * len(text)
-    for f in findings:
-        start, end = f["span"]
-        sev = SEVERITY.get(f["output"], 0)
-        for i in range(max(0, start), min(len(text), end)):
-            if sev > level[i]:
-                level[i], output_at[i] = sev, f["output"]
-    parts, i = [], 0
-    while i < len(text):
-        j = i
-        while j < len(text) and output_at[j] == output_at[i]:
-            j += 1
-        chunk = html.escape(text[i:j]).replace("\n", "<br>")
-        out = output_at[i]
-        parts.append(f'<mark class="vc-marca vc-marca--{out}">{chunk}</mark>' if out else chunk)
-        i = j
-    return '<div class="vc-peca"><p>' + "".join(parts) + "</p></div>"
 
 
 def domain_error(e: Exception) -> None:

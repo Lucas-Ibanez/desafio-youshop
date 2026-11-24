@@ -1,4 +1,8 @@
-"""Página 2 · Checador (creator): briefing, checagem da peça, link rastreado e contestação."""
+"""Página 2 · Checar peça (creator): briefing, checagem, achados, link rastreado e contestação.
+
+Identidade Vincula (docs/BRAND.md): texto checado com marca-texto (5.3), canhoto com carimbo
+(5.4) e as duas animações, que só rodam na execução logo depois da ação (6, `vc_anim`).
+"""
 
 import sys
 from html import escape
@@ -6,15 +10,23 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
-from painel_comum import domain_error, highlight, product_name, product_select, sidebar  # noqa: E402
-from ui.components import chip, dito, ident, page_header  # noqa: E402
+from painel_comum import domain_error, product_name, product_select, sidebar  # noqa: E402
+from ui.components import (  # noqa: E402
+    achado,
+    canhoto,
+    chip,
+    ident,
+    page_header,
+    peca_marcada,
+    sort_findings,
+    when,
+)
 from ui.theme import apply_theme  # noqa: E402
 
 from promessa.checker import service as checker_service  # noqa: E402
 from promessa.db.session import session_scope  # noqa: E402
-from promessa.display import APPROVAL, PROMISE_TYPE, label, promise_label  # noqa: E402
+from promessa.display import promise_label  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.facts import service as facts_service  # noqa: E402
 from promessa.links import service as links_service  # noqa: E402
@@ -22,6 +34,13 @@ from promessa.review import service as review_service  # noqa: E402
 
 TITLE = "Checar peça"
 SUBTITLE = "Cole a legenda ou o roteiro. O Vincula compara com a ficha antes de gerar o link."
+# Notas do checador reescritas no tom do guia (7.4); as demais aparecem como vêm.
+NOTES = {"Checagem só com regras": "Checagem feita só com as regras. O modelo está desligado."}
+
+
+def note_text(note: str) -> str:
+    return next((v for k, v in NOTES.items() if note.startswith(k)), note)
+
 
 apply_theme(TITLE)
 ctx = sidebar()
@@ -52,7 +71,7 @@ last_blocked = bool(last and last["product_id"] == product_id and last["overall"
 channel = st.selectbox(
     "Canal", ["instagram", "tiktok", "youtube", "whatsapp", "outro"], key="canal"
 )
-text = st.text_area("Texto da peça", height=140, key="texto_peca")
+text = st.text_area("Texto da peça", height=190, key="texto_peca")
 c1, c2 = st.columns(2)
 is_fix = c1.checkbox(
     "Esta peça corrige a anterior (bloqueada)",
@@ -82,31 +101,36 @@ if st.button("Checar peça", type="primary", key="checar"):
     except DomainError as e:
         domain_error(e)
     else:
-        state["checagem"] = {**resp.model_dump(mode="json"), "text": text, "product_id": product_id}
+        state["checagem"] = {
+            **resp.model_dump(mode="json"),
+            "text": text,
+            "product_id": product_id,
+            "checked_at": when(),
+        }
         state.pop("link", None)
         state["contestados"] = []
+        state["vc_anim"] = ("peca", resp.piece_id)  # marca-texto só nesta execução
         last = state["checagem"]
 
 if last and last["product_id"] == product_id:
-    st.html(f'<h3 class="vc-resultado">Resultado {chip(last["overall"])}</h3>')
-    st.caption(
-        f"Peça {last['piece_id']} · ficha v{last['facts_version']} · camadas: {', '.join(last['layers_used'])}"
-    )
-    st.markdown(highlight(last["text"], last["findings"]), unsafe_allow_html=True)
-    for note in last.get("notes", []):
-        st.caption(note)
-    if not last["disclosure"]["present"]:
-        st.warning(last["disclosure"]["suggestion"])
+    anim = state.pop("vc_anim", None)
+    contested = state.get("contestados", [])
 
-    for f in last["findings"]:
-        with st.container(border=True):
-            st.html(f"{chip(f['output'])} {dito(f['excerpt'])} {ident(f['rule_key'] or 'modelo')}")
-            st.write(f["explanation"])
-            if f.get("suggestion"):
-                st.caption(f"Sugestão: {f['suggestion']}")
+    st.html(f'<h3 class="vc-resultado">Resultado {chip(last["overall"])}</h3>')
+    st.html(
+        f'<p class="vc-pequeno">Peça {ident(last["piece_id"])}, ficha '
+        f"{ident(f'v{last["facts_version"]}')}, checada em {escape(last.get('checked_at', ''))}</p>"
+    )
+    st.html(peca_marcada(last["text"], last["findings"], is_new=anim == ("peca", last["piece_id"])))
+    for note in last.get("notes", []):
+        st.caption(note_text(note))
+
+    for f in sort_findings(last["findings"]):
+        with st.container(key=f"vc_achado_{f['output']}_{f['id']}"):
+            st.html(achado(f, last["facts_version"]))
             if f["output"] == "bloquear":
-                if f["id"] in state.get("contestados", []):
-                    st.info("Contestação enviada para a marca")
+                if f["id"] in contested:
+                    st.html('<p class="vc-pequeno">Contestação enviada para a marca</p>')
                 elif st.button("Contestar bloqueio", key=f"contestar_{f['id']}"):
                     try:
                         with session_scope() as session:
@@ -120,20 +144,23 @@ if last and last["product_id"] == product_id:
                         st.rerun()
 
     st.divider()
-    can_try = last["can_generate_link"] or bool(state.get("contestados"))
-    if not last["can_generate_link"]:
-        pending = [
-            f
-            for f in last["findings"]
-            if f["output"] == "bloquear" and f["id"] not in state.get("contestados", [])
-        ]
-        if pending:
-            n = len(pending)
-            st.error(
-                f"Ainda há {n} {'trecho bloqueado' if n == 1 else 'trechos bloqueados'}. "
-                "Ajuste o texto ou conteste o bloqueio."
-            )
-    if can_try and st.button("Gerar link", type="primary", key="gerar_link"):
+    if not last["disclosure"]["present"]:  # não conta como achado (D5)
+        st.html(
+            '<p class="vc-publi">Falta identificar como publicidade. Inclua #publi na legenda.</p>'
+        )
+    can_try = last["can_generate_link"] or bool(contested)
+    pending = [
+        f for f in last["findings"] if f["output"] == "bloquear" and f["id"] not in contested
+    ]
+    b1, b2 = st.columns([1, 4], vertical_alignment="center")
+    clicked = b1.button("Gerar link", type="primary", key="gerar_link", disabled=not can_try)
+    if not can_try and pending:
+        n = len(pending)
+        b2.html(
+            f'<p class="vc-motivo">Ainda há {n} {"trecho bloqueado" if n == 1 else "trechos bloqueados"}.'
+            " Ajuste o texto ou conteste o bloqueio.</p>"
+        )
+    if clicked:
         try:
             with session_scope() as session:
                 link = links_service.register_content_and_link(session, last["piece_id"])
@@ -141,25 +168,33 @@ if last and last["product_id"] == product_id:
             domain_error(e)
         else:
             state["link"] = link.model_dump(mode="json")
+            anim = ("link", link.link_id)  # carimbo só nesta execução
+
     if state.get("link") and state["link"]["piece_id"] == last["piece_id"]:
         link = state["link"]
         st.success("Link gerado. As promessas ficaram registradas.")
-        st.html(f"<p>Link: {ident(link['url'])}</p>")
-        st.caption(link["disclosure_text"])
-        if link["registered_promises"]:
-            st.write("Promessas registradas na venda:")
-            st.dataframe(
-                pd.DataFrame(
-                    [
-                        {
-                            "promessa": promise_label(p["normalized_text"]),
-                            "tipo": label(PROMISE_TYPE, p["type"]),
-                            "situação": label(APPROVAL, p["approval"]),
-                        }
-                        for p in link["registered_promises"]
-                    ]
-                ),
-                hide_index=True,
+        excerpts = {f["id"]: f["excerpt"] for f in last["findings"]}
+        promises = [
+            (
+                excerpts.get(p["check_result_id"]) or promise_label(p["normalized_text"]),
+                p["approval"],
             )
+            for p in link["registered_promises"]
+        ]
+        meta = (
+            f"Ficha {ident(f'v{link["facts_version"]}')} do {escape(product_name(product_id))}, "
+            f"checada em {escape(last.get('checked_at', ''))}"
+        )
+        st.html(
+            canhoto(
+                promises,
+                link["url"],
+                link["link_id"],
+                meta,
+                is_new=anim == ("link", link["link_id"]),
+            ),
+            unsafe_allow_javascript=True,
+        )
+        st.caption(link["disclosure_text"])
 elif not last:
     st.caption("Nenhuma peça checada ainda. Cole a legenda ou o roteiro acima para começar.")
