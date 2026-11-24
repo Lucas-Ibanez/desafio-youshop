@@ -21,6 +21,10 @@ from promessa.db.session import session_scope
 from promessa.errors import DomainError
 from promessa.facts import service as facts_service
 from promessa.facts.service import FactsView, UpsertResult
+from promessa.links import service as links_service
+from promessa.links.service import LinkResponse
+from promessa.review import service as review_service
+from promessa.review.service import ReviewQueue, ReviewResult
 
 VERSION = "0.1.0"
 
@@ -122,6 +126,54 @@ def check_content(
             submitted_by=submitted_by,
             published_since=published_since,
             parent_piece_id=parent_piece_id,
+        )
+
+
+@mcp.tool()
+@domain_errors
+def register_content_and_link(piece_id: str, actor_type: str = "humano") -> LinkResponse:
+    """Gera o link rastreado de uma peça já checada e registra as promessas dela.
+
+    Recusa com BLOQUEIO_PENDENTE (lista os trechos) se houver bloqueio não revertido, e com
+    FICHA_DESATUALIZADA se a ficha mudou depois da checagem. actor_type: humano | agente.
+    Chamar de novo para a mesma peça devolve o mesmo link.
+    """
+    with session_scope() as session:
+        return links_service.register_content_and_link(session, piece_id, actor_type)
+
+
+@mcp.tool()
+@domain_errors
+def list_review_queue(kind: str | None = None) -> ReviewQueue:
+    """Pendências de decisão humana (para marca e Operações), com contexto e idade.
+
+    kind: bloqueio (bloqueios contestados) | classificacao (devoluções com confiança baixa).
+    """
+    with session_scope() as session:
+        return review_service.list_review_queue(session, kind)
+
+
+@mcp.tool()
+@domain_errors
+def submit_review(
+    target_type: str,
+    target_id: str,
+    action: str,
+    actor: str,
+    actor_role: str,
+    note: str | None = None,
+    payload: dict[str, Any] | None = None,
+) -> ReviewResult:
+    """Registra uma decisão humana.
+
+    target_type: check_result | refund_classification.
+    action: contestar (creator ou marca, só bloqueio) | manter | reverter | aprovar (trecho em
+    revisão) | reclassificar (payload {"cause", "subcause"}). Só marca e Operações decidem.
+    actor_role: creator | marca | operacoes.
+    """
+    with session_scope() as session:
+        return review_service.submit_review(
+            session, target_type, target_id, action, actor, actor_role, note, payload
         )
 
 

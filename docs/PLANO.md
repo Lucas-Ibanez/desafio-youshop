@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 22:15):
+**Andamento** (atualizado em 23/11, 22:25):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -57,8 +57,9 @@
 | T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24); checador trocado para `gemini-3.5-flash-lite` (D25). |
 | T08 Teste 1 do checador | ✅ Concluída | Rodada v1 em `eval/reports/checador_h2.md`: 4/4 evidentes; kappa test 0,37 (regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 47% e 71%, meta 80% ❌ (D26). |
 | **Checkpoint 1** | ✅ Feito | Conferência manual: 6 de 10 extrações certas. Rodada v2 com ajustes de regra só do `dev`: kappa (só regras) dev 0,52 → 0,71; test igual, 0,37 (D27). |
-| T09 Promessa registrada e link | **Próxima** | — |
-| T10–T16 | Não iniciadas | — |
+| T09 Promessa registrada e link | ✅ Concluída | `register_content_and_link`, `list_review_queue`, `submit_review` via MCP; 22 testes (D28). |
+| T10 Classificador de devolução **[plan]** | **Próxima** | — |
+| T11–T16 | Não iniciadas | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -436,11 +437,13 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 3. Ferramentas MCP `register_content_and_link`, `list_review_queue`, `submit_review`.
 
 **Critérios de aceite** (`tests/test_links.py`):
-- [ ] Passos 2 e 3 do exemplo do guia: peça bloqueada → `BLOQUEIO_PENDENTE`; peça corrigida → link criado com 2 promessas `registrada` (acesso 12 meses, garantia 7 dias).
-- [ ] Peça com "5 kg em 7 dias" + "7 dias de garantia" → link criado; promessa de resultado `em_revisao` e garantia `registrada`.
-- [ ] Contestação: creator `contestar` → item aparece na fila; creator tentando `reverter` → `PAPEL_NAO_AUTORIZADO`; marca `reverter` → link liberado; `review_event` tem 2 linhas com ator e papel.
-- [ ] Nova versão da ficha depois da checagem → `FICHA_DESATUALIZADA`.
-- [ ] Invariantes 2 e 3 da seção 8.3 do CONTEXTO testados.
+- [x] Passos 2 e 3 do exemplo do guia: peça bloqueada → `BLOQUEIO_PENDENTE`; peça corrigida → link criado com 2 promessas `registrada` (acesso 12 meses, garantia 7 dias). *(o erro lista os dois trechos; também pelo MCP.)*
+- [x] Peça com "5 kg em 7 dias" + "7 dias de garantia" → link criado; promessa de resultado `em_revisao` e garantia `registrada`.
+- [x] Contestação: creator `contestar` → item aparece na fila; creator tentando `reverter` → `PAPEL_NAO_AUTORIZADO`; marca `reverter` → link liberado; `review_event` tem 2 linhas com ator e papel.
+- [x] Nova versão da ficha depois da checagem → `FICHA_DESATUALIZADA`.
+- [x] Invariantes 2 e 3 da seção 8.3 do CONTEXTO testados.
+
+**Status:** ✅ concluída em 23/11 (22:25).
 
 **Não fazer:** vendas e devoluções (T10, T13).
 
