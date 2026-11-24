@@ -56,8 +56,33 @@ def place_window(hwnd: int, topmost: bool = True) -> None:
 # ── processo filho (roda dentro da janela) ────────────────────────────────────────────────
 
 
+class _ConsoleFont(ctypes.Structure):
+    _fields_ = [
+        ("cbSize", ctypes.c_ulong),
+        ("nFont", ctypes.c_ulong),
+        ("dwFontSize", ctypes.c_short * 2),
+        ("FontFamily", ctypes.c_uint),
+        ("FontWeight", ctypes.c_uint),
+        ("FaceName", ctypes.c_wchar * 32),
+    ]
+
+
+def set_console_font(height: int, face: str = "Consolas") -> None:
+    """Fonte menor cabe mais linhas na tela (a saída da demo tem ~60 linhas)."""
+    font = _ConsoleFont()
+    font.cbSize = ctypes.sizeof(_ConsoleFont)
+    font.dwFontSize[1] = height
+    font.FontFamily = 54  # FF_MODERN | TMPF_TRUETYPE | TMPF_VECTOR
+    font.FontWeight = 400
+    font.FaceName = face
+    handle = ctypes.windll.kernel32.GetStdHandle(-11)  # STD_OUTPUT_HANDLE
+    ctypes.windll.kernel32.SetCurrentConsoleFontEx(handle, False, ctypes.byref(font))
+
+
 def child(args: argparse.Namespace) -> int:
     ctypes.windll.kernel32.SetConsoleTitleW(args.title)
+    if args.font_size:
+        set_console_font(args.font_size)
     os.system(f"mode con: cols={args.cols} lines={args.lines}")
     ctypes.windll.kernel32.SetConsoleTitleW(args.title)  # o `mode` pode trocar o título
     go, done, log_path = Path(args.go), Path(args.done), Path(args.log)
@@ -102,6 +127,7 @@ def record_terminal(
     cols: int = 110,
     lines: int = 32,
     hold: float = 2.0,
+    font_size: int = 0,
     timeout: float = 600.0,
     fallback: bool = True,
 ) -> dict:
@@ -116,7 +142,8 @@ def record_terminal(
     child_cmd = [
         "conhost.exe", sys.executable, str(Path(__file__).resolve()), "--child",
         "--title", title, "--log", str(log_path), "--go", str(go), "--done", str(done),
-        "--cols", str(cols), "--lines", str(lines), "--hold", str(hold), "--", *command,
+        "--cols", str(cols), "--lines", str(lines), "--hold", str(hold),
+        "--font-size", str(font_size), "--", *command,
     ]  # fmt: skip
     win = subprocess.Popen(child_cmd, cwd=ROOT, creationflags=subprocess.CREATE_NEW_CONSOLE)
     hwnd = find_window(title)
@@ -222,6 +249,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cols", type=int, default=110)
     parser.add_argument("--lines", type=int, default=32)
     parser.add_argument("--hold", type=float, default=2.0)
+    parser.add_argument("--font-size", type=int, default=0, help="altura da fonte (0 = padrão)")
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     if args.command and args.command[0] == "--":
@@ -233,7 +261,13 @@ def main(argv: list[str] | None = None) -> int:
     if not args.out:
         parser.error("--out é obrigatório")
     result = record_terminal(
-        args.command, args.out, title=args.title, cols=args.cols, lines=args.lines, hold=args.hold
+        args.command,
+        args.out,
+        title=args.title,
+        cols=args.cols,
+        lines=args.lines,
+        hold=args.hold,
+        font_size=args.font_size,
     )
     print(result)
     return 0 if result["video"]["ok"] else 1
