@@ -29,3 +29,6 @@ eval/reports/*.csv
 
 # Saídas do ensaio (vídeos e logs, grandes)
 /ensaio/
+
+# Vídeos da demonstração (scripts/gravar_demo.py)
+/out/
