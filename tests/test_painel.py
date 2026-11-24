@@ -172,6 +172,18 @@ def test_visao_creator_sem_texto_de_comprador(engine, creator):
     assert not (buyer & _windows(shown)) - own
 
 
+def test_tabela_do_creator_diz_quantas_pesam(engine):
+    """Ana: parte das promessas explícitas contradiz a peça e não pesa (D30)."""
+    at = AppTest.from_file(str(APP / "pages/4_Relatorios.py"), default_timeout=30)
+    at.session_state["_papel"] = "creator"
+    at.session_state["_creator"] = "cr_ana"
+    at.run()
+    assert not at.exception
+    table = at.dataframe[0].value.set_index("causa")["pesa no creator"]
+    assert re.fullmatch(r"\d+ de \d+", table["Promessa explícita"])
+    assert (table.drop("Promessa explícita") == "não").all()
+
+
 def test_relatorio_da_marca_mostra_sinal_vitalicio(engine):
     at = app("pages/4_Relatorios.py", "marca")
     at.selectbox(key="produto_relatorio").set_value("prod_treino").run()

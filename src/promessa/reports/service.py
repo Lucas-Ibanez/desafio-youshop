@@ -54,7 +54,8 @@ class CauseRow(BaseModel):
     devolucoes: int
     pct_devolucoes: float
     taxa_sobre_vendas: float
-    pesa_no_creator: bool
+    pesa_no_creator: bool  # a causa pode pesar (taxonomia)
+    pesam_no_creator: int = 0  # devoluções desta causa que pesam de fato (D30)
 
 
 class Indicator(BaseModel):
@@ -224,8 +225,14 @@ def promise_outcome_report(
     pairs = _classifications(session, list(sale_link))
     n_sales, n_refunds = len(rows), len(pairs)
 
+    def confirmed(c: RefundClassification | None) -> bool:
+        return bool(c) and weighs_on_creator(
+            c.cause, c.relation, c.confidence, c.review_status, threshold
+        )
+
     taxonomy = load_rules().taxonomy
     by_cause = Counter(c.cause for _, c in pairs if c)
+    weighing = Counter(c.cause for _, c in pairs if confirmed(c))
     causes = [
         CauseRow(
             causa=c.causa,
@@ -234,14 +241,10 @@ def promise_outcome_report(
             pct_devolucoes=by_cause.get(c.causa, 0) / n_refunds if n_refunds else 0.0,
             taxa_sobre_vendas=by_cause.get(c.causa, 0) / n_sales if n_sales else 0.0,
             pesa_no_creator=c.pesa_no_creator,
+            pesam_no_creator=weighing.get(c.causa, 0),
         )
         for c in taxonomy.causas
     ]
-
-    def confirmed(c: RefundClassification | None) -> bool:
-        return bool(c) and weighs_on_creator(
-            c.cause, c.relation, c.confidence, c.review_status, threshold
-        )
 
     # promessas mais contestadas (só confirma) e sinais para a marca (crenças em contradiz)
     contested: dict[str, dict] = {}

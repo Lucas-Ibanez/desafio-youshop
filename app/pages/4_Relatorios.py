@@ -23,6 +23,15 @@ st.title("4 · Relatórios")
 st.caption(f"Vendas de {ctx['start']} a {ctx['end']} e as devoluções dessas vendas.")
 
 
+def weighs_label(c) -> str:
+    """Quantas devoluções da causa pesam de fato no creator (só `confirma`, D30)."""
+    if not c.pesa_no_creator or c.pesam_no_creator == 0:
+        return "não"
+    if c.pesam_no_creator == c.devolucoes:
+        return "sim"
+    return f"{c.pesam_no_creator} de {c.devolucoes}"
+
+
 def causes_table(report) -> pd.DataFrame:
     return pd.DataFrame(
         [
@@ -31,7 +40,7 @@ def causes_table(report) -> pd.DataFrame:
                 "devoluções": c.devolucoes,
                 "% das devoluções": f"{c.pct_devolucoes:.0%}",
                 "% das vendas": f"{c.taxa_sobre_vendas:.1%}",
-                "pesa no creator": "sim" if c.pesa_no_creator else "não",
+                "pesa no creator": weighs_label(c),
             }
             for c in report.causas
             if c.devolucoes

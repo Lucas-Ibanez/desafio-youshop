@@ -109,6 +109,13 @@ def fixed_text(data: dict[str, Any]) -> str:
             f"{data['promessa_que_nao_veio_da_peca']} citaram uma promessa que não está na sua "
             "peça; a marca vai olhar de onde ela veio."
         )
+    expected = data["expectativa_ou_qualidade"]
+    if expected:
+        verb = "esperava" if expected == 1 else "esperavam"
+        parts.append(
+            f"{expected} {verb} do produto algo que a sua peça não prometeu (expectativa ou "
+            "qualidade); isso não pesa no seu indicador."
+        )
     if data["indicador"] == "dados_insuficientes":
         parts.append("Ainda são poucas vendas para um indicador confiável.")
     if data["publi_faltando"]:

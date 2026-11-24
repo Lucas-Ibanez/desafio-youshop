@@ -51,6 +51,7 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **D35** · Painel: escolhas da T14 · 24/11/2026
 - **D36** · Demo via MCP e conexão no Claude Code: escolhas da T15 · 24/11/2026
 - **D37** · Fechamento do MVP: escolhas da T16 · 24/11/2026
+- **D38** · Ensaio da demo: o que pesa no creator e a expectativa no texto fixo · 24/11/2026
 
 ---
 
@@ -389,3 +390,13 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - Este arquivo ganhou um índice no topo. Decisões revistas não foram apagadas: as que mudaram têm "substituída" ou "atualização" no próprio registro (ex.: D9 → D11, D16 → D25, D17 → D18).
 - Verificação do clone limpo: `git clone` + `.env` + `tasks.py setup db-reset seed simulate demo` num diretório temporário, com o simulador no modo `modelo` (sem cache, chamando o Gemini).
 - Tag `v0.1-mvp` local (sem push). O ensaio cronometrado da demo é do Lucas (roteiro na seção 6 do PLANO).
+
+## D38 · Ensaio da demo: o que pesa no creator e a expectativa no texto fixo · 24/11/2026
+**Contexto:** o ensaio cronometrado (Checkpoint 3) achou duas contradições na tela de Relatórios do creator (passo S5 do roteiro):
+1. A tabela de causas dizia "Promessa explícita · pesa no creator: sim" com o total da causa. Para a cr_ana eram 10, mas só 7 pesam (as outras 3 contradizem a peça; D30). Para cr_caio e cr_duda, a linha dizia "sim" ao lado do texto "Nenhuma devolução veio de promessa da sua peça".
+2. O texto fixo da explicação não citava as devoluções de expectativa ou qualidade: a cr_caio lia "35 voltaram" e só 33 eram explicadas.
+**Decisão (a mais simples):**
+- `CauseRow` ganhou `pesam_no_creator` (devoluções da causa que pesam de fato, pela mesma regra `weighs_on_creator` do indicador). `pesa_no_creator` continua dizendo se a causa *pode* pesar (taxonomia). O campo é novo e opcional na saída do `get_promise_outcome_report`.
+- O painel mostra na coluna "pesa no creator": "não" (nenhuma pesa), "sim" (todas pesam) ou "7 de 10" (parte pesa). Vale para creator e marca.
+- O texto fixo ganhou a frase "N esperavam do produto algo que a sua peça não prometeu (expectativa ou qualidade); isso não pesa no seu indicador." (singular com 1). As parcelas do texto agora somam o total de devoluções.
+**Consequência:** a soma de `pesam_no_creator` é igual a `devolucoes_confirmadas` do indicador (teste). O prompt do modelo não mudou (o campo já ia nos dados). Os problemas de gravidade baixa do ensaio ficaram para depois.

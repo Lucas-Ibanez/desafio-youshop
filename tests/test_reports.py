@@ -14,7 +14,7 @@ from promessa.db.session import get_engine, get_session, init_db, set_default_en
 from promessa.errors import DomainError
 from promessa.facts.seed import load_seed
 from promessa.llm.client import LLMResult
-from promessa.reports.explain import ExplainerLLMOutput, explain_refunds_to_creator
+from promessa.reports.explain import ExplainerLLMOutput, explain_refunds_to_creator, fixed_text
 from promessa.reports.service import promise_outcome_report
 from tests.mcp_helpers import ToolCallError, call_tool
 
@@ -135,6 +135,63 @@ def test_explicacao_da_bia_e_da_duda(s):
     )
     duda = explain_refunds_to_creator(s, "cr_duda").text
     assert "poucas vendas" in duda and "#publi" in duda  # peça da duda não tem #publi
+
+
+@pytest.mark.parametrize("creator", CREATORS)
+def test_tabela_de_causas_mostra_o_que_pesa_de_fato(s, creator):
+    """A linha "promessa explícita" não pode dizer que tudo pesa: só `confirma` pesa (D30)."""
+    report = promise_outcome_report(s, creator_id=creator)
+    rows = {c.causa: c for c in report.causas}
+    assert sum(c.pesam_no_creator for c in report.causas) == (
+        report.indicador_creator.devolucoes_confirmadas
+    )
+    assert all(c.pesam_no_creator == 0 for c in report.causas if not c.pesa_no_creator)
+    assert rows["promessa_explicita"].pesam_no_creator <= rows["promessa_explicita"].devolucoes
+
+
+def test_ana_tem_promessa_explicita_que_nao_pesa(s):
+    row = next(c for c in promise_outcome_report(s, creator_id="cr_ana").causas
+               if c.causa == "promessa_explicita")  # fmt: skip
+    assert 0 < row.pesam_no_creator < row.devolucoes  # as que contradizem não pesam
+
+
+@pytest.mark.parametrize("creator", CREATORS)
+def test_explicacao_explica_todas_as_devolucoes(s, creator):
+    e = explain_refunds_to_creator(s, creator)
+    d = e.data_used
+    explained = (
+        d["promessa_da_peca_cobrada"]
+        + d["promessa_que_nao_veio_da_peca"]
+        + d["expectativa_ou_qualidade"]
+        + sum(d["nao_e_com_voce"].values())
+    )
+    assert explained == d["devolucoes"]
+    assert ("não prometeu (expectativa ou qualidade)" in e.text) == bool(
+        d["expectativa_ou_qualidade"]
+    )
+
+
+@pytest.mark.parametrize(("n", "verb"), [(1, "1 esperava"), (2, "2 esperavam")])
+def test_texto_fixo_cita_expectativa(n, verb):
+    data = {
+        "vendas": 100,
+        "devolucoes": n,
+        "trechos_a_mudar": [],
+        "promessa_da_peca_cobrada": 0,
+        "promessa_que_nao_veio_da_peca": 0,
+        "expectativa_ou_qualidade": n,
+        "nao_e_com_voce": {
+            "acesso_ou_entrega": 0,
+            "cancelamento_ou_reembolso": 0,
+            "cobranca_nao_reconhecida": 0,
+            "outros": 0,
+        },
+        "indicador": "ok",
+        "publi_faltando": False,
+    }
+    text = fixed_text(data)
+    assert f"{verb} do produto algo que a sua peça não prometeu" in text
+    assert "não pesa no seu indicador" in text
 
 
 def _fake_explainer(text):
