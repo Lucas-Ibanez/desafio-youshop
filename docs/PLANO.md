@@ -61,7 +61,7 @@
 | T10 Classificador de devolução **[plan]** | ✅ Concluída | `classify_refund` via MCP; 31 testes sem rede + 7 `llm` (passam ao vivo e com cache) (D29). |
 | T11 Ligação com a promessa | ✅ Concluída | `classify_refund` preenche `relation` e `linked_promise_id`; 12 de 12 cenários com modelo; 29 testes sem rede (D30). |
 | T12 Teste 1 do classificador | ✅ Concluída (1 critério ❌) | Rodada v1 em `eval/reports/classificador_h1.md`: test acurácia 81%, kappa 0,74, subtipo 74% (metas ✅); corte: sim. Rodada fria de 14,5 min (meta 10 ❌, cota do Gemini) (D31). |
-| **Checkpoint 2** | **Lucas** | Fluxo completo pelos serviços + dois relatórios; decidir modelo final (ver T12). |
+| **Checkpoint 2** | Em andamento | Decidido: v2 do classificador com a causa restrita à taxonomia (D32). Código pronto; rodada v2 pendente até a cota diária do Gemini voltar (~05h de 24/11; faltam ~96 chamadas). |
 | T13 Simulador, relatórios e explicação **[plan]** | **Próxima** | — |
 | T14–T16 | Não iniciadas | — |
 

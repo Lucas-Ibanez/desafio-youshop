@@ -284,3 +284,12 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - 4 reclamações de processo viraram `outros` porque o modelo devolveu a causa "process" ou "processamento", fora da taxonomia. Restringir `cause` a uma lista fechada no esquema de saída do Gemini (enum) corrige isso; é mudança de esquema, então vira v2.
 - A precisão de `promessa_explicita` (63%) é o ponto fraco: é ela que pesa no creator. O limiar de confiança e a revisão humana protegem o indicador, mas vale olhar os erros de acesso → promessa no `dev`.
 - Paráfrase escrita por quem codificou: o resultado é otimista; a rodada com títulos é a contraprova.
+
+## D32 · Classificador v2: causa restrita à taxonomia; rodada pendente por cota · 23/11/2026
+**Contexto:** no Checkpoint 2, o Lucas aprovou corrigir o esquema de saída do classificador: na v1, 4 reclamações de processo viraram `outros` porque o modelo escreveu "process"/"processamento" (D31).
+**Decisão:**
+- O esquema enviado ao Gemini passa a ter `cause` como enum com as causas da taxonomia, gerado do YAML (`refunds.classifier.output_model`); a validação em código continua como defesa. A subcausa não foi restringida (fora do que foi aprovado).
+- O prompt sobe para `classifier_v2` (mesmo texto, reforçando o nome exato da causa). Isso também é necessário porque a chave do cache não inclui o esquema: sem nova versão, a v2 reaproveitaria as respostas da v1.
+**Cota diária:** durante a rodada v2, a chave atingiu a cota diária do plano gratuito para `gemini-3.5-flash-lite` (500 chamadas/dia por modelo; `GenerateRequestsPerDayPerProjectPerModel-FreeTier`; espera pedida de ~5h30). A rodada foi interrompida antes de gravar o relatório (a v1 ficou intacta); 76 das 172 reclamações já estão no cache com o `classifier_v2`. Outros modelos (`gemini-3.5-flash`, `gemini-3.6-flash`, `gemini-3.1-flash-lite`) ainda respondiam, cada um com cota própria.
+**Decisão do Lucas:** esperar a cota voltar e manter o mesmo modelo (comparação v1 × v2 limpa). Enquanto isso, seguir com a T13 com testes sem rede; o simulador e a rodada v2 rodam depois de ~05h de 24/11.
+**Consequência:** os testes `llm` do classificador e do linker também perdem o cache (prompt novo) e precisam de cota para a próxima rodada ao vivo. Orçamento de amanhã por modelo (500): v2 (~96) + testes `llm` (~20) + simulador (~70 devoluções) + demo.

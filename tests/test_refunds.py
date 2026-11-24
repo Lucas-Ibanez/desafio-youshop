@@ -3,6 +3,7 @@
 import json
 
 import pytest
+from pydantic import ValidationError
 from sqlalchemy import select
 
 from promessa.db.models import RefundClassification, RefundEvent
@@ -31,7 +32,7 @@ def fake_model(cause, subcause, confidence=0.9, belief=None, channel=None):
     seen = {}
 
     def completer(prompt_name, variables, output_model, model):
-        assert prompt_name == "classifier_v1" and output_model is ClassifierLLMOutput
+        assert prompt_name == "classifier_v2" and issubclass(output_model, ClassifierLLMOutput)
         seen.update(variables)
         return LLMResult(
             ClassifierLLMOutput(
@@ -43,7 +44,7 @@ def fake_model(cause, subcause, confidence=0.9, belief=None, channel=None):
                 explanation="explicação do modelo",
             ),
             model="modelo-simulado",
-            prompt_version="classifier_v1",
+            prompt_version="classifier_v2",
             cached=False,
         )
 
@@ -159,7 +160,7 @@ def test_grava_evento_limpo_e_classificacao(s, make_sale):
         "condicao_da_oferta",
         "contradiz",  # T11: registrado "acesso 12 meses", comprador acha que era vitalício
     )
-    assert row.buyer_belief["value"] == "vitalicio" and row.prompt_version == "classifier_v1"
+    assert row.buyer_belief["value"] == "vitalicio" and row.prompt_version == "classifier_v2"
     assert (resp.needs_review, resp.main_cause, resp.weighs_on_creator) == (
         False,
         "promessa",
@@ -216,3 +217,25 @@ def test_classify_refund_pelo_mcp(mcp_db, make_sale):
         assert event.reason_text == "meu cpf [CPF]" and event.type.value == "chargeback"
     with pytest.raises(ToolCallError, match="VENDA_INEXISTENTE"):
         call_tool("classify_refund", {"sale_id": 999, "reason_text": "x"})
+
+
+def test_esquema_restringe_a_causa_a_taxonomia():
+    from typing import get_args
+
+    from promessa.refunds.classifier import output_model
+    from promessa.rules.loader import load_rules
+
+    model = output_model()
+    causes = set(get_args(model.model_fields["cause"].annotation))
+    assert causes == {c.causa for c in load_rules().taxonomy.causas}
+    schema = model.model_json_schema()
+    assert set(schema["properties"]["cause"]["enum"]) == causes
+    with pytest.raises(ValidationError):
+        model(
+            cause="process",
+            subcause="x",
+            buyer_belief=None,
+            channel_mentioned=None,
+            confidence=0.9,
+            explanation="e",
+        )

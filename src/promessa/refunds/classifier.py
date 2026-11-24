@@ -15,7 +15,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, create_model
 
 from promessa.config import get_settings, has_api_key
 from promessa.llm.client import LLMError, complete_json
@@ -24,7 +24,7 @@ from promessa.rules.loader import load_rules
 
 log = logging.getLogger(__name__)
 
-PROMPT = "classifier_v1"
+PROMPT = "classifier_v2"  # v2: causa restrita à taxonomia no esquema (D32)
 GOLD = Path(__file__).resolve().parents[3] / "data" / "gold"
 EXAMPLE_SEED = 42
 # Até 8 exemplos do split dev, balanceados por causa (CONTEXTO 12.2)
@@ -60,6 +60,18 @@ class ClassifierLLMOutput(BaseModel):
     channel_mentioned: str | None
     confidence: float
     explanation: str
+
+
+@lru_cache(maxsize=1)
+def output_model() -> type[ClassifierLLMOutput]:
+    """Esquema enviado ao Gemini: `cause` só pode ser uma causa da taxonomia (enum).
+
+    A lista vem do YAML (taxonomia é dado). A validação em `validate` continua como defesa.
+    """
+    causes = tuple(c.causa for c in load_rules().taxonomy.causas)
+    return create_model(
+        "ClassifierLLMOutputV2", __base__=ClassifierLLMOutput, cause=(Literal[causes], ...)
+    )
 
 
 class Classification(BaseModel):
@@ -157,7 +169,7 @@ def classify_text(
         return _without_model("Sem modelo disponível; a classificação precisa de revisão humana.")
     try:
         result = (completer or complete_json)(
-            PROMPT, prompt_variables(clean, product_category), ClassifierLLMOutput, model
+            PROMPT, prompt_variables(clean, product_category), output_model(), model
         )
     except LLMError as e:
         log.warning("classificador indisponível (%s) para %r", e, preview(clean))

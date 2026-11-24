@@ -67,7 +67,7 @@ def fake_classifier(cause, subcause, belief=None, confidence=0.9):
                 explanation="e",
             ),
             model="modelo-simulado",
-            prompt_version="classifier_v1",
+            prompt_version="classifier_v2",
             cached=False,
         )
 
