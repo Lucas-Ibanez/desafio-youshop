@@ -26,3 +26,6 @@ docs/fontes/*
 
 # Saídas de erro da avaliação
 eval/reports/*.csv
+
+# Saídas do ensaio (vídeos e logs, grandes)
+/ensaio/
