@@ -216,3 +216,63 @@
 }
 /* o Streamlit recua listas globalmente; no canhoto a lista encosta na margem */
 .vc-canhoto__lista, .vc-canhoto__lista li { margin-left: 0 !important; padding-left: 0 !important; }
+
+/* ══ P2 ═════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Métricas em linha (5.6): sem caixa, filete vertical risco ────────────────────────── */
+.vc-metricas { display: flex; flex-wrap: wrap; gap: 24px 0; margin: 8px 0 16px; }
+.vc-metrica { flex: 1 1 0; min-width: 9rem; padding: 0 24px; border-left: 1px solid var(--vc-risco); }
+.vc-metrica:first-child { padding-left: 0; border-left: 0; }
+.vc-metrica p { margin: 0; }
+.vc-metrica__rotulo { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); letter-spacing: .005em; }
+.vc-metrica__numero {
+  font: 800 40px/40px var(--vc-f-sistema); letter-spacing: -0.02em; color: var(--vc-tinta);
+  font-variant-numeric: tabular-nums; margin-top: 6px !important;
+}
+.vc-metrica__vazio { font: 500 16px/40px var(--vc-f-sistema); color: var(--vc-grafite); margin-top: 6px !important; }
+.vc-metrica__contexto { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); margin-top: 4px !important; max-width: 28ch; }
+
+/* ── O fio (5.5): ponto cheio → linha no estilo da relação → ponto vazado ─────────────── */
+.vc-fio { --cor: var(--vc-carimbo); padding: 4px 0; }
+.vc-fio--confirma   { --cor: var(--vc-carimbo); }
+.vc-fio--contradiz  { --cor: var(--vc-linha); }
+.vc-fio--sem_relacao { --cor: var(--vc-sem-relacao); }
+.vc-fio__cab {
+  display: flex; justify-content: space-between;
+  font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); margin-bottom: 6px;
+}
+.vc-fio__trilho { display: flex; align-items: center; gap: 10px; }
+.vc-fio__lado { flex: none; max-width: 40%; }
+.vc-fio__lado .vc-dito { font-size: 18px; line-height: 27px; }
+.vc-fio__fora { font: 500 14px/20px var(--vc-f-sistema); color: var(--vc-grafite); }
+.vc-fio__ponto { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.vc-fio__ponto--cheio  { background: var(--vc-carimbo); }
+.vc-fio__ponto--vazado { border: 2px solid var(--cor); background: var(--vc-folha); }
+.vc-fio__meio {
+  flex: 1 1 auto; position: relative; min-width: 12rem; height: 28px;
+  display: flex; justify-content: center; align-items: center;
+}
+.vc-fio__linha { position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; }
+.vc-fio__rel { position: relative; }
+.vc-fio--confirma .vc-fio__linha  { background: var(--cor); }
+.vc-fio--contradiz .vc-fio__linha { background: repeating-linear-gradient(90deg, var(--cor) 0 6px, transparent 6px 10px); }
+.vc-fio--sem_relacao .vc-fio__linha {
+  height: 2px; background: radial-gradient(circle, var(--cor) 1px, transparent 1.2px) 0 50% / 6px 2px repeat-x;
+}
+.vc-fio__rel {
+  font: 600 13px/20px var(--vc-f-sistema); color: var(--cor); background: var(--vc-folha);
+  padding: 0 8px; border-radius: var(--vc-raio-p); white-space: nowrap;
+}
+.vc-fio__n { font: 500 13px/20px var(--vc-f-sistema); color: var(--vc-grafite); text-align: center; margin: 6px 0 0; }
+[data-testid="stExpanderDetails"] .vc-fio { background: var(--vc-folha); }
+
+/* A linha se desenha quando o fio aparece (ao abrir o expander); o chip vem no fim (6). */
+@keyframes vc-fiar     { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes vc-aparecer { from { opacity: 0; } to { opacity: 1; } }
+.vc-fio__linha { animation: vc-fiar 500ms var(--vc-ease) both; }
+.vc-fio__rel   { animation: vc-aparecer 160ms var(--vc-ease) 460ms both; }
+@media (prefers-reduced-motion: reduce) { .vc-fio__linha, .vc-fio__rel { animation: none !important; } }
+
+/* Só o botão "Deploy" sai (ruído fora do guia). O client.toolbarMode = "minimal" tiraria também
+   o indicador de execução (stStatusWidget), que avisa que a página está rodando. */
+[data-testid="stAppDeployButton"] { display: none; }

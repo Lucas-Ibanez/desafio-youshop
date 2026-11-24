@@ -193,14 +193,30 @@ def webm_to_mp4(src: str | Path, dst: str | Path, *, keep_src: bool = False) -> 
 
 
 def wait_idle(page, timeout: float = 60.0) -> None:
-    """Espera o Streamlit terminar de rodar o script (o indicador "Running" some)."""
-    page.wait_for_timeout(250)
-    page.wait_for_function(
-        "() => !document.querySelector('[data-testid=\"stStatusWidget\"]')"
-        " || !document.querySelector('[data-testid=\"stStatusWidget\"]').innerText.trim()",
-        timeout=timeout * 1000,
+    """Espera o Streamlit terminar de rodar o script.
+
+    Três pistas no DOM: o indicador "Running" (stStatusWidget) some, não sobra esqueleto de
+    carregamento (stSkeleton) na área principal e o conteúdo dela fica igual em duas leituras
+    seguidas (o indicador demora um pouco a aparecer em páginas lentas).
+    """
+    probe = (
+        "() => { const s = document.querySelector('[data-testid=\"stStatusWidget\"]');"
+        " const main = document.querySelector('[data-testid=stMain]');"
+        " return { busy: !!(s && s.innerText.trim())"
+        " || !!document.querySelector('[data-testid=stMain] [data-testid=stSkeleton]'),"
+        " size: main ? main.querySelectorAll('*').length + ':' + main.innerText.length : '' }; }"
     )
-    page.wait_for_timeout(200)
+    page.wait_for_timeout(250)
+    end = time.monotonic() + timeout
+    last, stable = None, 0
+    while time.monotonic() < end:
+        state = page.evaluate(probe)
+        stable = stable + 1 if not state["busy"] and state["size"] == last else 0
+        if stable >= 2:
+            break
+        last = state["size"]
+        page.wait_for_timeout(200)
+    page.wait_for_timeout(150)
 
 
 def open_home(page, url: str = URL) -> None:
@@ -226,12 +242,28 @@ def selectbox(page, label: str, *, in_sidebar: bool = True):
 def select_option(
     page, label: str, option: str, *, in_sidebar: bool = True, exact: bool = True
 ) -> None:
-    """Escolhe no selectbox `label` a opção `option` (exata, ou que contém o texto)."""
-    selectbox(page, label, in_sidebar=in_sidebar).locator('[role="combobox"], input').first.click()
-    if exact:
-        page.get_by_role("option", name=option, exact=True).click()
-    else:
-        page.get_by_role("option").filter(has_text=option).first.click()
+    """Escolhe no selectbox `label` a opção `option` (exata, ou que contém o texto).
+
+    Às vezes o primeiro clique só dá foco (a página acabou de rodar de novo) e a lista não
+    abre: tenta abrir até três vezes, esperando as opções aparecerem.
+    """
+    box = selectbox(page, label, in_sidebar=in_sidebar).locator('[role="combobox"], input').first
+    target = (
+        page.get_by_role("option", name=option, exact=True)
+        if exact
+        else page.get_by_role("option").filter(has_text=option).first
+    )
+    for attempt in range(3):
+        box.click()
+        try:
+            target.wait_for(state="visible", timeout=3_000)
+            break
+        except Exception:  # noqa: BLE001
+            if attempt == 2:
+                raise
+            page.keyboard.press("Escape")
+            wait_idle(page)
+    target.click()
     wait_idle(page)
 
 
@@ -259,9 +291,22 @@ def choose_creator(page, creator_label: str) -> None:
 
 
 def goto_page(page, name: str) -> None:
-    """Página da barra lateral pelo nome (ex.: "Checador", "Relatorios")."""
+    """Página da barra lateral pelo nome do menu (ex.: "Checar peça", "Teste dos agentes").
+
+    Espera o título da página de destino (o h1 do cabeçalho tem o mesmo nome do menu) antes de
+    esperar o fim da execução: sem isso, a espera pode terminar ainda na página anterior.
+    """
     nav = page.locator('[data-testid="stSidebarNav"]')
     nav.get_by_role("link").filter(has_text=name).first.click()
+    try:
+        page.wait_for_function(
+            "t => [...document.querySelectorAll('[data-testid=stMain] h1')]"
+            ".some(h => h.innerText.trim() === t)",
+            arg=name,
+            timeout=15_000,
+        )
+    except Exception:  # noqa: BLE001  (página sem h1 com o nome do menu, ex.: Início)
+        pass
     wait_idle(page)
 
 

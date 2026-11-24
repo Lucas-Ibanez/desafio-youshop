@@ -179,3 +179,100 @@ def canhoto(
         f'<button type="button" class="vc-botao-sec" id="{button_id}">Copiar link</button>'
         "</div></div>" + script
     )
+
+
+# --- O fio (5.5) ---------------------------------------------------------------------------
+
+
+def md_label(text: str) -> str:
+    """Texto seguro para rótulo em markdown do Streamlit (expander): escapa a marcação."""
+    return re.sub(r"([\\`*_{}\[\]()#+\-!|>~])", r"\\\1", text)
+
+
+def fio(left_html: str, right_text: str, relation: str, count_text: str) -> str:
+    """Promessa registrada (ponto cheio) ligada ao que o comprador entendeu (ponto vazado).
+
+    `left_html` já vem pronto (dito escapado ou aviso); `right_text` é a crença ou promessa
+    normalizada e agregada, nunca o texto do comprador (invariante 5). A linha se desenha ao
+    aparecer (o conteúdo do expander só entra na tela quando ele abre).
+    """
+    from ui.labels import RELATION
+
+    rel = escape(relation)
+    return (
+        f'<div class="vc-fio vc-fio--{rel}">'
+        '<div class="vc-fio__cab"><span>Prometido na peça</span><span>O comprador entendeu</span></div>'
+        '<div class="vc-fio__trilho">'
+        f'<span class="vc-fio__ponto vc-fio__ponto--cheio"></span>'
+        f'<span class="vc-fio__lado">{left_html}</span>'
+        '<span class="vc-fio__meio"><span class="vc-fio__linha"></span>'
+        f'<span class="vc-fio__rel">{escape(label(RELATION, relation))}</span></span>'
+        '<span class="vc-fio__ponto vc-fio__ponto--vazado"></span>'
+        f'<span class="vc-fio__lado">{dito(right_text)}</span>'
+        "</div>"
+        f'<p class="vc-fio__n">{escape(count_text)}</p>'
+        "</div>"
+    )
+
+
+# --- Métricas (5.6) ------------------------------------------------------------------------
+
+
+def metricas(items: list[tuple[str, str | None, str | None]]) -> str:
+    """Linha de números sem caixa: [(rótulo, número ou None = "Dados insuficientes", contexto)]."""
+    cells = []
+    for label_text, number, context in items:
+        value = (
+            f'<p class="vc-metrica__numero">{escape(number)}</p>'
+            if number is not None
+            else '<p class="vc-metrica__vazio">Dados insuficientes</p>'
+        )
+        ctx = f'<p class="vc-metrica__contexto">{escape(context)}</p>' if context else ""
+        cells.append(
+            f'<div class="vc-metrica"><p class="vc-metrica__rotulo">{escape(label_text)}</p>'
+            f"{value}{ctx}</div>"
+        )
+    return f'<div class="vc-metricas">{"".join(cells)}</div>'
+
+
+# --- Gráfico das causas (2.4) --------------------------------------------------------------
+
+
+def cause_chart(causes: list, labels: dict[str, str]) -> None:
+    """Barras por causa com a cor fixa de cada causa (escala explícita, não a ordem automática)."""
+    import altair as alt
+    import pandas as pd
+
+    from ui.labels import CAUSE_COLORS
+
+    order = list(CAUSE_COLORS)
+    rows = [
+        {"causa": labels.get(c.causa, c.rotulo), "devoluções": c.devolucoes}
+        for c in sorted(causes, key=lambda c: order.index(c.causa) if c.causa in order else 99)
+        if c.devolucoes
+    ]
+    if not rows:
+        return
+    domain = [labels[k] for k in order]
+    chart = (
+        alt.Chart(pd.DataFrame(rows))
+        .mark_bar(cornerRadiusEnd=2, height=18)
+        .encode(
+            x=alt.X("devoluções:Q", title=None, axis=alt.Axis(tickMinStep=1, grid=False)),
+            y=alt.Y(
+                "causa:N",
+                title=None,
+                sort=[r["causa"] for r in rows],
+                axis=alt.Axis(labelLimit=260, labelFontSize=13),
+            ),
+            color=alt.Color(
+                "causa:N",
+                scale=alt.Scale(domain=domain, range=[CAUSE_COLORS[k] for k in order]),
+                legend=None,
+            ),
+            tooltip=["causa", "devoluções"],
+        )
+    )
+    # A altura vai no st.altair_chart: com width="stretch", a do Altair não segura (conferido:
+    # com duas causas as barras se sobrepunham).
+    st.altair_chart(chart, width="stretch", height=34 * len(rows) + 40)

@@ -59,6 +59,19 @@ def product(page) -> None:
     select_option(page, "Produto", "prod_treino", in_sidebar=False, exact=False)
 
 
+def open_threads(page) -> None:
+    """Abre os expanders dos relatórios para o fio (BRAND 5.5) aparecer na captura."""
+    expanders = page.locator('[data-testid="stMain"] [data-testid="stExpander"] details')
+    for i in range(expanders.count()):
+        details = expanders.nth(i)
+        for _ in range(3):  # o Streamlit pode trocar o nó logo depois de rodar a página
+            if details.evaluate("d => d.open"):
+                break
+            details.locator("summary").click()
+            page.wait_for_timeout(300)
+    page.wait_for_timeout(700)
+
+
 def run(out: Path) -> list[Path]:
     from playwright.sync_api import sync_playwright
 
@@ -87,6 +100,8 @@ def run(out: Path) -> list[Path]:
                 click_button(page, "Gerar link")
                 saved.append(shot(page, out, f"creator_{key}_link"))
                 continue
+            if key == "4_relatorios":
+                open_threads(page)
             saved.append(shot(page, out, f"creator_{key}"))
 
         # marca
@@ -95,6 +110,8 @@ def run(out: Path) -> list[Path]:
             goto_page(page, title)
             if key in ("1_ficha", "4_relatorios"):
                 product(page)
+            if key == "4_relatorios":
+                open_threads(page)
             saved.append(shot(page, out, f"marca_{key}"))
         browser.close()
     return saved

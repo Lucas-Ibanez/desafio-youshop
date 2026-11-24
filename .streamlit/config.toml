@@ -4,10 +4,6 @@
 [server]
 enableStaticServing = true
 
-[client]
-# esconde o botão "Deploy" (ruído fora do guia); chave conferida na 1.67
-toolbarMode = "minimal"
-
 [theme]
 base = "light"
 primaryColor = "#4B2FA8"
