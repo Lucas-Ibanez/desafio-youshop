@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 
-from common import next_run, num, ok, pct, rel, sha
+from common import next_run, num, ok, pct, rel, run_date, sha
 from metrics import accuracy, cohen_kappa, confusion, precision_recall
 
 from promessa.config import get_settings
@@ -366,6 +366,7 @@ def main(argv: list[str] | None = None) -> int:
         "acuracia_test": test["acuracia"],
         "kappa_test": test["kappa"],
     }
+    now = entry["data"] = run_date(history, entry, now)
     history = [h for h in history if h["versao"] != run["versao"]] + [entry]
 
     def jsonable(m):  # chaves da matriz como texto

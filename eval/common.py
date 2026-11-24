@@ -26,6 +26,18 @@ def next_run(history: list[dict], fp: dict[str, str], note: str | None) -> dict:
     return {"versao": f"v{int(last['versao'][1:]) + 1}", "mudancas": text}
 
 
+def run_date(history: list[dict], entry: dict, now: str) -> str:
+    """Repetir a mesma rodada com os mesmos números mantém a data da primeira execução.
+
+    Só muda a data se a rodada é nova ou se algum número mudou (ex.: cache apagado e o modelo
+    respondeu diferente).
+    """
+    same = next((h for h in history if h["versao"] == entry["versao"]), None)
+    if same and all(same.get(k) == v for k, v in entry.items() if k != "data"):
+        return same.get("data", now)
+    return now
+
+
 def rel(path: Path) -> str:
     try:
         return path.relative_to(ROOT).as_posix()

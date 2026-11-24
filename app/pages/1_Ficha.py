@@ -10,6 +10,7 @@ import streamlit as st  # noqa: E402
 from painel_comum import domain_error, product_select, sidebar  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
+from promessa.display import ACCESS_TYPE, RECURRENCE, label, money, num  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.facts import service as facts_service  # noqa: E402
 
@@ -53,13 +54,13 @@ with left:
                 ],
                 "valor": [
                     f"{facts.guarantee_days} dias",
-                    facts.access_type.value,
+                    label(ACCESS_TYPE, facts.access_type),
                     facts.access_months or "—",
-                    facts.recurrence.value,
+                    label(RECURRENCE, facts.recurrence),
                     "sim" if facts.auto_renewal else "não",
                     ", ".join(facts.bonuses) or "nenhum",
                     ", ".join(
-                        f"{c['descricao']} (R$ {c['valor_mensal_cents'] / 100:.2f}/mês)"
+                        f"{c['descricao']} ({money(c['valor_mensal_cents'])}/mês)"
                         for c in facts.extra_costs
                     )
                     or "nenhum",
@@ -100,7 +101,10 @@ else:
         )
         access_types = ["vitalicio", "prazo", "assinatura", "nao_aplica"]
         access = c2.selectbox(
-            "Acesso", access_types, index=access_types.index(facts.access_type.value)
+            "Acesso",
+            access_types,
+            index=access_types.index(facts.access_type.value),
+            format_func=lambda v: label(ACCESS_TYPE, v),
         )
         months = c3.number_input(
             "Meses de acesso (só para prazo)",
@@ -110,14 +114,17 @@ else:
         )
         recurrences = ["unica", "mensal", "anual"]
         recurrence = c1.selectbox(
-            "Cobrança", recurrences, index=recurrences.index(facts.recurrence.value)
+            "Cobrança",
+            recurrences,
+            index=recurrences.index(facts.recurrence.value),
+            format_func=lambda v: label(RECURRENCE, v),
         )
         renewal = c2.checkbox("Renovação automática", value=facts.auto_renewal)
         bonuses = c3.text_input("Bônus (separados por vírgula)", value=", ".join(facts.bonuses))
         costs = st.text_area(
             "Custos extras (um por linha: descrição; valor mensal em reais)",
             value="\n".join(
-                f"{c['descricao']}; {c['valor_mensal_cents'] / 100:.2f}" for c in facts.extra_costs
+                f"{c['descricao']}; {num(c['valor_mensal_cents'] / 100)}" for c in facts.extra_costs
             ),
         )
         brand_rule = st.text_input("Frase que a marca proíbe (opcional)")

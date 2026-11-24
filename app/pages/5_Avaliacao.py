@@ -10,6 +10,8 @@ import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 from painel_comum import sidebar  # noqa: E402
 
+from promessa import display  # noqa: E402
+
 REPORTS = Path(__file__).resolve().parents[2] / "eval" / "reports"
 
 st.set_page_config(page_title="Avaliação", page_icon="🧪", layout="wide")
@@ -32,11 +34,11 @@ def mark(value, goal) -> str:
 
 
 def pct(v) -> str:
-    return "—" if v is None else f"{v:.0%}"
+    return display.pct(v, 0)
 
 
 def num(v) -> str:
-    return "—" if v is None else f"{v:.2f}"
+    return display.num(v)
 
 
 checker = load("checador_h2.json")

@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
-from common import next_run, sha
+from common import next_run, run_date, sha
 from common import num as _num
 from common import ok as _ok
 from common import pct as _pct
@@ -489,6 +489,7 @@ def main(argv: list[str] | None = None) -> int:
         "fingerprint": fp,
         "kappa_test": {cfg: m["test"]["kappa"] for cfg, m in metrics.items()},
     }
+    now = entry["data"] = run_date(history, entry, now)
     history = [h for h in history if h["versao"] != run["versao"]] + [entry]
 
     cfg_sample = "regras+modelo" if "regras+modelo" in preds_by_cfg else "regras"

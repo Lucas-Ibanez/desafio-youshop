@@ -48,6 +48,20 @@ def test_primeira_rodada_e_v1_e_mudanca_gera_v2():
     assert "data/rules/a.yaml" in changed["mudancas"] and "termo novo" in changed["mudancas"]
 
 
+def test_repetir_a_rodada_mantem_a_data():
+    from common import run_date
+
+    fp = {"modelo": "m"}
+    first = {"versao": "v2", "mudancas": "x", "data": "24/11/2026 07:59", "fingerprint": fp,
+             "kappa_test": {"regras": 0.37}}  # fmt: skip
+    again = {**first, "data": "24/11/2026 09:01"}
+    assert run_date([first], again, again["data"]) == "24/11/2026 07:59"
+    changed = {**again, "kappa_test": {"regras": 0.38}}  # número mudou: data nova
+    assert run_date([first], changed, changed["data"]) == "24/11/2026 09:01"
+    new_run = {**again, "versao": "v3"}
+    assert run_date([first], new_run, new_run["data"]) == "24/11/2026 09:01"
+
+
 def test_marcas_manuais_sobrevivem(tmp_path, monkeypatch):
     md = tmp_path / "checador_h2.md"
     md.write_text(

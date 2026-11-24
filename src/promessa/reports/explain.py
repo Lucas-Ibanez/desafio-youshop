@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 from promessa.checker.service import disclosure_of
 from promessa.config import get_settings, has_api_key
 from promessa.db.models import ContentPiece, TrackedLink
+from promessa.display import join_pt
 from promessa.llm.client import LLMError, complete_json
 from promessa.reports.service import promise_outcome_report
 
@@ -80,41 +81,60 @@ def explanation_data(
     }
 
 
+NOT_YOURS_GROUPS = [
+    ("acesso_ou_entrega", "acesso ou entrega"),
+    ("cancelamento_ou_reembolso", "cancelamento ou reembolso"),
+    ("cobranca_nao_reconhecida", "cobrança não reconhecida"),
+    ("outros", "outros motivos"),
+]
+
+
+def _verb(count: int, singular: str, plural: str) -> str:
+    return singular if count == 1 else plural
+
+
 def fixed_text(data: dict[str, Any]) -> str:
     """Modelo de texto fixo (sem modelo de linguagem), com os mesmos campos."""
     n, sales = data["devolucoes"], data["vendas"]
     if sales == 0:
         return "Não houve vendas pelos seus links neste período."
-    parts = [f"Neste período, {n} das suas {sales} vendas voltaram."]
+    if n == 0:
+        parts = [f"Neste período, nenhuma das suas {sales} vendas voltou."]
+    else:
+        parts = [f"Neste período, {n} das suas {sales} vendas {_verb(n, 'voltou', 'voltaram')}."]
+    confirmed = data["promessa_da_peca_cobrada"]
     if data["trechos_a_mudar"]:
         top = data["trechos_a_mudar"][0]
         parts.append(
-            f"{data['promessa_da_peca_cobrada']} foram por uma promessa da sua peça que o "
+            f"{confirmed} {_verb(confirmed, 'foi', 'foram')} por uma promessa da sua peça que o "
             f'comprador cobrou: o trecho "{top["trecho"]}". Vale reescrever esse trecho sem '
             "prometer número ou prazo de resultado; fale do que o produto oferece."
         )
-    else:
+    elif n:
         parts.append("Nenhuma devolução veio de promessa da sua peça.")
     other = data["nao_e_com_voce"]
     not_yours = sum(other.values())
     if not_yours:
+        groups = [
+            (other[key], text) for key, text in NOT_YOURS_GROUPS if other.get(key)
+        ]  # só os grupos com devolução
+        head = f"{not_yours} {_verb(not_yours, 'não tem', 'não têm')} a ver com você"
+        if len(groups) == 1:
+            head += f" ({groups[0][1]})"
+        else:
+            head += ": " + join_pt([f"{k} de {text}" for k, text in groups])
+        parts.append(head + ". Isso fica com a marca e a plataforma.")
+    elsewhere = data["promessa_que_nao_veio_da_peca"]
+    if elsewhere:
         parts.append(
-            f"{not_yours} não têm a ver com você: {other['acesso_ou_entrega']} de acesso ou "
-            f"entrega, {other['cancelamento_ou_reembolso']} de cancelamento ou reembolso e "
-            f"{other['cobranca_nao_reconhecida']} de cobrança não reconhecida. Isso fica com a "
-            "marca e a plataforma."
-        )
-    if data["promessa_que_nao_veio_da_peca"]:
-        parts.append(
-            f"{data['promessa_que_nao_veio_da_peca']} citaram uma promessa que não está na sua "
-            "peça; a marca vai olhar de onde ela veio."
+            f"{elsewhere} {_verb(elsewhere, 'citou', 'citaram')} uma promessa que não está na "
+            "sua peça; a marca vai olhar de onde ela veio."
         )
     expected = data["expectativa_ou_qualidade"]
     if expected:
-        verb = "esperava" if expected == 1 else "esperavam"
         parts.append(
-            f"{expected} {verb} do produto algo que a sua peça não prometeu (expectativa ou "
-            "qualidade); isso não pesa no seu indicador."
+            f"{expected} {_verb(expected, 'esperava', 'esperavam')} do produto algo que a sua "
+            "peça não prometeu (expectativa ou qualidade); isso não pesa no seu indicador."
         )
     if data["indicador"] == "dados_insuficientes":
         parts.append("Ainda são poucas vendas para um indicador confiável.")

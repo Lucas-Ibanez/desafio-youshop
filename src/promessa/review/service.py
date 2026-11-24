@@ -30,6 +30,7 @@ from promessa.db.models import (
     ReviewEvent,
     utcnow,
 )
+from promessa.display import num
 from promessa.errors import ENTRADA_INVALIDA, PAPEL_NAO_AUTORIZADO, DomainError
 from promessa.rules.loader import load_rules
 
@@ -135,7 +136,7 @@ def list_review_queue(session: Session, kind: str | None = None) -> ReviewQueue:
                     product_id=None,
                     creator_id=None,
                     summary=(
-                        f"Classificação com confiança {c.confidence:.2f}: {c.cause}/{c.subcause}"
+                        f"Classificação com confiança {num(c.confidence)}: {c.cause}/{c.subcause}"
                     ),
                     context={
                         "refund_id": c.refund_id,

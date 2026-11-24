@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "app"
 PAGES = [
     "painel.py",
+    "inicio.py",
     "pages/1_Ficha.py",
     "pages/2_Checador.py",
     "pages/3_Fila_de_revisao.py",
@@ -188,7 +189,40 @@ def test_relatorio_da_marca_mostra_sinal_vitalicio(engine):
     at = app("pages/4_Relatorios.py", "marca")
     at.selectbox(key="produto_relatorio").set_value("prod_treino").run()
     shown = all_text(at)
-    assert "acesso vitalicio" in shown and "Sinais para a marca" in shown
+    assert "acesso vitalício" in shown and "Sinais para a marca" in shown
+    assert "acesso vitalicio" not in shown  # a chave normalizada não aparece na tela
+    assert re.search(r"\d,\d%", shown) and not re.search(r"\d\.\d%", shown)  # vírgula decimal
+
+
+def test_tabela_do_creator_nao_diz_fraude(engine):
+    at = AppTest.from_file(str(APP / "pages/4_Relatorios.py"), default_timeout=30)
+    at.session_state["_papel"] = "creator"
+    at.session_state["_creator"] = "cr_caio"
+    at.run()
+    causes = list(at.dataframe[0].value["causa"])
+    assert "Cobrança não reconhecida" in causes and "Fraude" not in causes
+    assert not [m for m in at.metric if m.delta]  # sem seta de variação nas métricas
+
+
+def test_ficha_sem_valores_internos(engine):
+    at = app("pages/1_Ficha.py", "marca")
+    at.selectbox(key="produto").set_value("prod_treino").run()
+    values = at.table[0].value.set_index("condição")["valor"]
+    assert values["acesso"] == "por prazo" and values["cobrança"] == "pagamento único"
+
+
+def test_menu_com_nomes_em_portugues():
+    import ast
+
+    tree = ast.parse((APP / "painel.py").read_text(encoding="utf-8"))
+    titles = [
+        kw.value.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and getattr(node.func, "attr", "") == "Page"
+        for kw in node.keywords
+        if kw.arg == "title"
+    ]
+    assert titles == ["Início", "Ficha", "Checador", "Fila de revisão", "Relatórios", "Avaliação"]
 
 
 def test_avaliacao_mostra_metas(engine):

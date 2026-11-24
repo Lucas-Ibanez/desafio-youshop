@@ -213,14 +213,14 @@ async def run() -> None:
             client, "get_promise_outcome_report", {"product_id": "prod_treino", **period}
         )
         for s in report["sinais_para_a_marca"]:
-            out(f'sinal: "{s["crenca"]}" ({s["devolucoes"]}) · {s["texto"]}')
+            out(f'sinal: "{s["rotulo"]}" ({s["devolucoes"]}) · {s["texto"]}')
         barred = report["integridade"]["condicoes_contrarias_barradas"]
         out(
             f"vendas {report['vendas']} · devoluções {report['devolucoes']} · "
             f"condições contrárias barradas antes da venda: {barred}"
         )
         check(
-            'sinal "acesso vitalicio" para a marca',
+            'sinal "acesso vitalício" para a marca',
             bool(report["sinais_para_a_marca"])
             and report["sinais_para_a_marca"][0]["crenca"] == "acesso vitalicio",
         )

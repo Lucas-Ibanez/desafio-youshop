@@ -52,6 +52,7 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **D36** · Demo via MCP e conexão no Claude Code: escolhas da T15 · 24/11/2026
 - **D37** · Fechamento do MVP: escolhas da T16 · 24/11/2026
 - **D38** · Ensaio da demo: o que pesa no creator e a expectativa no texto fixo · 24/11/2026
+- **D39** · Ensaio da demo: textos e números na tela (problemas de gravidade baixa) · 24/11/2026
 
 ---
 
@@ -400,3 +401,15 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - O painel mostra na coluna "pesa no creator": "não" (nenhuma pesa), "sim" (todas pesam) ou "7 de 10" (parte pesa). Vale para creator e marca.
 - O texto fixo ganhou a frase "N esperavam do produto algo que a sua peça não prometeu (expectativa ou qualidade); isso não pesa no seu indicador." (singular com 1). As parcelas do texto agora somam o total de devoluções.
 **Consequência:** a soma de `pesam_no_creator` é igual a `devolucoes_confirmadas` do indicador (teste). O prompt do modelo não mudou (o campo já ia nos dados). Os problemas de gravidade baixa do ensaio ficaram para depois.
+
+## D39 · Ensaio da demo: textos e números na tela (problemas de gravidade baixa) · 24/11/2026
+**Contexto:** o ensaio cronometrado listou oito problemas de gravidade baixa na tela e no `eval`: concordância e grupos zerados no texto fixo ("1 não têm…: 0 de acesso…"), "Fraude" na tabela do creator e "cobrança não reconhecida" no texto, "acesso vitalicio" sem acento, menu com nomes de arquivo ("painel", "Relatorios"), ponto decimal, seta de variação na métrica de devoluções, valores internos na tela ("prazo", "unica", "condicao_oferta") e rodar de novo a mesma rodada do `eval` trocando a data.
+**Decisão (a mais simples em cada caso):**
+- **`promessa/display.py`:** forma de exibição em pt-BR, usada pelos serviços e pelo painel: `pct`/`num`/`money` com vírgula, rótulos dos valores internos (acesso, cobrança, tipo de promessa, situação), `promise_label` (acento no vocabulário das condições da oferta: vitalício, bônus, única) e `join_pt`. Os valores gravados e as chaves de agrupamento não mudam. A regra do CONTEXTO (seção 1) continua valendo para as saídas de decisão (`bloquear`, `revisar`, `registrar`, `contradiz`); os valores descritivos ganham rótulo.
+- **Relatório:** `BrandSignal` e `ContestedPromise` ganharam `rotulo` (forma com acento). `crenca` e `promessa` continuam normalizadas, porque o relatório agrupa por elas, a demo confere `crenca` e o MCP as devolve. O texto do sinal concorda com o número ("1 comprador acreditava").
+- **Texto fixo da explicação:** verbo no singular com 1 (voltou, foi, tem, citou, esperava); só os grupos com devolução aparecem ("1 não tem a ver com você (cancelamento ou reembolso)"); "outros motivos" passa a aparecer quando houver.
+- **"Fraude" na visão do creator:** só o painel do creator mostra "Cobrança não reconhecida", o mesmo termo da explicação; a marca e Operações continuam vendo "Fraude". O rótulo da taxonomia (`taxonomia_devolucao.yaml`) não mudou, porque ele entra no prompt do classificador: mudar o rótulo trocaria as chaves do cache (chamadas novas) e a impressão digital da avaliação.
+- **Menu:** `app/painel.py` virou o ponto de entrada com `st.navigation` e títulos em português (Início, Ficha, Checador, Fila de revisão, Relatórios, Avaliação). A página inicial foi para `app/inicio.py`. Os endereços das páginas não mudaram.
+- **Métrica de devoluções:** sem delta (a seta sugeria aumento); a taxa vai numa legenda.
+- **`eval`:** `run_date` (em `eval/common.py`) mantém a data da primeira execução quando a rodada e todos os números são os mesmos; rodada nova ou número diferente gravam a data de agora.
+**Consequência:** o prompt do modelo, as regras e a taxonomia não mudaram (o cache continua valendo). `scripts/demo_e2e.py` mostra o rótulo com acento e continua conferindo a chave normalizada.

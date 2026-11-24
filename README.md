@@ -132,7 +132,7 @@ modelo). Os vazamentos (regras e paráfrase vindas da própria codificação) es
 
 - [docs/CONTEXTO.md](docs/CONTEXTO.md): o que é, stack, modelo de dados, regras dos agentes
 - [docs/PLANO.md](docs/PLANO.md): tasks, andamento e roteiro da demo (seção 6)
-- [docs/decisoes.md](docs/decisoes.md): decisões registradas (D1 a D38)
+- [docs/decisoes.md](docs/decisoes.md): decisões registradas (D1 a D39)
 - [docs/resultados.md](docs/resultados.md): Teste 1
 
 ## Status

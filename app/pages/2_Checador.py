@@ -11,6 +11,7 @@ from painel_comum import LABELS, domain_error, highlight, product_select, sideba
 
 from promessa.checker import service as checker_service  # noqa: E402
 from promessa.db.session import session_scope  # noqa: E402
+from promessa.display import APPROVAL, PROMISE_TYPE, label, promise_label  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.facts import service as facts_service  # noqa: E402
 from promessa.links import service as links_service  # noqa: E402
@@ -131,10 +132,15 @@ if last and last["product_id"] == product_id:
         if link["registered_promises"]:
             st.write("Promessas registradas na venda:")
             st.dataframe(
-                pd.DataFrame(link["registered_promises"])[
-                    ["normalized_text", "type", "approval"]
-                ].rename(
-                    columns={"normalized_text": "promessa", "type": "tipo", "approval": "situação"}
+                pd.DataFrame(
+                    [
+                        {
+                            "promessa": promise_label(p["normalized_text"]),
+                            "tipo": label(PROMISE_TYPE, p["type"]),
+                            "situação": label(APPROVAL, p["approval"]),
+                        }
+                        for p in link["registered_promises"]
+                    ]
                 ),
                 hide_index=True,
             )

@@ -171,6 +171,67 @@ def test_explicacao_explica_todas_as_devolucoes(s, creator):
     )
 
 
+def _data(**over):
+    base = {
+        "vendas": 20,
+        "devolucoes": 0,
+        "trechos_a_mudar": [],
+        "promessa_da_peca_cobrada": 0,
+        "promessa_que_nao_veio_da_peca": 0,
+        "expectativa_ou_qualidade": 0,
+        "nao_e_com_voce": {
+            "acesso_ou_entrega": 0,
+            "cancelamento_ou_reembolso": 0,
+            "cobranca_nao_reconhecida": 0,
+            "outros": 0,
+        },
+        "indicador": "ok",
+        "publi_faltando": False,
+    }
+    return {**base, **over}
+
+
+def test_texto_fixo_no_singular_e_sem_itens_zerados():
+    """Caso da cr_duda no ensaio: "1 não têm a ver com você: 0 de acesso…"."""
+    data = _data(
+        devolucoes=1,
+        nao_e_com_voce={**_data()["nao_e_com_voce"], "cancelamento_ou_reembolso": 1},
+    )
+    text = fixed_text(data)
+    assert "1 das suas 20 vendas voltou." in text
+    assert "1 não tem a ver com você (cancelamento ou reembolso)." in text
+    assert "0 de" not in text
+
+
+def test_texto_fixo_lista_so_grupos_com_devolucao():
+    data = _data(
+        devolucoes=7,
+        promessa_que_nao_veio_da_peca=1,
+        nao_e_com_voce={**_data()["nao_e_com_voce"], "acesso_ou_entrega": 4, "outros": 2},
+    )
+    text = fixed_text(data)
+    assert "6 não têm a ver com você: 4 de acesso ou entrega e 2 de outros motivos." in text
+    assert "1 citou uma promessa" in text
+    assert "cobrança" not in text
+
+
+def test_texto_fixo_sem_devolucao():
+    assert fixed_text(_data()) == "Neste período, nenhuma das suas 20 vendas voltou."
+
+
+def test_sinal_e_promessa_com_acento_e_chave_normalizada(s):
+    report = promise_outcome_report(s, product_id="prod_treino")
+    signal = report.sinais_para_a_marca[0]
+    assert signal.crenca == "acesso vitalicio"  # chave de agrupamento (a demo confere esta)
+    assert signal.rotulo == "acesso vitalício" and '"acesso vitalício"' in signal.texto
+    assert all(p.rotulo for p in report.promessas_mais_contestadas)
+
+
+def test_indicador_com_virgula(s):
+    texto = promise_outcome_report(s, creator_id="cr_ana").indicador_creator.texto
+    assert re.search(r"\(\d+,\d%\)", texto)
+
+
 @pytest.mark.parametrize(("n", "verb"), [(1, "1 esperava"), (2, "2 esperavam")])
 def test_texto_fixo_cita_expectativa(n, verb):
     data = {

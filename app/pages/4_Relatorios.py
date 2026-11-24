@@ -13,6 +13,7 @@ import streamlit as st  # noqa: E402
 from painel_comum import domain_error, product_select, sidebar  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
+from promessa.display import CAUSE_FOR_CREATOR, num, pct  # noqa: E402
 from promessa.errors import DomainError  # noqa: E402
 from promessa.reports import explain as explain_service  # noqa: E402
 from promessa.reports import service as reports_service  # noqa: E402
@@ -32,14 +33,14 @@ def weighs_label(c) -> str:
     return f"{c.pesam_no_creator} de {c.devolucoes}"
 
 
-def causes_table(report) -> pd.DataFrame:
+def causes_table(report, for_creator: bool = False) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "causa": c.rotulo,
+                "causa": CAUSE_FOR_CREATOR.get(c.causa, c.rotulo) if for_creator else c.rotulo,
                 "devoluções": c.devolucoes,
-                "% das devoluções": f"{c.pct_devolucoes:.0%}",
-                "% das vendas": f"{c.taxa_sobre_vendas:.1%}",
+                "% das devoluções": pct(c.pct_devolucoes, 0),
+                "% das vendas": pct(c.taxa_sobre_vendas),
                 "pesa no creator": weighs_label(c),
             }
             for c in report.causas
@@ -61,26 +62,25 @@ try:
         st.info(explanation.text)
         m1, m2, m3 = st.columns(3)
         m1.metric("Vendas", report.vendas)
-        m2.metric(
-            "Devoluções",
-            report.devolucoes,
-            f"{report.taxa_devolucao:.1%} das vendas",
-            delta_color="off",
-        )
+        m2.metric("Devoluções", report.devolucoes)
+        m2.caption(f"{pct(report.taxa_devolucao)} das vendas")
         ind = report.indicador_creator
         m3.metric(
             "Devoluções por promessa da sua peça",
             "dados insuficientes"
             if ind.status == "dados_insuficientes"
-            else f"{ind.taxa_promessa_confirmada:.1%}",
+            else pct(ind.taxa_promessa_confirmada),
         )
         st.caption(ind.texto)
         if report.devolucoes:
-            st.dataframe(causes_table(report), hide_index=True)
+            st.dataframe(causes_table(report, for_creator=True), hide_index=True)
         if report.promessas_mais_contestadas:
             st.subheader("Trechos da sua peça que os compradores cobraram")
             for p in report.promessas_mais_contestadas:
-                st.markdown(f'- "{p.trecho or p.promessa}" · {p.devolucoes} devolução(ões)')
+                n = p.devolucoes
+                st.markdown(
+                    f'- "{p.trecho or p.rotulo}" · {n} {"devolução" if n == 1 else "devoluções"}'
+                )
     else:
         scope = st.radio("Ver por", ["produto", "creator"], horizontal=True, key="escopo")
         with session_scope() as session:
@@ -99,12 +99,11 @@ try:
                 )
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Vendas", report.vendas)
-        m2.metric(
-            "Devoluções", report.devolucoes, f"{report.taxa_devolucao:.1%}", delta_color="off"
-        )
+        m2.metric("Devoluções", report.devolucoes)
+        m2.caption(f"{pct(report.taxa_devolucao)} das vendas")
         m3.metric(
             "Vendas com promessa registrada",
-            f"{report.cobertura['vendas_com_promessa_registrada']:.0%}",
+            pct(report.cobertura["vendas_com_promessa_registrada"], 0),
         )
         m4.metric(
             "Condições contrárias barradas antes da venda",
@@ -121,10 +120,10 @@ try:
                             "creator": r.creator_id,
                             "vendas": r.vendas,
                             "devoluções": r.devolucoes,
-                            "taxa de devolução": f"{r.taxa_devolucao:.1%}",
+                            "taxa de devolução": pct(r.taxa_devolucao),
                             "promessa confirmada": r.indicador.texto
                             if r.indicador.status == "dados_insuficientes"
-                            else f"{r.indicador.taxa_promessa_confirmada:.1%}",
+                            else pct(r.indicador.taxa_promessa_confirmada),
                         }
                         for r in report.por_creator
                     ]
@@ -141,7 +140,7 @@ try:
             )
             for p in report.promessas_mais_contestadas:
                 st.markdown(
-                    f'- **{p.promessa}** · {p.devolucoes} · trecho "{p.trecho}" · {", ".join(p.creators)}'
+                    f'- **{p.rotulo}** · {p.devolucoes} · trecho "{p.trecho}" · {", ".join(p.creators)}'
                 )
             if not report.promessas_mais_contestadas:
                 st.write("Nenhuma.")
@@ -149,15 +148,15 @@ try:
             st.subheader("Sinais para a marca")
             st.caption("O comprador acreditava em algo que a peça não registrou (contradiz).")
             for s in report.sinais_para_a_marca:
-                st.markdown(f"- **{s.crenca}** · {s.devolucoes} · {s.texto}")
+                st.markdown(f"- **{s.rotulo}** · {s.devolucoes} · {s.texto}")
             if not report.sinais_para_a_marca:
                 st.write("Nenhum.")
         st.subheader("Cobertura e operação")
         horas = report.operacao["horas_medias_ate_classificar"]
         st.write(
-            f"Devoluções classificadas: {report.cobertura['devolucoes_classificadas']:.0%} · ligadas a uma promessa: "
-            f"{report.cobertura['devolucoes_ligadas_a_promessa']:.0%} · tempo médio até classificar: "
-            + ("—" if horas is None else f"{horas:.1f} h")
+            f"Devoluções classificadas: {pct(report.cobertura['devolucoes_classificadas'], 0)} · ligadas a uma promessa: "
+            f"{pct(report.cobertura['devolucoes_ligadas_a_promessa'], 0)} · tempo médio até classificar: "
+            + ("—" if horas is None else f"{num(horas, 1)} h")
         )
 except DomainError as e:
     domain_error(e)

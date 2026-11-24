@@ -27,6 +27,7 @@ from promessa.db.models import (
     Sale,
     TrackedLink,
 )
+from promessa.display import pct, promise_label
 from promessa.errors import (
     CREATOR_INEXISTENTE,
     ENTRADA_INVALIDA,
@@ -68,7 +69,8 @@ class Indicator(BaseModel):
 
 
 class ContestedPromise(BaseModel):
-    promessa: str
+    promessa: str  # texto normalizado (chave de agrupamento)
+    rotulo: str  # forma de exibição, com acento
     tipo: str
     devolucoes: int
     trecho: str | None
@@ -76,7 +78,8 @@ class ContestedPromise(BaseModel):
 
 
 class BrandSignal(BaseModel):
-    crenca: str
+    crenca: str  # texto normalizado (chave de agrupamento)
+    rotulo: str  # forma de exibição, com acento
     devolucoes: int
     creators: list[str]
     texto: str
@@ -181,7 +184,7 @@ def _indicator(sales: int, confirmed: int) -> Indicator:
         devolucoes_confirmadas=confirmed,
         vendas=sales,
         minimo_vendas=minimum,
-        texto=f"{confirmed} de {sales} vendas voltaram por promessa da peça ({rate:.1%}).",
+        texto=f"{confirmed} de {sales} vendas voltaram por promessa da peça ({pct(rate)}).",
     )
 
 
@@ -271,6 +274,7 @@ def promise_outcome_report(
     top_contested = [
         ContestedPromise(
             promessa=k,
+            rotulo=promise_label(k),
             tipo=v["tipo"],
             devolucoes=v["n"],
             trecho=v["trecho"],
@@ -281,12 +285,14 @@ def promise_outcome_report(
     top_signals = [
         BrandSignal(
             crenca=k,
+            rotulo=promise_label(k),
             devolucoes=v["n"],
             creators=sorted(v["creators"]),
             texto=(
-                f'{v["n"]} comprador(es) acreditavam em "{k}", que não está no que a peça '
-                "registrou: a expectativa veio de fora da peça (kit de divulgação, outra peça, "
-                "boca a boca)."
+                f"{v['n']} "
+                + ("comprador acreditava" if v["n"] == 1 else "compradores acreditavam")
+                + f' em "{promise_label(k)}", que não está no que a peça registrou: a '
+                "expectativa veio de fora da peça (kit de divulgação, outra peça, boca a boca)."
             ),
         )
         for k, v in sorted(signals.items(), key=lambda kv: (-kv[1]["n"], kv[0]))
