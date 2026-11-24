@@ -10,6 +10,10 @@ verdade (SDK `mcp`, stdio) e mostra a saída numa página estilo terminal. Nada 
 os textos na tela vêm do painel ou das respostas do servidor.
 
 Saída em out/demo/: demo_1_ficha.mp4 … demo_5_relatorio.mp4, demo_slide8.mp4, demo_marcas.txt.
+
+Vídeo de ~3 min (8 trechos, com legendas de capítulo e cartões de capa e encerramento):
+    uv run python scripts/gravar_demo.py --3min
+Saída em out/demo3min/: demo3_0_capa.mp4 … demo3_7_fim.mp4, demo_3min.mp4, demo3_marcas.txt.
 """
 
 from __future__ import annotations
@@ -55,6 +59,43 @@ T5_CREATOR_S = 3.0  # parado no trecho a mudar da cr_ana
 T5_HOLD_END_S = 2.0
 TRIM_PAD_S = 0.12  # folga no corte do começo de cada clipe
 
+# Vídeo de 3 min (--3min): 8 trechos, ~180 s no total.
+D3_CHAPTER_S = 4.0  # legenda de capítulo no começo de cada trecho
+D3_0_COVER_S = 12.2  # capa (o fade de 0,4 s entra nesse tempo)
+D3_1_LOOK_TOP_S = 3.6  # ficha: cabeçalho e produto
+D3_1_COND_S = 3.0  # condições da oferta
+D3_1_BRIEF_S = 3.0  # briefing para o creator
+D3_1_VERSION_S = 4.0  # seletor de versão (v1)
+D3_1_END_S = 2.2
+D3_2_LOOK_PAGE_S = 1.8  # bloqueio: o briefing antes de digitar
+D3_2_LOOK_TEXT_S = 1.6  # bloqueio: marca-texto pintando
+D3_2_FIRST_S = 6.0  # texto marcado + primeiro achado
+D3_2_SCROLL_MS = 2000  # rolagem lenta até o segundo achado
+D3_2_SECOND_S = 5.0
+D3_2_BUTTON_S = 3.0  # "Gerar link" desligado com o motivo
+D3_2_END_S = 1.0
+D3_3_LOOK_START_S = 3.4  # correção: a peça bloqueada antes de trocar o texto
+D3_3_CHECKBOX_S = 2.6  # "Esta peça corrige a anterior" (já vem marcada)
+D3_3_REGISTERED_S = 3.0  # resultado "Registrado"
+D3_3_CANHOTO_S = 5.0  # canhoto com o carimbo
+D3_3_END_S = 1.7
+D3_4_INTRO_S = 2.4  # MCP: o terminal antes da primeira chamada
+D3_4_READ_1_S = 10.0  # MCP: saída completa do classify_refund
+D3_4_READ_2_S = 8.0  # saída do relatório
+D3_4_HOLD_S = 7.0  # caixa de destaque
+D3_5_LOOK_LISTS_S = 3.6  # relatórios: as duas listas antes de abrir
+D3_5_FIO_S = 7.0  # fio da marca
+D3_5_AFTER_ROLE_S = 1.2  # creator: a página do creator antes de rolar
+D3_5_CAUSES_S = 5.0  # creator: devoluções por causa
+D3_5_CREATOR_FIO_S = 6.0  # creator: fio do trecho cobrado
+D3_5_END_S = 3.0  # de volta ao fio da marca
+D3_6_LOOK_TOP_S = 2.4  # teste dos agentes: cabeçalho
+D3_6_CHECKER_S = 4.0  # metas não atingidas do checador
+D3_6_SCROLL_MS = 1500
+D3_6_CLASSIFIER_S = 5.0  # números principais do classificador
+D3_6_END_S = 1.6
+D3_7_END_S = 8.2  # encerramento
+
 # O Playwright grava o quadro no tamanho do viewport (o device_scale_factor não amplia o
 # vídeo: com 1536x864 e vídeo 1920x1080 sobra uma faixa cinza) e zoom de CSS quebra a largura
 # das tabelas e gráficos do Streamlit. Então: grava 1536x864 (o layout de 125% em 1920) e o
@@ -79,6 +120,30 @@ CLIPS = [
 INIT_SCRIPT = r"""
 (() => {
   const PANEL = location.port === '8501';
+  const MCP = __MCP_LEGEND__ && location.href.includes('_mcp');  // vídeo de 3 min: legenda no MCP
+  // Legenda de capítulo (vídeo de 3 min), centralizada na área de conteúdo. No painel, a parte
+  // de baixo sempre tem conteúdo (achados, tabelas): ela sobe para a faixa vazia do topo (barra
+  // do Streamlit, que só tem o menu ⋮ à direita). Fora do painel, fica embaixo.
+  window.vcChapter = (text, ms) => {
+    let c = document.getElementById('vc-capitulo');
+    if (!c) {
+      c = document.createElement('div');
+      c.id = 'vc-capitulo';
+      c.style.cssText = 'position:fixed;transform:translateX(-50%);white-space:nowrap;'
+        + 'z-index:2147483645;pointer-events:none;text-align:center;'
+        + 'font:700 28px/1.25 "Schibsted Grotesk",system-ui,sans-serif;color:#1E1A2E;'
+        + 'background:rgba(255,255,255,.92);border-radius:8px;padding:10px 24px;'
+        + 'box-shadow:0 2px 12px rgba(30,26,46,.14);transition:opacity .35s';
+      document.body.appendChild(c);
+    }
+    c.style.left = PANEL ? 'calc(50% + 150px)' : '50%';  // a barra lateral tem 300 px
+    c.style.top = PANEL ? '4px' : 'auto';
+    c.style.bottom = PANEL ? 'auto' : '88px';
+    c.textContent = text;
+    c.style.opacity = '1';
+    clearTimeout(window.__vcChapterT);
+    window.__vcChapterT = setTimeout(() => { c.style.opacity = '0'; }, ms);
+  };
   function ensure() {
     if (!document.body) return;
     if (PANEL && !document.getElementById('vc-cursor')) {  // no trecho 4 não há interação
@@ -90,7 +155,7 @@ INIT_SCRIPT = r"""
       if (window.__vcXY) c.style.transform = window.__vcXY;
       document.body.appendChild(c);
     }
-    if (PANEL && !document.getElementById('vc-legenda-sim')) {
+    if ((PANEL || MCP) && !document.getElementById('vc-legenda-sim')) {
       const l = document.createElement('div');
       l.id = 'vc-legenda-sim';
       l.textContent = 'Dados de venda simulados';
@@ -147,7 +212,7 @@ WAITS: list[tuple[str, str, float]] = []  # (trecho, o que, segundos)
 class Rec:
     """Um clipe: contexto novo gravando; `start()` marca onde o corte começa."""
 
-    def __init__(self, browser, name: str):
+    def __init__(self, browser, name: str, *, mcp_legend: bool = False):
         self.name = name
         self.ctx = browser.new_context(
             viewport=VIEWPORT,
@@ -155,7 +220,9 @@ class Rec:
             record_video_size=VIEWPORT,
             locale="pt-BR",
         )
-        self.ctx.add_init_script(INIT_SCRIPT)
+        self.ctx.add_init_script(
+            INIT_SCRIPT.replace("__MCP_LEGEND__", "true" if mcp_legend else "false")
+        )
         self.page = self.ctx.new_page()
         self.page.set_default_timeout(WAIT_TIMEOUT_MS)
         self.t0 = time.monotonic()
@@ -233,6 +300,48 @@ def human_type(page, locator, text: str) -> None:
     page.keyboard.type(text, delay=TYPE_DELAY_MS)
     page.keyboard.press("Control+Enter")  # o text_area do Streamlit confirma o valor assim
     settle(page)
+
+
+def selected_text(locator) -> str:
+    """Texto visível do seletor mais o valor dos inputs (o valor escolhido pode estar num input)."""
+    return locator.evaluate(
+        "e => e.innerText + ' ' + [...e.querySelectorAll('input')].map(i => i.value).join(' ')"
+    )
+
+
+def ensure_creator(page, clip: str, name: str) -> None:
+    """Garante a creator na barra lateral; só abre o seletor se não for ela."""
+    box = selectbox(page, "Creator")
+    if name in selected_text(box):
+        return
+    combo = box.locator('[role="combobox"], input').first
+    option = page.get_by_role("option").filter(has_text=name).first
+    human_click(page, combo, hover=0.25)
+    option.wait_for(state="visible", timeout=3_000)
+    human_click(page, option, hover=0.25)
+    timed_wait(clip, f"creator {name}", lambda: settle(page))
+    if name not in selected_text(selectbox(page, "Creator")):
+        raise RuntimeError(f"a creator selecionada não é {name}")
+
+
+def chapter(page, text: str, seconds: float | None = None) -> None:
+    """Legenda de capítulo (vídeo de 3 min): aparece já e some sozinha depois de `seconds`."""
+    ms = int((seconds or D3_CHAPTER_S) * 1000)
+    page.evaluate("([t, ms]) => window.vcChapter(t, ms)", [text, ms])
+
+
+def pause(page, seconds: float) -> None:
+    page.wait_for_timeout(int(seconds * 1000))
+
+
+def look_at(page, locator, seconds: float) -> None:
+    """Leva o mouse para perto do elemento (sem clicar) e fica parado: guia o olhar."""
+    box = locator.bounding_box()
+    if box:
+        x = min(box["x"] + box["width"] * 0.85, VIEWPORT["width"] - 30)
+        y = box["y"] + min(box["height"] * 0.5, 40)
+        page.mouse.move(x, y, steps=MOVE_STEPS)
+    pause(page, seconds)
 
 
 def role(page, clip: str, label: str) -> None:
@@ -526,6 +635,8 @@ TERMINAL_HTML = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"
   font-weight: 400; }}
 @font-face {{ font-family: "IBM Plex Mono"; src: url("{font_m}") format("woff2");
   font-weight: 500; }}
+@font-face {{ font-family: "Schibsted Grotesk"; src: url("{font_s}") format("woff2");
+  font-weight: 400 900; }}
 html, body {{ margin: 0; height: 100%; background: #1E1A2E; }}
 body {{ color: #E9E6F2; font: 400 22px/1.32 "IBM Plex Mono", ui-monospace, monospace; }}
 #topo {{ padding: 18px 40px 10px; color: #9A95AB; font-size: 17px;
@@ -541,7 +652,7 @@ body {{ color: #E9E6F2; font: 400 22px/1.32 "IBM Plex Mono", ui-monospace, monos
        background: rgba(14,124,123,.18); display: none; }}
 #hl.on {{ display: block; }}
 #hl .l {{ color: #FFFFFF; font-weight: 500; font-size: 26px; }}
-#rodape {{ position: fixed; left: 40px; bottom: 16px; color: #9A95AB; font-size: 15px; }}
+#rodape {{ position: fixed; right: 40px; bottom: 16px; color: #9A95AB; font-size: 15px; }}
 </style></head><body>
 <div id="topo">cliente MCP → servidor promessa-rastreavel (stdio)</div>
 <div id="t">{body}<div id="hl">{hl}</div></div>
@@ -555,7 +666,17 @@ window.showHl = () => {{ const h = document.getElementById('hl'); h.classList.ad
 </script></body></html>"""
 
 
-def clip_4(browser, results) -> Path:
+def clip_4(
+    browser,
+    results,
+    *,
+    name: str = "demo_4_mcp",
+    reads: tuple[float, float] = (T4_READ_1_S, T4_READ_2_S),
+    hold: float = T4_HOLD_END_S,
+    chapter_text: str | None = None,
+    mcp_legend: bool = False,
+    intro: float = 0.0,
+) -> Path:
     blocks = terminal_lines(results)
     calls, highlight = blocks[:2], blocks[2]
     body, ids = [], []
@@ -572,19 +693,22 @@ def clip_4(browser, results) -> Path:
     html = TERMINAL_HTML.format(
         font_r=(fonts / "IBMPlexMono-Regular.woff2").as_uri(),
         font_m=(fonts / "IBMPlexMono-Medium.woff2").as_uri(),
+        font_s=(fonts / "SchibstedGrotesk-Variable.woff2").as_uri(),
         body="\n".join(body),
         hl=hl,
     )
     page_file = OUT / "_mcp.html"
     page_file.write_text(html, encoding="utf-8")
 
-    rec = Rec(browser, "demo_4_mcp")
+    rec = Rec(browser, name, mcp_legend=mcp_legend)
     p = rec.page
     p.goto(page_file.as_uri())
     p.evaluate("() => document.fonts.ready")
     p.wait_for_timeout(300)
     rec.start()
-    reads = [T4_READ_1_S, T4_READ_2_S]
+    if chapter_text:
+        chapter(p, chapter_text)
+    pause(p, intro)
     for b, group in enumerate(ids):
         p.evaluate("id => window.showLine(id)", group[0])  # a chamada
         p.evaluate("id => window.showLine(id)", f"w{b}")
@@ -597,19 +721,317 @@ def clip_4(browser, results) -> Path:
             p.wait_for_timeout(T4_LINE_MS)
         p.wait_for_timeout(int(reads[b] * 1000))
     p.evaluate("() => window.showHl()")
-    p.wait_for_timeout(int(T4_HOLD_END_S * 1000))
+    p.wait_for_timeout(int(hold * 1000))
     return rec.finish()
+
+
+# ── Vídeo de 3 min (--3min) ─────────────────────────────────────────────────────────────
+
+CLIPS_3MIN = [
+    ("demo3_0_capa", "Capa"),
+    ("demo3_1_ficha", "1 · Ficha do produto (Marca)"),
+    ("demo3_2_bloqueio", "2 · Checar peça com bloqueio (Creator)"),
+    ("demo3_3_canhoto", "3 · Correção, link e canhoto"),
+    ("demo3_4_mcp", "4 · Servidor MCP: devolução classificada"),
+    ("demo3_5_relatorio", "5 · Devoluções e promessas: os dois retornos"),
+    ("demo3_6_testes", "6 · Teste dos agentes"),
+    ("demo3_7_fim", "Encerramento"),
+]
+CHAPTERS = {
+    1: "1 · A marca declara o que pode ser prometido",
+    2: "2 · O creator descobre o problema antes de publicar",
+    3: "3 · O link nasce com a promessa presa",
+    4: "4 · Semanas depois, a devolução é ligada à promessa",
+    5: "5 · Dois retornos: a marca vê o sinal, o creator vê o trecho",
+    6: "6 · Os dois agentes, medidos contra dados reais",
+}
+
+CARD_HTML = """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+@font-face {{ font-family: "Schibsted Grotesk"; src: url("{font_s}") format("woff2");
+  font-weight: 400 900; }}
+@font-face {{ font-family: "Newsreader"; src: url("{font_n}") format("woff2");
+  font-weight: 200 800; font-style: italic; }}
+html, body {{ margin: 0; height: 100%; }}
+body {{ background: {bg}; color: {ink}; display: flex; align-items: center;
+  justify-content: center; font-family: "Schibsted Grotesk", system-ui, sans-serif; }}
+.c {{ text-align: center; opacity: {start_opacity}; transition: opacity .4s ease; }}
+.c.in {{ opacity: 1; }}
+.marca {{ display: inline-block; text-align: left; }}
+.wm {{ display: flex; align-items: center; gap: 22px; }}
+.wm span {{ font-weight: 800; font-size: 96px; letter-spacing: -0.035em; line-height: 1; }}
+.desc {{ font-weight: 500; font-size: 26px; color: {soft}; margin: 12px 0 0 184px; }}
+.l1 {{ font-weight: 600; font-size: 34px; margin: 64px 0 0; }}
+.l2 {{ font-family: "Newsreader", Georgia, serif; font-style: italic; font-size: 44px;
+  margin: 10px 0 0; color: {accent}; }}
+.small {{ font-weight: 500; font-size: 22px; color: {soft}; margin: 14px 0 0; }}
+</style></head><body><div class="c">
+<div class="marca"><div class="wm">
+<svg viewBox="0 0 40 16" width="160" height="64" aria-hidden="true">
+<circle cx="6" cy="8" r="5" fill="{dot}"/>
+<line x1="14" y1="8" x2="27" y2="8" stroke="{dot}" stroke-width="2" stroke-dasharray="3 3"
+  stroke-linecap="round"/>
+<circle cx="34" cy="8" r="4.5" fill="none" stroke="{ring}" stroke-width="2"/></svg>
+<span>vincula</span></div>{desc}</div>
+{body}
+</div></body></html>"""
+
+
+def repo_address() -> str | None:
+    """Endereço do repositório (git remote origin), sem protocolo nem .git."""
+    try:
+        url = subprocess.run(
+            ["git", "remote", "get-url", "origin"],
+            cwd=ROOT,
+            capture_output=True,
+            encoding="utf-8",
+            check=True,
+        ).stdout.strip()
+    except Exception:  # noqa: BLE001
+        return None
+    if not url or "github.com" not in url:
+        return None
+    url = url.removesuffix(".git").split("github.com", 1)[1].lstrip(":/")
+    return f"github.com/{url}"
+
+
+def card(browser, name: str, html: str, seconds: float, *, fade: bool) -> Path:
+    page_file = OUT / f"_{name}.html"
+    page_file.write_text(html, encoding="utf-8")
+    rec = Rec(browser, name)
+    p = rec.page
+    p.goto(page_file.as_uri())
+    p.evaluate("() => document.fonts.ready")
+    pause(p, 0.3)
+    rec.start()
+    if fade:
+        p.evaluate("() => document.querySelector('.c').classList.add('in')")
+    pause(p, seconds)
+    return rec.finish()
+
+
+def card_fonts() -> dict[str, str]:
+    fonts = ROOT / "app" / "static" / "fonts"
+    return {
+        "font_s": (fonts / "SchibstedGrotesk-Variable.woff2").as_uri(),
+        "font_n": (fonts / "Newsreader-Italic-Variable.woff2").as_uri(),
+    }
+
+
+def clip3_0(browser) -> Path:
+    body = (
+        '<p class="l1">Quando uma venda por creator volta, a plataforma sabe quanto.</p>'
+        '<p class="l2">Não sabe o que foi prometido.</p>'
+    )
+    html = CARD_HTML.format(
+        **card_fonts(), bg="#F6F5F9", ink="#1E1A2E", soft="#5C5770", accent="#4B2FA8",
+        dot="#4B2FA8", ring="#0E7C7B", start_opacity=0, body=body,
+        desc='<div class="desc">promessa rastreável</div>',
+    )  # fmt: skip
+    return card(browser, "demo3_0_capa", html, D3_0_COVER_S, fade=True)
+
+
+def clip3_7(browser) -> tuple[Path, str | None]:
+    repo = repo_address()
+    body = (
+        '<p class="l2" style="margin-top:56px;color:#FFFFFF">Cada promessa com o seu desfecho.</p>'
+        '<p class="small" style="margin-top:44px">'
+        "Dados de venda simulados · avaliação com dados reais</p>"
+    )
+    if repo:
+        body += f'<p class="small">{escape(repo)}</p>'
+    html = CARD_HTML.format(
+        **card_fonts(), bg="#1E1A2E", ink="#FFFFFF", soft="#B9B4C7", accent="#FFFFFF",
+        dot="#FFFFFF", ring="#8CE0DF", start_opacity=1, body=body, desc="",
+    )  # fmt: skip
+    return card(browser, "demo3_7_fim", html, D3_7_END_S, fade=False), repo
+
+
+def clip3_1(browser) -> Path:
+    rec = Rec(browser, "demo3_1_ficha")
+    p = rec.page
+    quick_setup(p, "Marca", None)
+    rec.start()
+    chapter(p, CHAPTERS[1])
+    nav(p, "1", "Ficha do produto")
+    choose_product(p, "1")
+    look_at(p, p.locator(".vc-header").first, D3_1_LOOK_TOP_S)
+    look_at(p, p.get_by_text("Condições da oferta", exact=True).first, D3_1_COND_S)
+    look_at(p, p.get_by_text("Briefing para o creator", exact=True).first, D3_1_BRIEF_S)
+    look_at(p, selectbox(p, "Versão", in_sidebar=False), D3_1_VERSION_S)
+    pause(p, D3_1_END_S)
+    return rec.finish()
+
+
+def clip3_2(browser) -> Path:
+    rec = Rec(browser, "demo3_2_bloqueio")
+    p = rec.page
+    quick_setup(p, "Marca", "Ficha do produto", product=True)
+    rec.start()
+    chapter(p, CHAPTERS[2])
+    role(p, "2", "Creator")
+    ensure_creator(p, "2", "Ana")
+    nav(p, "2", "Checar peça")
+    choose_product(p, "2")
+    look_at(p, p.get_by_text("Briefing do produto").first, D3_2_LOOK_PAGE_S)
+    scroll_to(p, p.get_by_text("Texto da peça", exact=True).first, 0.30)
+    human_type(p, textarea(p), BAD)
+    human_click(p, button(p, "Checar peça"))
+    timed_wait("2", "resultado", lambda: (p.locator(".vc-peca").first.wait_for(), settle(p)))
+    pause(p, D3_2_LOOK_TEXT_S)
+    scroll_to(p, p.locator(".vc-resultado").first, 0.06, 800)
+    achados = p.locator('[class*="st-key-vc_achado_bloquear"]')
+    look_at(p, achados.nth(0), D3_2_FIRST_S)
+    scroll_to(p, achados.nth(1), 0.14, D3_2_SCROLL_MS)
+    look_at(p, achados.nth(1), D3_2_SECOND_S)
+    scroll_to(p, button(p, "Gerar link"), 0.62, 900)
+    look_at(p, p.locator(".vc-motivo").first, D3_2_BUTTON_S)
+    pause(p, D3_2_END_S)
+    return rec.finish()
+
+
+def clip3_3(browser) -> Path:
+    rec = Rec(browser, "demo3_3_canhoto")
+    p = rec.page
+    quick_setup(p, "Creator", "Checar peça", product=True)
+    textarea(p).fill(BAD)
+    textarea(p).press("Control+Enter")
+    settle(p)
+    button(p, "Checar peça").click()
+    p.locator(".vc-peca").first.wait_for()
+    settle(p)
+    p.get_by_text("Texto da peça", exact=True).first.evaluate(SCROLL_JS, [0.22, 10])
+    pause(p, 0.3)
+    rec.start()
+    chapter(p, CHAPTERS[3])
+    pause(p, D3_3_LOOK_START_S)
+    human_type(p, textarea(p), FIXED)
+    fix = p.get_by_label("Esta peça corrige a anterior (bloqueada)")
+    if not fix.is_checked():  # vem marcada depois de uma peça bloqueada; só marca se não vier
+        human_click(p, p.locator('[data-testid="stCheckbox"]').filter(has_text="corrige").first)
+        settle(p)
+    look_at(p, p.locator('[data-testid="stCheckbox"]').filter(has_text="corrige").first,
+            D3_3_CHECKBOX_S)  # fmt: skip
+    human_click(p, button(p, "Checar peça"))
+    chip = p.locator(".vc-resultado .vc-chip--registrar")
+    timed_wait("3", "resultado", lambda: (chip.first.wait_for(), settle(p)))
+    scroll_to(p, p.locator(".vc-resultado").first, 0.08, 800)
+    look_at(p, chip.first, D3_3_REGISTERED_S)
+    scroll_to(p, button(p, "Gerar link"), 0.30, 800)
+    human_click(p, button(p, "Gerar link"))
+    timed_wait("3", "canhoto", lambda: p.locator(".vc-canhoto").first.wait_for())
+    pause(p, 0.45)  # o carimbo cai (~0,5 s)
+    scroll_to(p, p.locator(".vc-canhoto").first, 0.28, 600)
+    p.mouse.move(VIEWPORT["width"] * 0.93, VIEWPORT["height"] * 0.22, steps=MOVE_STEPS)
+    pause(p, D3_3_CANHOTO_S + D3_3_END_S)
+    return rec.finish()
+
+
+def clip3_5(browser) -> Path:
+    rec = Rec(browser, "demo3_5_relatorio")
+    p = rec.page
+    quick_setup(p, "Marca", "Devoluções e promessas", product=True)
+    rec.start()
+    chapter(p, CHAPTERS[5])
+    scroll_to(p, p.get_by_text("Promessas mais contestadas", exact=True).first, 0.04, 900)
+    look_at(p, p.get_by_text("Sinais para a marca", exact=True).first, D3_5_LOOK_LISTS_S)
+    open_thread(p, "5", "acesso vitalício", "Promessas mais contestadas")
+    p.mouse.move(VIEWPORT["width"] * 0.93, VIEWPORT["height"] * 0.2, steps=MOVE_STEPS)
+    pause(p, D3_5_FIO_S)
+    role(p, "5", "Creator")
+    pause(p, D3_5_AFTER_ROLE_S)
+    scroll_to(p, p.get_by_text("Devoluções por causa", exact=True).first, 0.04, 800)
+    look_at(p, p.get_by_text("Devoluções por causa", exact=True).first, D3_5_CAUSES_S)
+    open_thread(p, "5", "5KG", "Trechos da sua peça que os compradores cobraram")
+    pause(p, D3_5_CREATOR_FIO_S)
+    role(p, "5", "Marca")
+    open_thread(p, "5", "acesso vitalício", "Promessas mais contestadas")
+    p.mouse.move(VIEWPORT["width"] * 0.93, VIEWPORT["height"] * 0.2, steps=MOVE_STEPS)
+    pause(p, D3_5_END_S)
+    return rec.finish()
+
+
+def clip3_6(browser) -> Path:
+    rec = Rec(browser, "demo3_6_testes")
+    p = rec.page
+    quick_setup(p, "Marca", None)
+    rec.start()
+    chapter(p, CHAPTERS[6])
+    nav(p, "6", "Teste dos agentes")
+    look_at(p, p.locator(".vc-header").first, D3_6_LOOK_TOP_S)
+    checker = p.get_by_text("Checador (60 anúncios da H2)", exact=True).first
+    scroll_to(p, checker, 0.10, 900)
+    look_at(p, p.locator('[data-testid="stDataFrame"]').first, D3_6_CHECKER_S)
+    classifier = p.get_by_text("Classificador (172 compradores da H1)", exact=True).first
+    scroll_to(p, classifier, 0.06, D3_6_SCROLL_MS)
+    look_at(p, p.locator('[data-testid="stDataFrame"]').nth(1), D3_6_CLASSIFIER_S)
+    pause(p, D3_6_END_S)
+    return rec.finish()
+
+
+def main_3min() -> int:
+    from playwright.sync_api import sync_playwright
+
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "_webm").mkdir(exist_ok=True)
+    if port_in_use():
+        print("a porta 8501 está em uso: feche o painel aberto")
+        return 1
+    clips: list[Path] = []
+    with Panel(OUT / "_painel.log"):
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch()
+            warm_up(browser)
+            clips.append(clip3_0(browser))
+            clips.append(clip3_1(browser))
+            clips.append(clip3_2(browser))
+            clips.append(clip3_3(browser))
+            sale_id, link_id = add_simulated_sale()
+            results = mcp_calls(sale_id)
+            (OUT / "_mcp_saida.json").write_text(
+                json.dumps(
+                    {"venda": sale_id, "link": link_id, "chamadas": results},
+                    ensure_ascii=False,
+                    indent=1,
+                ),
+                encoding="utf-8",
+            )
+            clips.append(
+                clip_4(
+                    browser,
+                    results,
+                    name="demo3_4_mcp",
+                    reads=(D3_4_READ_1_S, D3_4_READ_2_S),
+                    hold=D3_4_HOLD_S,
+                    chapter_text=CHAPTERS[4],
+                    mcp_legend=True,
+                    intro=D3_4_INTRO_S,
+                )
+            )
+            clips.append(clip3_5(browser))
+            clips.append(clip3_6(browser))
+            end_clip, repo = clip3_7(browser)
+            clips.append(end_clip)
+            browser.close()
+    final = concat(clips, "demo_3min.mp4")
+    print(write_marks(clips, final, CLIPS_3MIN, "demo3_marcas.txt"))
+    print("repositório no encerramento:", repo or "(sem remoto do GitHub: linha omitida)")
+    slow = [w for w in WAITS if w[2] > WAIT_MAX_S]
+    print("esperas na gravação (s):", ", ".join(f"T{c} {w} {s}" for c, w, s in WAITS))
+    if slow:
+        print("ESPERAS ACIMA DE", WAIT_MAX_S, "s:", slow)
+        return 2
+    return 0
 
 
 # ── Concatenação e marcas ───────────────────────────────────────────────────────────────
 
 
-def concat(clips: list[Path]) -> Path:
+def concat(clips: list[Path], final_name: str = "demo_slide8.mp4") -> Path:
     listing = OUT / "_lista.txt"
     listing.write_text(
         "".join(f"file '{c.resolve().as_posix()}'\n" for c in clips), encoding="utf-8"
     )
-    final = OUT / "demo_slide8.mp4"
+    final = OUT / final_name
     cmd = [ffmpeg_exe(), "-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0"]
     cmd += ["-i", str(listing), "-c", "copy", "-movflags", "+faststart", str(final)]
     subprocess.run(cmd, check=True)
@@ -617,16 +1039,21 @@ def concat(clips: list[Path]) -> Path:
     return final
 
 
-def write_marks(clips: list[Path], final: Path) -> str:
+def write_marks(
+    clips: list[Path],
+    final: Path,
+    titles: list[tuple[str, str]] = CLIPS,
+    marks_name: str = "demo_marcas.txt",
+) -> str:
     lines, t = [], 0.0
-    for (name, title), clip in zip(CLIPS, clips, strict=True):
+    for (name, title), clip in zip(titles, clips, strict=True):
         d = video_info(clip)["seconds"]
         lines.append(f"{name}  {t:6.2f} s → {t + d:6.2f} s  ({d:5.2f} s)  {title}")
         t += d
     info = video_info(final)
     lines.append(f"total  {info['seconds']:.2f} s  ·  {info['size']}  ·  30 fps")
     text = "\n".join(lines) + "\n"
-    (OUT / "demo_marcas.txt").write_text(text, encoding="utf-8")
+    (OUT / marks_name).write_text(text, encoding="utf-8")
     return text
 
 
@@ -686,4 +1113,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    if "--3min" in sys.argv[1:]:
+        OUT = ROOT / "out" / "demo3min"
+        sys.exit(main_3min())
     sys.exit(main())
