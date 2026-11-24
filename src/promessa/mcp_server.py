@@ -23,6 +23,8 @@ from promessa.facts import service as facts_service
 from promessa.facts.service import FactsView, UpsertResult
 from promessa.links import service as links_service
 from promessa.links.service import LinkResponse
+from promessa.refunds import service as refunds_service
+from promessa.refunds.service import RefundResponse
 from promessa.review import service as review_service
 from promessa.review.service import ReviewQueue, ReviewResult
 
@@ -175,6 +177,19 @@ def submit_review(
         return review_service.submit_review(
             session, target_type, target_id, action, actor, actor_role, note, payload
         )
+
+
+@mcp.tool()
+@domain_errors
+def classify_refund(sale_id: int, reason_text: str, type: str = "reembolso") -> RefundResponse:
+    """Classifica o motivo de uma devolução e grava o evento (o motivo é limpo de dados pessoais).
+
+    Devolve causa e subcausa da taxonomia, o que o comprador diz que foi prometido
+    (buyer_belief), confiança e se precisa de revisão humana. type: reembolso | chargeback |
+    ticket.
+    """
+    with session_scope() as session:
+        return refunds_service.classify_refund(session, sale_id, reason_text, type)
 
 
 def main() -> None:

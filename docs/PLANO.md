@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 23/11, 22:25):
+**Andamento** (atualizado em 23/11, 22:30):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -58,8 +58,9 @@
 | T08 Teste 1 do checador | ✅ Concluída | Rodada v1 em `eval/reports/checador_h2.md`: 4/4 evidentes; kappa test 0,37 (regras) e 0,32 (regras + modelo), meta 0,6 ❌; promessa verificável 47% e 71%, meta 80% ❌ (D26). |
 | **Checkpoint 1** | ✅ Feito | Conferência manual: 6 de 10 extrações certas. Rodada v2 com ajustes de regra só do `dev`: kappa (só regras) dev 0,52 → 0,71; test igual, 0,37 (D27). |
 | T09 Promessa registrada e link | ✅ Concluída | `register_content_and_link`, `list_review_queue`, `submit_review` via MCP; 22 testes (D28). |
-| T10 Classificador de devolução **[plan]** | **Próxima** | — |
-| T11–T16 | Não iniciadas | — |
+| T10 Classificador de devolução **[plan]** | ✅ Concluída | `classify_refund` via MCP; 31 testes sem rede + 7 `llm` (passam ao vivo e com cache) (D29). |
+| T11 Ligação com a promessa | **Próxima** | — |
+| T12–T16 | Não iniciadas | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -462,8 +463,8 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 5. Ferramenta MCP `classify_refund`. Para testar agora, uma função auxiliar de teste cria `sale` ligada a um link.
 
 **Critérios de aceite:**
-- [ ] `tests/test_privacy.py`: "meu cpf 123.456.789-00 e email ana@x.com" → sem CPF nem e-mail.
-- [ ] Testes `@pytest.mark.llm`:
+- [x] `tests/test_privacy.py`: "meu cpf 123.456.789-00 e email ana@x.com" → sem CPF nem e-mail. *(→ "meu cpf [CPF] e email [EMAIL]"; valores, datas e números de pedido ficam.)*
+- [x] Testes `@pytest.mark.llm`: *(os 7 passaram com `gemini-3.5-flash-lite`, incluindo as crenças garantia 30 e acesso vitalício.)*
 
   | Motivo | Causa / subcausa esperada |
   |---|---|
@@ -475,9 +476,11 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
   | "Perdi o acesso, achei que era para sempre" | `promessa_explicita` / `condicao_da_oferta`, crença acesso vitalício |
   | "Cobraram renovação que ninguém me avisou na compra" | `promessa_explicita` / `informacao_omitida` |
 
-- [ ] Subcausa inválida devolvida pelo modelo (teste com *mock*) é corrigida e a confiança fica ≤ 0,5.
-- [ ] `refund_event.reason_text` gravado já limpo.
-- [ ] Nenhum exemplo do prompt pertence ao split `test` (teste que confere os ids).
+- [x] Subcausa inválida devolvida pelo modelo (teste com *mock*) é corrigida e a confiança fica ≤ 0,5.
+- [x] `refund_event.reason_text` gravado já limpo. *(e o texto vai limpo também para o modelo.)*
+- [x] Nenhum exemplo do prompt pertence ao split `test` (teste que confere os ids).
+
+**Status:** ✅ concluída em 23/11 (22:30). Plano apresentado no início da sessão (pedido direto do Lucas).
 
 **Não fazer:** ligação com a promessa (T11); relatórios (T13).
 

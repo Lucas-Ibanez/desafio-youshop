@@ -102,3 +102,29 @@ def facts_v1(session, product):
     session.add(facts)
     session.commit()
     return facts
+
+
+@pytest.fixture
+def make_sale():
+    """Cria peça checada, link e venda (para testar devoluções). Devolve a `Sale`."""
+    from promessa.checker.service import check_content
+    from promessa.db.models import Sale
+    from promessa.links.service import register_content_and_link
+
+    def _make(
+        session,
+        product_id="prod_treino",
+        creator_id="cr_ana",
+        text="12 meses de acesso, 7 dias de garantia",
+        amount_cents=19700,
+    ):
+        resp = check_content(session, product_id, creator_id, text, "instagram")
+        link = register_content_and_link(session, resp.piece_id)
+        sale = Sale(
+            link_id=link.link_id, amount_cents=amount_cents, commission_cents=amount_cents // 5
+        )
+        session.add(sale)
+        session.flush()
+        return sale
+
+    return _make
