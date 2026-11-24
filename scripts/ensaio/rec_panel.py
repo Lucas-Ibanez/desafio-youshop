@@ -18,6 +18,7 @@ texto fixo e o checador fica só com regras (sem gastar cota nem depender da red
 from __future__ import annotations
 
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -213,12 +214,24 @@ def sidebar(page):
     return page.locator('[data-testid="stSidebar"]')
 
 
-def select_option(page, label: str, option: str, *, in_sidebar: bool = True) -> None:
-    """Escolhe `option` no selectbox de rótulo `label`."""
+def selectbox(page, label: str, *, in_sidebar: bool = True):
+    """Selectbox pelo rótulo exato (o texto do valor escolhido não conta)."""
     scope = sidebar(page) if in_sidebar else page.locator('[data-testid="stMain"]')
-    box = scope.locator('[data-testid="stSelectbox"]').filter(has_text=label).first
-    box.locator('[role="combobox"], input').first.click()
-    page.get_by_role("option", name=option, exact=True).click()
+    label_el = page.locator('[data-testid="stWidgetLabel"]').filter(
+        has_text=re.compile(rf"^\s*{re.escape(label)}\s*$")
+    )
+    return scope.locator('[data-testid="stSelectbox"]').filter(has=label_el).first
+
+
+def select_option(
+    page, label: str, option: str, *, in_sidebar: bool = True, exact: bool = True
+) -> None:
+    """Escolhe no selectbox `label` a opção `option` (exata, ou que contém o texto)."""
+    selectbox(page, label, in_sidebar=in_sidebar).locator('[role="combobox"], input').first.click()
+    if exact:
+        page.get_by_role("option", name=option, exact=True).click()
+    else:
+        page.get_by_role("option").filter(has_text=option).first.click()
     wait_idle(page)
 
 
@@ -228,10 +241,8 @@ def choose_role(page, role_label: str) -> None:
 
 
 def choose_creator(page, creator_label: str) -> None:
-    sb = sidebar(page).locator('[data-testid="stSelectbox"]').filter(has_text="Creator").first
-    sb.locator('[role="combobox"], input').first.click()
-    page.get_by_role("option").filter(has_text=creator_label).first.click()
-    wait_idle(page)
+    """Creator na barra lateral (papel creator), pelo nome ou @handle."""
+    select_option(page, "Creator", creator_label, exact=False)
 
 
 def goto_page(page, name: str) -> None:
