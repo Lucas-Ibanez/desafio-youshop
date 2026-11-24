@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 24/11, 07:40):
+**Andamento** (atualizado em 24/11, 07:45):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -63,8 +63,9 @@
 | T12 Teste 1 do classificador | ✅ Concluída (1 critério ❌) | Rodada v1 em `eval/reports/classificador_h1.md`: test acurácia 81%, kappa 0,74, subtipo 74% (metas ✅); corte: sim. Rodada fria de 14,5 min (meta 10 ❌, cota do Gemini) (D31). |
 | **Checkpoint 2** | ✅ Feito | v2 do classificador (causa restrita à taxonomia): test acurácia 81% → 83%, kappa 0,74 → 0,77, nenhuma causa inválida; modelo mantido `gemini-3.5-flash-lite` (D34). |
 | T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída | Conferida no modo gabarito e com o classificador real: as personas batem nos dois (D33, D34). |
-| T14 Painel | **Próxima** | — |
-| T15–T16 | Não iniciadas | — |
+| T14 Painel | ✅ Concluída | 5 páginas + início, só serviços; exemplo do guia pela interface; 30 testes com o AppTest do Streamlit (D35). |
+| T15 Demo via MCP + Claude Code | **Próxima** | — |
+| T16 Fechamento | Não iniciada | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -589,10 +590,12 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
 | 5 · Avaliação | todos | Lê `eval/reports/*.json`: metas e resultados do Teste 1. |
 
 **Critérios de aceite:**
-- [ ] `make painel` abre sem erro sobre o banco do `simulate`.
-- [ ] O exemplo do guia inteiro pode ser feito pela interface (ficha → peça bloqueada → correção → link).
-- [ ] Na visão `creator`, nenhum texto de comprador aparece.
-- [ ] `grep` confirma que `app/` não importa `promessa.db.models`.
+- [x] `make painel` abre sem erro sobre o banco do `simulate`. *(servidor headless: health ok, HTTP 200; as 6 páginas abrem nos 3 papéis sobre o `var/promessa.db` da simulação real.)*
+- [x] O exemplo do guia inteiro pode ser feito pela interface (ficha → peça bloqueada → correção → link). *(teste com o AppTest: ficha do treino, peça bloqueada sem botão de link, correção ligada à anterior, link com acesso 12 meses e garantia 7 dias; contestação e reversão também.)*
+- [x] Na visão `creator`, nenhum texto de comprador aparece. *(teste: nenhuma sequência de 5 palavras dos motivos na página de relatórios, para os 5 creators.)*
+- [x] `grep` confirma que `app/` não importa `promessa.db.models`.
+
+**Status:** ✅ concluída em 24/11 (07:45).
 
 **Não fazer:** autenticação, estilo elaborado.
 

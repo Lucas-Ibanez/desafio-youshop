@@ -317,3 +317,14 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Testes `llm`:** 27 de 27 ao vivo com os prompts novos.
 **Achado na explicação do modelo (cr_ana, 93 palavras):** cita o trecho certo e o que não é com ela, mas diz que "a maior parte" das devoluções veio da peça (foram 7 de 18). O filtro atual confere tamanho e trecho, não os números ditos em texto. Ajuste possível na T15/T16: instrução no prompt para não usar quantificadores ("maior parte") sem o número, ou preferir o texto fixo na demo.
 **Consumo de cota no dia:** ~210 chamadas de 500 no `gemini-3.5-flash-lite`.
+
+## D35 · Painel: escolhas da T14 · 24/11/2026
+**Contexto:** a T14 monta a interface de marca, creator e Operações sobre os serviços (D3).
+**Decisão:**
+- **Estrutura:** `app/painel.py` (início) e `app/pages/1_Ficha.py` a `5_Avaliacao.py` (multipágina do Streamlit). Barra lateral comum em `app/painel_comum.py`: papel, creator (no papel creator), nome do revisor (marca e Operações) e período; as escolhas ficam guardadas entre páginas.
+- **Só serviços:** o painel usa `promessa.*.service`, `db.session` e o carregador de regras; nada de `db.models`. Para isso, o serviço da ficha ganhou `list_products`, `list_creators` e `list_versions`.
+- **Checador:** só regras por padrão, com a opção "Usar o modelo (camada 2)" (não gasta cota a cada clique). Destaque por cor do trecho mais grave (vermelho bloquear, amarelo revisar, verde registrar). Botão "Gerar link" só aparece se a checagem permite ou se o creator contestou (para tentar de novo depois da decisão da marca). A caixa "corrige a anterior" vem marcada depois de uma peça bloqueada e liga a nova peça à anterior (`parent_piece_id`).
+- **Papéis:** Ficha (nova versão só para marca), Checador (creator), Fila (marca e Operações; o creator vê o aviso), Relatórios (creator: só os próprios números, o indicador, os trechos cobrados e a explicação; marca/Operações: por produto ou por creator, com sinais, cobertura e integridade), Avaliação (todos, lendo `eval/reports/*.json`).
+- **Testes:** `streamlit.testing.v1.AppTest` sobre um banco em memória com seed e simulação (modo gabarito): todas as páginas nos 3 papéis, o exemplo do guia pela interface, a contestação com reversão pela fila e a ausência de texto de comprador na visão creator.
+- **Lint:** arquivos de `app/` podem ter linhas longas (layout e textos da interface).
+**Consequência:** a demo da página 2 e da página 4 pode ser feita ao vivo (roteiro da seção 6 do PLANO). A explicação ao creator no painel usa o modelo quando há chave (com cache); o achado da D34 sobre quantificadores continua valendo.

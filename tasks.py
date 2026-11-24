@@ -107,6 +107,11 @@ def simulate() -> int:
     return run(sys.executable, "scripts/simulate.py", *SIMULATE_ARGS)
 
 
+def painel() -> int:
+    # Painel do MVP (T14).
+    return py("streamlit", "run", "app/painel.py")
+
+
 def mcp() -> int:
     return py("promessa.mcp_server")
 
@@ -133,9 +138,7 @@ TASKS: dict[str, Task] = {
     "eval": Task("Teste 1 dos dois agentes", "T08, T12", eval_all),
     "mcp": Task("sobe o servidor MCP em stdio", "T01", mcp),
     "demo": Task("exemplo do guia de ponta a ponta via MCP", "T15", not_implemented("T15")),
-    "painel": Task(
-        "painel Streamlit (python -m streamlit run app/painel.py)", "T14", not_implemented("T14")
-    ),
+    "painel": Task("painel Streamlit (python -m streamlit run app/painel.py)", "T14", painel),
 }
 
 

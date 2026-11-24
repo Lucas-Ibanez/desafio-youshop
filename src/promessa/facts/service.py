@@ -14,7 +14,14 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from promessa.db.enums import AccessType, Category, Recurrence, RuleKind, RuleOutput, RuleSource
-from promessa.db.models import ClaimRule, Product, ProductFacts, get_current_facts, utcnow
+from promessa.db.models import (
+    ClaimRule,
+    Creator,
+    Product,
+    ProductFacts,
+    get_current_facts,
+    utcnow,
+)
 from promessa.errors import (
     FICHA_INEXISTENTE,
     FICHA_INVALIDA,
@@ -467,3 +474,51 @@ def build_briefing(
 
 def word_count(text: str) -> int:
     return len(text.split())
+
+
+# --- Catálogo (para o painel e o MCP, sem expor o banco) --------------------------------
+
+
+class ProductSummary(BaseModel):
+    id: str
+    name: str
+    category: Category
+    brand_id: str
+
+
+class CreatorSummary(BaseModel):
+    id: str
+    handle: str
+    display_name: str
+
+
+class VersionSummary(BaseModel):
+    version: int
+    valid_from: datetime
+    created_by: str
+
+
+def list_products(session: Session) -> list[ProductSummary]:
+    return [
+        ProductSummary(id=p.id, name=p.name, category=p.category, brand_id=p.brand_id)
+        for p in session.scalars(select(Product).order_by(Product.id))
+    ]
+
+
+def list_creators(session: Session) -> list[CreatorSummary]:
+    return [
+        CreatorSummary(id=c.id, handle=c.handle, display_name=c.display_name)
+        for c in session.scalars(select(Creator).order_by(Creator.id))
+    ]
+
+
+def list_versions(session: Session, product_id: str) -> list[VersionSummary]:
+    get_product(session, product_id)
+    return [
+        VersionSummary(version=f.version, valid_from=f.valid_from, created_by=f.created_by)
+        for f in session.scalars(
+            select(ProductFacts)
+            .where(ProductFacts.product_id == product_id)
+            .order_by(ProductFacts.version)
+        )
+    ]

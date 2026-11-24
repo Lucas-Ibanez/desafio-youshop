@@ -1,0 +1,160 @@
+"""Página 1 · Ficha de promessas (marca): versões, condições, regras com fonte e nova versão."""
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import pandas as pd  # noqa: E402
+import streamlit as st  # noqa: E402
+from painel_comum import domain_error, product_select, sidebar  # noqa: E402
+
+from promessa.db.session import session_scope  # noqa: E402
+from promessa.errors import DomainError  # noqa: E402
+from promessa.facts import service as facts_service  # noqa: E402
+
+st.set_page_config(page_title="Ficha", page_icon="📋", layout="wide")
+ctx = sidebar()
+st.title("1 · Ficha de promessas")
+st.caption(
+    "O que o produto pode prometer: condições da oferta e alegações permitidas e proibidas, com fonte e versão."
+)
+
+product_id = product_select()
+with session_scope() as session:
+    versions = facts_service.list_versions(session, product_id)
+numbers = [v.version for v in versions]
+version = st.selectbox(
+    "Versão",
+    numbers,
+    index=len(numbers) - 1,
+    format_func=lambda n: (
+        f"v{n} (vale desde {versions[n - 1].valid_from:%d/%m/%Y %H:%M}, por {versions[n - 1].created_by})"
+    ),
+    key="versao_ficha",
+)
+with session_scope() as session:
+    facts = facts_service.get_product_facts(session, product_id, version)
+
+left, right = st.columns(2)
+with left:
+    st.subheader("Condições da oferta")
+    st.table(
+        pd.DataFrame(
+            {
+                "condição": [
+                    "garantia",
+                    "acesso",
+                    "meses de acesso",
+                    "cobrança",
+                    "renovação automática",
+                    "bônus",
+                    "custos extras",
+                ],
+                "valor": [
+                    f"{facts.guarantee_days} dias",
+                    facts.access_type.value,
+                    facts.access_months or "—",
+                    facts.recurrence.value,
+                    "sim" if facts.auto_renewal else "não",
+                    ", ".join(facts.bonuses) or "nenhum",
+                    ", ".join(
+                        f"{c['descricao']} (R$ {c['valor_mensal_cents'] / 100:.2f}/mês)"
+                        for c in facts.extra_costs
+                    )
+                    or "nenhum",
+                ],
+            }
+        ).astype(str)
+    )
+with right:
+    st.subheader("Briefing para o creator")
+    st.text(facts.briefing)
+
+st.subheader(f"Regras desta versão ({len(facts.rules)})")
+if facts.rules:
+    st.dataframe(
+        pd.DataFrame([r.model_dump(mode="json") for r in facts.rules])[
+            ["rule_key", "kind", "tema", "output", "source", "reference", "text"]
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+else:
+    st.write(
+        "Nenhuma lista oficial para esta categoria; valem só as condições da oferta e os padrões gerais."
+    )
+
+st.divider()
+st.subheader("Nova versão da ficha")
+if ctx["role"] != "marca":
+    st.info("Só a marca cria versões da ficha. Troque o papel para **Marca** na barra lateral.")
+else:
+    st.caption(
+        "A versão atual não muda: a nova versão passa a valer a partir de agora (CDC art. 30: a oferta vincula)."
+    )
+    with st.form("nova_versao"):
+        c1, c2, c3 = st.columns(3)
+        guarantee = c1.number_input(
+            "Garantia (dias)", min_value=0, value=int(facts.guarantee_days), step=1
+        )
+        access_types = ["vitalicio", "prazo", "assinatura", "nao_aplica"]
+        access = c2.selectbox(
+            "Acesso", access_types, index=access_types.index(facts.access_type.value)
+        )
+        months = c3.number_input(
+            "Meses de acesso (só para prazo)",
+            min_value=0,
+            value=int(facts.access_months or 0),
+            step=1,
+        )
+        recurrences = ["unica", "mensal", "anual"]
+        recurrence = c1.selectbox(
+            "Cobrança", recurrences, index=recurrences.index(facts.recurrence.value)
+        )
+        renewal = c2.checkbox("Renovação automática", value=facts.auto_renewal)
+        bonuses = c3.text_input("Bônus (separados por vírgula)", value=", ".join(facts.bonuses))
+        costs = st.text_area(
+            "Custos extras (um por linha: descrição; valor mensal em reais)",
+            value="\n".join(
+                f"{c['descricao']}; {c['valor_mensal_cents'] / 100:.2f}" for c in facts.extra_costs
+            ),
+        )
+        brand_rule = st.text_input("Frase que a marca proíbe (opcional)")
+        submitted = st.form_submit_button("Criar nova versão")
+    if submitted:
+        extra = []
+        for line in costs.splitlines():
+            if line.strip():
+                desc, _, value = line.partition(";")
+                try:
+                    extra.append(
+                        {
+                            "descricao": desc.strip(),
+                            "valor_mensal_cents": round(float(value.replace(",", ".")) * 100),
+                        }
+                    )
+                except ValueError:
+                    st.error(f"Valor inválido em custos extras: {line!r}")
+                    st.stop()
+        data = {
+            "guarantee_days": int(guarantee),
+            "access_type": access,
+            "access_months": int(months) if access == "prazo" else None,
+            "recurrence": recurrence,
+            "auto_renewal": renewal,
+            "bonuses": [b.strip() for b in bonuses.split(",") if b.strip()],
+            "extra_costs": extra,
+            "brand_rules": [{"kind": "proibida", "text": brand_rule}] if brand_rule.strip() else [],
+        }
+        try:
+            with session_scope() as session:
+                result = facts_service.create_facts_version(
+                    session, product_id, data, ctx["reviewer"] or "marca"
+                )
+        except DomainError as e:
+            domain_error(e)
+        else:
+            st.success(f"Versão v{result.version} criada.")
+            for w in result.warnings:
+                st.warning(f"{w.rule_key}: {w.message}")

@@ -45,6 +45,8 @@ select = ["E", "F", "I", "B", "UP"]
 [tool.ruff.lint.per-file-ignores]
 # relatórios de avaliação: linhas longas são o próprio texto em Markdown (D26)
 "eval/*.py" = ["E501"]
+# painel: linhas longas de layout e texto da interface (D35)
+"app/**/*.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
