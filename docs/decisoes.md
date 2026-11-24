@@ -328,3 +328,14 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Testes:** `streamlit.testing.v1.AppTest` sobre um banco em memória com seed e simulação (modo gabarito): todas as páginas nos 3 papéis, o exemplo do guia pela interface, a contestação com reversão pela fila e a ausência de texto de comprador na visão creator.
 - **Lint:** arquivos de `app/` podem ter linhas longas (layout e textos da interface).
 **Consequência:** a demo da página 2 e da página 4 pode ser feita ao vivo (roteiro da seção 6 do PLANO). A explicação ao creator no painel usa o modelo quando há chave (com cache); o achado da D34 sobre quantificadores continua valendo.
+
+## D36 · Demo via MCP e conexão no Claude Code: escolhas da T15 · 24/11/2026
+**Contexto:** a T15 mostra que o servidor MCP é a porta de entrada e que um agente consegue usá-lo.
+**Decisão:**
+- **`scripts/demo_e2e.py`:** sobe o servidor como subprocesso stdio com `mcp.Client(StdioServerParameters)` (D8) e roda os 5 passos do guia, com a chamada resumida, a resposta em destaque e uma verificação ✅/❌ por passo; termina com "Demo concluída" ou lista o que falhou (código de saída 1).
+- **Banco só da demo:** `var/demo.db`, recriado e com seed a cada execução (repetível, não mistura com a simulação). A venda do passo 4 é gravada direto nesse banco: não há ferramenta MCP de venda (vendas vêm do pipeline, simulado no MVP).
+- **Período do relatório no passo 5:** de 26/10 até a data de hoje, para incluir a venda da demo.
+- **Logs do servidor:** `PROMESSA_LOG_LEVEL` (padrão INFO) controla o log do servidor MCP; a demo usa WARNING para a saída ficar legível.
+- **Claude Code:** `claude mcp add promessa -- uv run --directory <repo> python -m promessa.mcp_server` no escopo local (privado nesta máquina; `~/.claude.json`). O servidor usa `var/promessa.db` (rodar `db-reset seed simulate` antes). Os 3 pedidos do PLANO rodaram com `claude -p` (modo não interativo), com permissão só para as ferramentas `mcp__promessa`; respostas resumidas no README. O pedido 1 grava a legenda como peça no banco (é o que o `check_content` faz).
+**Resultado:** demo em ~5 s com cache (9 verificações ok); `claude mcp list` → `promessa: ... ✔ Connected`; os 3 pedidos responderam com o esperado (bloqueio das alegações e a frase literal da IN 28; trecho "Secar até 5KG EM 7 DIAS" e o que não é com a cr_ana; promessas do prod_treino separando creator e marca).
+**Consequência:** todas as tarefas do `tasks.py` estão implementadas; falta o fechamento (T16).

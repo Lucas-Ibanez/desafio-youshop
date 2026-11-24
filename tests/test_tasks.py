@@ -53,8 +53,13 @@ def test_sequencia_para_na_primeira_falha(monkeypatch):
 
 
 def test_nao_implementada_sai_com_zero(capsys):
-    assert tasks.main(["demo"]) == 0
-    assert "ainda não implementado (T15)" in capsys.readouterr().out
+    assert tasks.not_implemented("T99")() == 0
+    assert "ainda não implementado (T99)" in capsys.readouterr().out
+
+
+def test_todas_as_tarefas_estao_implementadas():
+    pending = [name for name, task in tasks.TASKS.items() if task.action.__name__ == "action"]
+    assert pending == []
 
 
 @pytest.mark.parametrize("args", [["help"], []])

@@ -8,6 +8,7 @@ serviço e devolvem o modelo Pydantic. Erro de domínio sobe como `CODIGO: expli
 """
 
 import functools
+import os
 from collections.abc import Callable
 from datetime import datetime
 from typing import Any
@@ -34,7 +35,12 @@ from promessa.review.service import ReviewQueue, ReviewResult
 
 VERSION = "0.1.0"
 
-mcp = MCPServer("promessa-rastreavel", version=VERSION)
+# PROMESSA_LOG_LEVEL=WARNING deixa o stderr do servidor quieto (a demo usa; D36)
+mcp = MCPServer(
+    "promessa-rastreavel",
+    version=VERSION,
+    log_level=os.environ.get("PROMESSA_LOG_LEVEL", "INFO").upper(),
+)
 
 
 def domain_errors[F: Callable[..., Any]](fn: F) -> F:

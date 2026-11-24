@@ -43,7 +43,7 @@
 
 ## 3. Cronograma
 
-**Andamento** (atualizado em 24/11, 07:45):
+**Andamento** (atualizado em 24/11, 07:50):
 
 | Task | Status | Evidência |
 |---|---|---|
@@ -64,8 +64,8 @@
 | **Checkpoint 2** | ✅ Feito | v2 do classificador (causa restrita à taxonomia): test acurácia 81% → 83%, kappa 0,74 → 0,77, nenhuma causa inválida; modelo mantido `gemini-3.5-flash-lite` (D34). |
 | T13 Simulador, relatórios e explicação **[plan]** | ✅ Concluída | Conferida no modo gabarito e com o classificador real: as personas batem nos dois (D33, D34). |
 | T14 Painel | ✅ Concluída | 5 páginas + início, só serviços; exemplo do guia pela interface; 30 testes com o AppTest do Streamlit (D35). |
-| T15 Demo via MCP + Claude Code | **Próxima** | — |
-| T16 Fechamento | Não iniciada | — |
+| T15 Demo via MCP + Claude Code | ✅ Concluída | `tasks.py demo` em ~5 s com 9 verificações; servidor registrado no Claude Code (✔ Connected); os 3 pedidos funcionaram numa conversa (D36). |
+| T16 Fechamento | **Próxima** | — |
 
 Adiantado cerca de 1h15 em relação ao cronograma abaixo (o Checkpoint 1 estava previsto para 23:30; a T09, para terça 08:00).
 
@@ -619,9 +619,11 @@ Formato de cada task: **objetivo · depende de · o que fazer · arquivos · cri
    - "Quais promessas sobre o prod_treino mais geram devolução?".
 
 **Critérios de aceite:**
-- [ ] `make demo` roda em menos de 60 segundos (com cache) e termina com "Demo concluída".
-- [ ] A lista de ferramentas mostrada tem as 9 da seção 9 do CONTEXTO (e o `ping`).
-- [ ] `claude mcp list` mostra o servidor; os 3 pedidos de exemplo funcionam numa conversa (anotar a saída no README ou gravar a tela).
+- [x] `make demo` roda em menos de 60 segundos (com cache) e termina com "Demo concluída". *(~5 s; 9 verificações ok; teste `llm` em `tests/test_demo.py`.)*
+- [x] A lista de ferramentas mostrada tem as 9 da seção 9 do CONTEXTO (e o `ping`).
+- [x] `claude mcp list` mostra o servidor; os 3 pedidos de exemplo funcionam numa conversa (anotar a saída no README ou gravar a tela). *(`promessa: ... ✔ Connected`; respostas resumidas no README.)*
+
+**Status:** ✅ concluída em 24/11 (07:50).
 
 ---
 
