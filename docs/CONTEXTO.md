@@ -161,7 +161,7 @@ DEPOIS DA VENDA
 | Ambiente e dependências | `uv` (+ `uv.lock`) | Instala e roda rápido; um comando para tudo. |
 | Servidor MCP | SDK oficial `mcp` 2.x (classe `MCPServer` em `mcp.server.mcpserver`), transporte stdio; cliente `mcp.Client` (em memória nos testes ou stdio) | Padrão para Claude Code/Desktop; mesmo servidor serve agentes externos na fase 2. |
 | Modelo de linguagem | Gemini via SDK `google-genai`, saída estruturada nativa (`response_mime_type="application/json"` + `response_schema` com o modelo Pydantic), temperatura 0 | JSON validável com Pydantic; reprodutível. |
-| Modelos (configuráveis) | Checador: `gemini-3.6-flash`; classificador e explicação: `gemini-3.5-flash-lite` | Checador lida com nuance (grafia, comparação implícita); classificador é volume. Trocar por variável de ambiente; escolha final pelo split de desenvolvimento. |
+| Modelos (configuráveis) | Checador, classificador e explicação: `gemini-3.5-flash-lite` (D25) | Rápido (~1 s por chamada) e dentro da cota da chave; o `gemini-3.6-flash` levou ~40 s por chamada e estourou a cota (D24). Trocar por variável de ambiente; escolha final pelo split de desenvolvimento. |
 | Banco | SQLite (arquivo `var/promessa.db`) via SQLAlchemy 2.x | Protótipo sem servidor; troca para Postgres por URL. |
 | Validação e esquemas | Pydantic v2 | Entrada/saída de ferramentas, YAML de regras, saída do modelo. |
 | Regras e seeds | YAML (`pyyaml`) | Legível pela marca e pelo jurídico; versionável no git. |
@@ -580,7 +580,7 @@ Também reportar: matriz de confusão; precisão e recall de `promessa_explicita
 |---|---|---|
 | `GEMINI_API_KEY` | — | Chave da Gemini API (AI Studio). Obrigatória para a camada 2 e o classificador |
 | `PROMESSA_DB_URL` | `sqlite:///var/promessa.db` | Banco |
-| `CHECKER_MODEL` | `gemini-3.6-flash` | Camada 2 do checador |
+| `CHECKER_MODEL` | `gemini-3.5-flash-lite` | Camada 2 do checador (D25) |
 | `CLASSIFIER_MODEL` | `gemini-3.5-flash-lite` | Classificador e linker |
 | `EXPLAINER_MODEL` | `gemini-3.5-flash-lite` | Explicação ao creator |
 | `CHECKER_USE_LLM` | `true` | Desliga a camada 2 |
@@ -653,7 +653,7 @@ Comandos: uv run python tasks.py <tarefa> (test | test-llm | lint | seed | simul
 |---|---|
 | Mínimo de vendas para mostrar o indicador do creator | 30 no período (`MIN_SALES_FOR_INDICATOR`); confirmado (D16) |
 | Limiar de confiança alta | 0,8; confirmado (D16) |
-| Modelo final de cada agente | `gemini-3.6-flash` (checador) e `gemini-3.5-flash-lite` (classificador e explicação), conforme `.env` (D14, D16); reavaliar pelo split `dev` e registrar no relatório |
+| Modelo final de cada agente | `gemini-3.5-flash-lite` nos três (checador, classificador e explicação), conforme `.env` (D14, D16, D25); reavaliar pelo split `dev` e registrar no relatório |
 | Prazo para a marca revisar uma contestação | Não implementado; aparece a idade do item na fila |
 
 ---

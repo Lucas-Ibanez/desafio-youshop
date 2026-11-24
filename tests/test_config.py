@@ -13,7 +13,7 @@ def test_padroes_sem_env(monkeypatch, tmp_path):
     assert s.gemini_api_key.get_secret_value() == ""
     assert not has_api_key(s)
     assert s.promessa_db_url == "sqlite:///var/promessa.db"
-    assert s.checker_model == "gemini-3.6-flash"
+    assert s.checker_model == "gemini-3.5-flash-lite"
     assert s.classifier_model == "gemini-3.5-flash-lite"
     assert s.explainer_model == "gemini-3.5-flash-lite"
     assert s.checker_use_llm is True

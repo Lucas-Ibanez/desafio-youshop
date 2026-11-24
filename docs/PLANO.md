@@ -54,8 +54,8 @@
 | T04 Gabaritos | ✅ Concluída | 17 conferências OK; 60 anúncios e 172 compradores anonimizados; splits 20/40 e 40/132; amostra cega de 20+20 (D21). |
 | T05 Ficha de promessas | ✅ Concluída | Seeds, `facts/service.py`, ferramentas `get_product_facts` e `upsert_product_facts`; 27 testes (D22). |
 | T06 Checador camada 1 **[plan]** | ✅ Concluída | Os 15 casos da tabela passam; 31 testes; < 50 ms por peça (D23). Plano apresentado no início da sessão, sem aprovação prévia (pedido direto do Lucas). |
-| T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24). |
-| T08 Teste 1 do checador | **Próxima** | Decidir o modelo do checador antes (D24). |
+| T07 Cliente do modelo + camada 2 **[plan]** | ✅ Concluída | `check_content` via MCP; 32 testes sem rede + 17 `llm` (passam ao vivo e com `LLM_OFFLINE`). Atenção: `gemini-3.6-flash` lento (~40 s/chamada) e com cota estourada (D24); checador trocado para `gemini-3.5-flash-lite` (D25). |
+| T08 Teste 1 do checador | **Próxima** | Modelo do checador decidido: `gemini-3.5-flash-lite` (D25). |
 | T09–T16 | Não iniciadas | — |
 
 Adiantado cerca de 2h15 em relação ao cronograma abaixo (a T08 estava prevista para 22:45).

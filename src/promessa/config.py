@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     gemini_api_key: SecretStr = SecretStr("")
     promessa_db_url: str = "sqlite:///var/promessa.db"
-    checker_model: str = "gemini-3.6-flash"
+    checker_model: str = "gemini-3.5-flash-lite"
     classifier_model: str = "gemini-3.5-flash-lite"
     explainer_model: str = "gemini-3.5-flash-lite"
     checker_use_llm: bool = True
