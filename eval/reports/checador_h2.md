@@ -60,20 +60,20 @@
 
 ## Conferência manual (10 extrações sorteadas)
 
-Semente 11, entre as peças verificáveis com alguma promessa extraída (regras + modelo). Lucas: marque a última coluna com `certo` ou `errado`; as marcas são mantidas nas próximas rodadas.
+Semente 11, entre as peças verificáveis com alguma promessa extraída (regras + modelo). Lucas: marque a última coluna com `certo` ou `errado`; as marcas são mantidas nas próximas rodadas. Marcas desta rodada feitas pelo Claude a pedido do Lucas (23/11).
 
 | id | trecho do anúncio | extraído | certo ou errado |
 |---|---|---|---|
-| O05 | comprar imóveis abaixo do valor... ACESSO VITALÍCIO. DE R$ 3.997 por apenas R$ 2.597 | acesso=vitalicio |  |
-| O08 | Certificado Gratuito Válido de 200h... Vagas Limitadas | resultado=200 horas |  |
-| O09 | Certificado incluso + acesso vitalício... Certificado válido em todo Brasil | acesso=vitalicio |  |
-| O11 | Você desbloqueou acesso vitalício! | acesso=vitalicio |  |
-| R01 | tenha uma RENDA EXTRA de 10K | resultado=renda extra de 10k |  |
-| R02 | +3k alunas ja passaram pelo curso... nenhuma era confeiteira | resultado=3000 |  |
-| S04 | Secar até 5KG EM 7 DIAS | resultado=5 kg em 7 dias |  |
-| S14 | estratégias para secar a barriga, começando pelo Seca Barriga de 7 dias | resultado=secar a barriga, comecando pelo seca barriga de 7 dias |  |
-| S15 | ELIMINAR A BARRIGA nas próximas semanas SEM SAIR DE CASA | resultado=semanas |  |
-| S17 | cardápios de emagrecimento saudável para 21 dias | resultado=emagrecimento saudavel para 21 dias |  |
+| O05 | comprar imóveis abaixo do valor... ACESSO VITALÍCIO. DE R$ 3.997 por apenas R$ 2.597 | acesso=vitalicio | certo |
+| O08 | Certificado Gratuito Válido de 200h... Vagas Limitadas | resultado=200 horas | errado: o valor (200 h) está certo, mas é condição do certificado, não resultado |
+| O09 | Certificado incluso + acesso vitalício... Certificado válido em todo Brasil | acesso=vitalicio | certo |
+| O11 | Você desbloqueou acesso vitalício! | acesso=vitalicio | certo |
+| R01 | tenha uma RENDA EXTRA de 10K | resultado=renda extra de 10k | certo |
+| R02 | +3k alunas ja passaram pelo curso... nenhuma era confeiteira | resultado=3000 | errado: "3000" sem a unidade (alunas); é prova social, não resultado prometido |
+| S04 | Secar até 5KG EM 7 DIAS | resultado=5 kg em 7 dias | certo |
+| S14 | estratégias para secar a barriga, começando pelo Seca Barriga de 7 dias | resultado=secar a barriga, comecando pelo seca barriga de 7 dias | errado: valor não normalizado; a promessa é "secar a barriga em 7 dias" |
+| S15 | ELIMINAR A BARRIGA nas próximas semanas SEM SAIR DE CASA | resultado=semanas | errado: perdeu o resultado; deveria ser "eliminar a barriga em semanas" |
+| S17 | cardápios de emagrecimento saudável para 21 dias | resultado=emagrecimento saudavel para 21 dias | certo |
 
 ## Erros
 
