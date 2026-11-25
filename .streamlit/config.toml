@@ -3,6 +3,12 @@
 
 [server]
 enableStaticServing = true
+# Painel sem login (protótipo): escuta só nesta máquina, não na rede local (D41).
+address = "localhost"
+
+[browser]
+# Não envia estatísticas de uso ao Streamlit (D41).
+gatherUsageStats = false
 
 [theme]
 base = "light"

@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import streamlit as st  # noqa: E402
 from painel_comum import domain_error, sidebar  # noqa: E402
-from ui.components import page_header  # noqa: E402
+from ui.components import md_label, page_header  # noqa: E402
 from ui.theme import apply_theme  # noqa: E402
 
 from promessa.db.session import session_scope  # noqa: E402
@@ -84,22 +84,22 @@ taxonomy = load_rules().taxonomy.subcauses_by_cause()
 for item in queue:
     age = f"há {item.age_hours:.0f} h" if item.age_hours is not None else ""
     with st.container(border=True):
-        st.markdown(f"**{item.summary}** · {age}")
+        st.markdown(f"**{md_label(item.summary)}** · {age}")  # trecho vem do creator (D41)
         c = item.context
         if item.kind == "bloqueio":
             st.write(f"Peça de `{item.creator_id}` para `{item.product_id}`:")
             st.text(c["piece_text"])
-            st.write(c["explanation"])
+            st.write(md_label(c["explanation"]))
             if c.get("contest_note"):
-                st.caption(f"Contestação de {c['contested_by']}: {c['contest_note']}")
+                st.caption(f"Contestação de {c['contested_by']}: {md_label(c['contest_note'])}")
             b1, b2 = st.columns(2)
             if b1.button("Manter bloqueio", key=f"manter_{item.target_id}"):
                 decide(item.target_type, item.target_id, "manter")
             if b2.button("Reverter bloqueio", key=f"reverter_{item.target_id}"):
                 decide(item.target_type, item.target_id, "reverter")
         else:
-            st.write(f"Motivo (até 80 caracteres): {c['reason_preview']}")
-            st.caption(c["explanation"])
+            st.write(f"Motivo (até 80 caracteres): {md_label(c['reason_preview'])}")
+            st.caption(md_label(c["explanation"]))
             b1, b2, b3 = st.columns([1, 1, 2])
             if b1.button("Manter", key=f"manter_c_{item.target_id}"):
                 decide(item.target_type, item.target_id, "manter")

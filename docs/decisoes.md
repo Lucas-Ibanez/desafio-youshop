@@ -424,3 +424,10 @@ As decisões D1–D7 vêm da seção 18.1 do docs/CONTEXTO.md.
 - **Seletores do Streamlit** conferidos no DOM real com o Playwright: a barra lateral vira coluna flex para o menu ficar por último (`order`); o papel é um `st.segmented_control`; avisos nativos recebem as cores da marca pelo `stAlertContainer`. O `st.html` remove `<svg>` embutido, então o símbolo do fio é servido como `app/static/fio.svg`.
 - **Menu e títulos:** os títulos das páginas da seção 5.2 também viram os nomes do menu; os arquivos e endereços não mudam. Os roteiros de gravação (`scripts/ensaio/`) acham o papel e as páginas pelos novos nomes.
 
+## D41 · Auditoria de segurança antes da entrega · 24/11/2026
+**Contexto:** o repositório é público. Auditoria de credenciais, dados pessoais e erros simples de segurança.
+**Resultado:** nenhuma chave, token ou `.env` no conteúdo nem no histórico do git (a chave local também foi procurada pelo valor exato); `data/raw/` e `docs/fontes/` nunca foram versionados; gabaritos anonimizados; e-mails e CPF só fictícios nos testes; sem `shell=True`, `eval`, `pickle` ou `yaml.load` inseguro; SQL só pelo ORM (o único f-string de SQL monta os triggers a partir de constantes); HTML do painel sempre com `html.escape` e o link do botão "Copiar link" com `json.dumps`.
+**Decisão:** duas correções pequenas.
+- **Painel só na máquina local:** `server.address = "localhost"` no `.streamlit/config.toml`. Sem isso, o Streamlit escuta em todas as interfaces e o painel, que não tem login, ficava aberto para a rede local (por exemplo, o Wi-Fi da apresentação). Também `browser.gatherUsageStats = false`. Os roteiros de gravação já usam `localhost`.
+- **Markdown na fila de revisão:** o trecho contestado, a nota de contestação, o motivo do comprador e a explicação do modelo passam por `md_label` antes de `st.markdown`/`st.write`/`st.caption`, para que um texto de usuário não vire link ou imagem externa.
+**Fica para depois:** auditoria das dependências com `pip-audit` (não rodou nesta sessão); autenticação de verdade no painel e no MCP (fora do MVP, CONTEXTO 3.2).
