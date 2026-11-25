@@ -38,7 +38,7 @@ e **por que o comprador pediu o dinheiro de volta**, e devolve isso a quem prome
 > 3. Rode `uv run python tasks.py setup lint test` (sem rede, sem chave) e, com a chave do Gemini,
 >    `uv run python tasks.py db-reset seed simulate demo` (5 min).
 >
-> As escolhas de projeto estão justificadas, uma a uma, em [docs/decisoes.md](docs/decisoes.md) (D1 a D40).
+> As escolhas de projeto estão justificadas, uma a uma, em [docs/decisoes.md](docs/decisoes.md) (D1 a D41).
 
 ## 🎯 O problema
 
@@ -400,7 +400,7 @@ desafio-youshop/
 |---|---|
 | [docs/CONTEXTO.md](docs/CONTEXTO.md) | o que é, evidências, escopo, stack, modelo de dados, regras dos agentes |
 | [docs/PLANO.md](docs/PLANO.md) | tasks T00 a T16, andamento e roteiro da demo de 5 minutos |
-| [docs/decisoes.md](docs/decisoes.md) | 40 decisões registradas, com contexto e justificativa (D1 a D40) |
+| [docs/decisoes.md](docs/decisoes.md) | 41 decisões registradas, com contexto e justificativa (D1 a D41) |
 | [docs/resultados.md](docs/resultados.md) | Teste 1 completo, vazamentos e próximos passos |
 | [docs/BRAND.md](docs/BRAND.md) | identidade visual Vincula e guia de interface |
 
